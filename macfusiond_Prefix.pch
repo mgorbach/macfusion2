@@ -1,0 +1,7 @@
+//
+// Prefix header for all source files of the 'macfusiond' target in the 'macfusiond' project.
+//
+
+#ifdef __OBJC__
+    #import <Foundation/Foundation.h>
+#endif
