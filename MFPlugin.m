@@ -33,7 +33,7 @@
 	return self;
 }
 
-- (void)defaultParameterDict
+- (NSDictionary*)defaultParameterDictionary
 {
 	NSMutableDictionary* defaultsDictionary = [NSMutableDictionary dictionary];
 	NSDictionary* parametersDict = [dictionary objectForKey:@"Parameters"];
@@ -44,6 +44,8 @@
 		[defaultsDictionary setObject:defaultValueForParam 
 							   forKey:parameterKey];
 	}
+	
+	return defaultsDictionary;
 }
 
 - (NSString*)inputFormatString
@@ -53,7 +55,7 @@
 
 - (NSString*)taskPath
 {
-	NSArray* locationsArray = [dictionary objectForKey:@"Binary Location"]
+	NSArray* locationsArray = [dictionary objectForKey:@"Binary Location"];
 	NSFileManager* fm = [NSFileManager defaultManager];
 	for(NSString* path in locationsArray)
 	{
@@ -73,6 +75,9 @@
 			}
 		}
 	}
+	
+	// We can't find the executablr
+	return nil;
 }
 
 - (NSString*)id

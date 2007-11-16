@@ -7,7 +7,7 @@
 //
 
 #import <Cocoa/Cocoa.h>
-
+@class MFPlugin;
 
 @interface MFFilesystem : NSObject {
 	NSMutableDictionary* parameters;

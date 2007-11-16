@@ -18,6 +18,8 @@
 @property(readonly) NSString* id;
 @property(readonly) NSString* inputFormatString;
 
-+(MFPlugin*)pluginFromBundleAtPath:(NSString*)path;
++ (MFPlugin*)pluginFromBundleAtPath:(NSString*)path;
+
+- (NSDictionary*)defaultParameterDictionary;
 
 @end

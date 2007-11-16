@@ -7,11 +7,12 @@
 //
 
 #import "MFFilesystem.h"
-
+#import "MFPluginController.h"
+#import "MFPlugin.h"
 
 @interface MFFilesystem(PrivateAPI)
-- (void)mergeParameters;
-- (NSArray*)taskArgumentList
+- (NSMutableDictionary*)fullParametersWithDictionary: (NSDictionary*)fsParams;
+- (NSArray*)taskArgumentList;
 @end
 
 @implementation MFFilesystem
@@ -29,6 +30,7 @@
 	return self;
 }
 
+
 - (MFPlugin*)plugin
 {
 	return [[MFPluginController sharedController] pluginWithID: 
@@ -38,30 +40,35 @@
 - (NSDictionary*)parameterDictionary
 {
 	// We want an immutable dictionary
-	return [parameterDictionary copy];
+	return [parameters copy];
 }
 
-- (void)mergeParameters:(NSDictionary*)params
+- (NSMutableDictionary*)fullParametersWithDictionary:(NSDictionary*)fsParams
 {
-	NSDictionary* defaults = [[self plugin] defaultParameterDict];
-	for(NSString* parameterKey in [defaults keyEnumerator])
+	MFPlugin* plugin = [self plugin];
+	NSDictionary* defaultParams = [plugin defaultParameterDictionary];
+	NSMutableDictionary* params = [NSMutableDictionary dictionary];
+	
+	for(NSString* parameterKey in [defaultParams keyEnumerator])
 	{
-		if ([params objectForKey:parameterKey] != nil)
+		if ([fsParams objectForKey:parameterKey] != nil)
 		{
 			// The fs specifies a value for this parameter, take it.
 			// Validation per-value goes here
-			[parameters setObject: [params objectForKey:parameterKey]
-						   forKey: parameterKey];
+			[params setObject: [fsParams objectForKey:parameterKey]
+					forKey: parameterKey];
 		}
 		else 
 		{
 			// The fs doesn't specify a value for this parameter.
 			// Use the default
-			[parameters setObject: [defaults objectForKey:parameterKey]
-						   forKey: parameterKey];
+			[params setObject: [defaultParams objectForKey:parameterKey]
+					forKey: parameterKey];
 		}
 			
 	}
+	
+	return params;
 }
 
 - (NSArray*)taskArgumentList
@@ -79,7 +86,7 @@
 			// TODO: SECURITY: Watch for instances of tokens in user input
 			// TODO: Value typing
 			NSString* searchString = [NSString stringWithFormat:@"[%@]", token];
-			id* value = [parameters objectForKey:parameterKey];
+			id value = [parameters objectForKey:parameterKey];
 			NSString* stringValue;
 			if ([value isKindOfClass: [NSString class]])
 			{
@@ -93,7 +100,7 @@
 			[formatString replaceOccurrencesOfString:searchString 
 										  withString:value 
 											 options:NSLiteralSearch
-											   range:NSMakeRange(0, [receiver length])];
+											   range:NSMakeRange(0, [formatString length])];
 		}
 		
 		// TODO: Handle options here
@@ -102,11 +109,12 @@
 	}
 	
 	argParameters = [formatString componentsSeparatedByString:@" "];
+	return argParameters;
 }
 
 - (NSTask*)taskForLaunch
 {
-	
+	return nil;
 }
 
 
