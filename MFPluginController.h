@@ -8,6 +8,7 @@
 
 #import <Cocoa/Cocoa.h>
 
+@class MFFilesystem, MFPlugin;
 
 @interface MFPluginController : NSObject {
 	NSMutableDictionary* plugins;
@@ -17,6 +18,8 @@
 
 - (MFPlugin*)pluginWithID:(NSString*)ID;
 - (void)loadPlugins;
-- (NSMutableArray*) plugins;
+- (MFPlugin*)pluginWithID:(NSString*)id;
+
+@property(readonly) NSMutableDictionary* plugins;
 
 @end

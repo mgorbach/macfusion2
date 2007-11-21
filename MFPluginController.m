@@ -8,14 +8,16 @@
 
 #import "MFPluginController.h"
 #import "MFPlugin.h"
+#import "MFFilesystem.h"
 
 #define PLUGIN_EXTENSION @"mfplugin"
 
 @implementation MFPluginController
 static MFPluginController* sharedController = nil;
 
-#pragma mark Singleton Methods
 @synthesize plugins;
+
+#pragma mark Singleton Methods
 
 + (MFPluginController*)sharedController
 {
@@ -97,10 +99,10 @@ static MFPluginController* sharedController = nil;
 		MFPlugin* newPlugin;
 		if ([self validatePluginAtPath: path] && (newPlugin = [MFPlugin pluginFromBundleAtPath: path]))
 		{
-			[plugins setObject: newPlugin forKey: newPlugin.id];
+			[plugins setObject: newPlugin forKey: newPlugin.ID];
 			MFPrint(@"%@", plugins);
 			MFPrint(@"Loaded plugin at path %@ OK", path);
-			MFPrint(@"Name: %@", newPlugin.id);
+			MFPrint(@"Name: %@", newPlugin.ID);
 		}
 		else
 		{
@@ -111,7 +113,12 @@ static MFPluginController* sharedController = nil;
 
 - (MFPlugin*)pluginWithID:(NSString*)ID
 {
-	return [[self plugins] objectForKey:@"ID"];
+	return [plugins objectForKey:ID];
+}
+
+- (MFPlugin*)pluginForFilesystem:(MFFilesystem*)fs
+{
+	return [fs plugin];
 }
 
 @end

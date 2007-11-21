@@ -12,12 +12,12 @@
 	<dict>
 		<key>Description</key>
 		<string>This is some really long description of SSHFS.</string>
-		<key>LongName</key>
+		<key>Long Name</key>
 		<string>Secure Shell File System</string>
-		<key>ShortName</key>
+		<key>Short Name</key>
 		<string>sshfs</string>
 	</dict>
-	<key>InputFormat</key>
+	<key>Input Format</key>
 	<string>[user]@[host]:[dir] [mountpoint] [options]</string>
 	<key>Parameters</key>
 	<dict>
@@ -27,6 +27,8 @@
 			<string></string>
 			<key>Description</key>
 			<string>The location (directory path) on the remote computer you are interested in accessing.</string>
+			<key>Token</key>
+			<string>dir</string>
 		</dict>
 		<key>Host</key>
 		<dict>

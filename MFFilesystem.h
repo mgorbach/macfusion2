@@ -11,13 +11,17 @@
 
 @interface MFFilesystem : NSObject {
 	NSMutableDictionary* parameters;
+	MFPlugin* plugin;
 }
 
-+ (MFFilesystem*)filesystemFromParameters:(NSDictionary*)parameters;
++ (MFFilesystem*)filesystemFromParameters:(NSDictionary*)parameters
+								   plugin:(MFPlugin*)p;
 
 - (MFPlugin*)plugin;
-- (MFFilesystem*)initWithParameters:(NSDictionary*)parameters;
+- (MFFilesystem*)initWithParameters:(NSDictionary*)parameters 
+							 plugin:(MFPlugin*)p;
 - (NSDictionary*)parameterDictionary;
+- (NSString*)pluginID;
 //- (void)mount;
 //- (void)unmount;
 

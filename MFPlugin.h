@@ -15,11 +15,12 @@
 }
 
 @property(readonly) NSMutableDictionary* dictionary;
-@property(readonly) NSString* id;
+@property(readonly) NSString* ID;
 @property(readonly) NSString* inputFormatString;
 
 + (MFPlugin*)pluginFromBundleAtPath:(NSString*)path;
 
+- (NSString*)tokenForParameter:(NSString*)param;
 - (NSDictionary*)defaultParameterDictionary;
 
 @end

@@ -7,7 +7,7 @@
 //
 
 #import "MFFilesystem.h"
-#import "MFPluginController.h"
+//#import "MFPluginController.h"
 #import "MFPlugin.h"
 
 @interface MFFilesystem(PrivateAPI)
@@ -17,24 +17,24 @@
 
 @implementation MFFilesystem
 
-+ (MFFilesystem*)filesystemFromParameters:(NSDictionary*)parameters
++ (MFFilesystem*)filesystemFromParameters:(NSDictionary*)parameters plugin:(MFPlugin*)p
 {
-	MFFilesystem* fs = [[MFFilesystem alloc] initWithParameters: parameters];
+	MFFilesystem* fs = [[MFFilesystem alloc] initWithParameters: parameters plugin: p];
 	return fs;
 }
 
-- (MFFilesystem*)initWithParameters:(NSDictionary*)params
+- (MFFilesystem*)initWithParameters:(NSDictionary*)params plugin:(MFPlugin*)p
 {
 	self = [super init];
+	plugin = p;
 	parameters = [self fullParametersWithDictionary: params];
 	return self;
 }
 
 
-- (MFPlugin*)plugin
+- (NSString*)pluginID
 {
-	return [[MFPluginController sharedController] pluginWithID: 
-			[parameters objectForKey:@"Type"]];
+	return [parameters objectForKey:@"Type"];
 }
 
 - (NSDictionary*)parameterDictionary
@@ -45,7 +45,6 @@
 
 - (NSMutableDictionary*)fullParametersWithDictionary:(NSDictionary*)fsParams
 {
-	MFPlugin* plugin = [self plugin];
 	NSDictionary* defaultParams = [plugin defaultParameterDictionary];
 	NSMutableDictionary* params = [NSMutableDictionary dictionary];
 	
@@ -117,5 +116,15 @@
 	return nil;
 }
 
+- (MFPlugin*)plugin
+{
+	if (plugin)
+		return plugin;
+	else
+	{
+		MFPrint(@"Plugin empty!");
+		return nil;
+	}
+}
 
 @end

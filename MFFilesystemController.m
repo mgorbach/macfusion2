@@ -82,11 +82,36 @@ static MFFilesystemController* sharedController = nil;
 	return filesystems;
 }
 
+- (BOOL)validateFilesystemParameters:(NSDictionary*)params
+{
+	return YES;
+}
+
 - (void)loadFilesystems
 {
 	MFPrint(@"Filesystems loading. Searching ...");
 	NSArray* filesystemPaths = [self pathsToFilesystemDefs];
-	MFPrint(@"%@", filesystemPaths);
+	for(NSString* fsPath in filesystemPaths)
+	{
+		MFPrint(@"Loading fs at %@", fsPath);
+		NSDictionary* fsParams = [NSDictionary dictionaryWithContentsOfFile:fsPath];
+		if (fsParams && [self validateFilesystemParameters: fsParams])
+		{
+			NSString* type = [fsParams objectForKey:@"Type"];
+			MFPlugin* plugin = [[MFPluginController sharedController] pluginWithID: type];
+			if (plugin)
+			{
+				MFFilesystem* fs = [MFFilesystem filesystemFromParameters:fsParams plugin:plugin];
+				MFPrint(@"%@", fs);
+				MFPrint(@"Args %@", [fs taskArgumentList]);
+			}
+			else
+			{
+				MFPrint(@"Failed to find plugin for Filesystem");
+			}
+		}
+	}
+//	MFPrint(@"%@", filesystemPaths);
 }
 
 @end 

@@ -48,6 +48,15 @@
 	return defaultsDictionary;
 }
 
+- (NSString*)tokenForParameter:(NSString*)param
+{
+	NSDictionary* parametersDict = [dictionary objectForKey:@"Parameters"];
+	NSDictionary* paramDict = [parametersDict objectForKey:param];
+	NSString* token;
+	token = [paramDict objectForKey:@"Token"];
+	return token;
+}
+
 - (NSString*)inputFormatString
 {
 	return [[self dictionary] objectForKey:@"Input Format"];
@@ -76,11 +85,11 @@
 		}
 	}
 	
-	// We can't find the executablr
+	// We can't find the executable
 	return nil;
 }
 
-- (NSString*)id
+- (NSString*)ID
 {
 	return [self.dictionary objectForKey: @"BundleIdentifier"];
 }
