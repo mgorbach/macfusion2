@@ -19,21 +19,30 @@
 			name = "Plugin Install";
 			productName = "Plugin Install";
 		};
+		D4FC0DA30CF23CFE0029B133 /* All */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = D4FC0DAC0CF23D2B0029B133 /* Build configuration list for PBXAggregateTarget "All" */;
+			buildPhases = (
+			);
+			dependencies = (
+				D4FC0DAB0CF23D0D0029B133 /* PBXTargetDependency */,
+				D4FC0DA90CF23D060029B133 /* PBXTargetDependency */,
+				D4FC0DA70CF23D040029B133 /* PBXTargetDependency */,
+			);
+			name = All;
+			productName = All;
+		};
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		8DD76F9A0486AA7600D96B5E /* macfusiond.m in Sources */ = {isa = PBXBuildFile; fileRef = 08FB7796FE84155DC02AAC07 /* macfusiond.m */; settings = {ATTRIBUTES = (); }; };
+		8DD76F9A0486AA7600D96B5E /* macfusionAgent.m in Sources */ = {isa = PBXBuildFile; fileRef = 08FB7796FE84155DC02AAC07 /* macfusionAgent.m */; settings = {ATTRIBUTES = (); }; };
 		8DD76F9C0486AA7600D96B5E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08FB779EFE84155DC02AAC07 /* Foundation.framework */; };
-		D43548110CE3DAF100EE39C6 /* MFCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D43548100CE3DAF100EE39C6 /* MFCore.framework */; };
-		D43548120CE3DAF100EE39C6 /* MFCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D43548100CE3DAF100EE39C6 /* MFCore.framework */; };
 		D44152720CE2E344001EEF36 /* MFMainController.m in Sources */ = {isa = PBXBuildFile; fileRef = D42E13E50CDFC69500C81814 /* MFMainController.m */; };
 		D44152730CE2E344001EEF36 /* MFPluginController.m in Sources */ = {isa = PBXBuildFile; fileRef = D4B14C850CE0455A003195A3 /* MFPluginController.m */; };
 		D4B14BC90CE03D25003195A3 /* sshnodelay.so in Resources */ = {isa = PBXBuildFile; fileRef = D4B14BAA0CE03C84003195A3 /* sshnodelay.so */; };
 		D4B14BCA0CE03D25003195A3 /* sshfs.plist in Resources */ = {isa = PBXBuildFile; fileRef = D4B14BAB0CE03C84003195A3 /* sshfs.plist */; };
 		D4B14BCB0CE03D25003195A3 /* sshfs-static in Resources */ = {isa = PBXBuildFile; fileRef = D4B14BAC0CE03C84003195A3 /* sshfs-static */; };
 		D4B14D740CE195CB003195A3 /* macfusionctl.m in Sources */ = {isa = PBXBuildFile; fileRef = D4B14D730CE195CB003195A3 /* macfusionctl.m */; };
-		D4B14E720CE198AC003195A3 /* MFCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D4B14E710CE198AC003195A3 /* MFCore.framework */; };
-		D4B14E770CE198CE003195A3 /* MFCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D4B14E710CE198AC003195A3 /* MFCore.framework */; };
 		D4B14EE30CE2468B003195A3 /* MFLoggingController.h in Headers */ = {isa = PBXBuildFile; fileRef = D4B14EE10CE2468B003195A3 /* MFLoggingController.h */; };
 		D4B14EE40CE2468B003195A3 /* MFLoggingController.m in Sources */ = {isa = PBXBuildFile; fileRef = D4B14EE20CE2468B003195A3 /* MFLoggingController.m */; };
 		D4B14FC20CE25A88003195A3 /* MFFilesystemController.m in Sources */ = {isa = PBXBuildFile; fileRef = D4B14FC10CE25A88003195A3 /* MFFilesystemController.m */; };
@@ -42,6 +51,9 @@
 		D4E51FE80CE03AC3009B1A30 /* MFFilesystem.h in Headers */ = {isa = PBXBuildFile; fileRef = D42E14540CDFCF9000C81814 /* MFFilesystem.h */; };
 		D4E51FEA0CE03ACA009B1A30 /* MFPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = D42E141C0CDFC99A00C81814 /* MFPlugin.m */; };
 		D4E51FEB0CE03ACA009B1A30 /* MFFilesystem.m in Sources */ = {isa = PBXBuildFile; fileRef = D42E14550CDFCF9000C81814 /* MFFilesystem.m */; };
+		D4FC0C990CF128480029B133 /* MFCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D4FC0C980CF128480029B133 /* MFCore.framework */; };
+		D4FC0C9A0CF128480029B133 /* MFCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D4FC0C980CF128480029B133 /* MFCore.framework */; };
+		D4FC0D1C0CF148720029B133 /* sshfs.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = D441521F0CE2933C001EEF36 /* sshfs.bundle */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -73,6 +85,27 @@
 			remoteGlobalIDString = D42E15540CE03A8200C81814;
 			remoteInfo = MFCore;
 		};
+		D4FC0DA60CF23D040029B133 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8DD76F960486AA7600D96B5E;
+			remoteInfo = macfusionAgent;
+		};
+		D4FC0DA80CF23D060029B133 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D42E15540CE03A8200C81814;
+			remoteInfo = MFCore;
+		};
+		D4FC0DAA0CF23D0D0029B133 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D4B14C5F0CE044C0003195A3;
+			remoteInfo = "Plugin Install";
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -91,13 +124,14 @@
 			dstPath = "~/Library/Application Support/Macfusion/Plugins";
 			dstSubfolderSpec = 0;
 			files = (
+				D4FC0D1C0CF148720029B133 /* sshfs.bundle in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		08FB7796FE84155DC02AAC07 /* macfusiond.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = macfusiond.m; sourceTree = "<group>"; };
+		08FB7796FE84155DC02AAC07 /* macfusionAgent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = macfusionAgent.m; sourceTree = "<group>"; };
 		08FB779EFE84155DC02AAC07 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		32A70AAB03705E1F00C91783 /* macfusiond_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = macfusiond_Prefix.pch; sourceTree = "<group>"; };
 		D42E13E40CDFC69500C81814 /* MFMainController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFMainController.h; sourceTree = "<group>"; };
@@ -108,8 +142,7 @@
 		D42E14550CDFCF9000C81814 /* MFFilesystem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MFFilesystem.m; sourceTree = "<group>"; };
 		D42E15560CE03A8200C81814 /* MFCore-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "MFCore-Info.plist"; sourceTree = "<group>"; };
 		D435480E0CE3DAF100EE39C6 /* macfusiond */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = macfusiond; sourceTree = BUILT_PRODUCTS_DIR; };
-		D43548100CE3DAF100EE39C6 /* MFCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MFCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		D441521F0CE2933C001EEF36 /* sshfs.mfplugin */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = sshfs.mfplugin; sourceTree = BUILT_PRODUCTS_DIR; };
+		D441521F0CE2933C001EEF36 /* sshfs.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = sshfs.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		D4B14BAA0CE03C84003195A3 /* sshnodelay.so */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = sshnodelay.so; sourceTree = "<group>"; };
 		D4B14BAB0CE03C84003195A3 /* sshfs.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = sshfs.plist; sourceTree = "<group>"; };
 		D4B14BAC0CE03C84003195A3 /* sshfs-static */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = "sshfs-static"; sourceTree = "<group>"; };
@@ -117,13 +150,12 @@
 		D4B14C840CE0455A003195A3 /* MFPluginController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFPluginController.h; sourceTree = "<group>"; };
 		D4B14C850CE0455A003195A3 /* MFPluginController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MFPluginController.m; sourceTree = "<group>"; };
 		D4B14D730CE195CB003195A3 /* macfusionctl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = macfusionctl.m; sourceTree = "<group>"; };
-		D4B14E710CE198AC003195A3 /* MFCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = MFCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D4B14E730CE198AC003195A3 /* macfusionctl */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = macfusionctl; sourceTree = BUILT_PRODUCTS_DIR; };
 		D4B14EE10CE2468B003195A3 /* MFLoggingController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFLoggingController.h; sourceTree = "<group>"; };
 		D4B14EE20CE2468B003195A3 /* MFLoggingController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MFLoggingController.m; sourceTree = "<group>"; };
-		D4B14EE50CE246BF003195A3 /* macfusiond */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = macfusiond; sourceTree = BUILT_PRODUCTS_DIR; };
 		D4B14FC00CE25A88003195A3 /* MFFilesystemController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFFilesystemController.h; sourceTree = "<group>"; };
 		D4B14FC10CE25A88003195A3 /* MFFilesystemController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MFFilesystemController.m; sourceTree = "<group>"; };
+		D4FC0C980CF128480029B133 /* MFCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MFCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -131,9 +163,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D4B14E770CE198CE003195A3 /* MFCore.framework in Frameworks */,
 				8DD76F9C0486AA7600D96B5E /* Foundation.framework in Frameworks */,
-				D43548110CE3DAF100EE39C6 /* MFCore.framework in Frameworks */,
+				D4FC0C990CF128480029B133 /* MFCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -155,8 +186,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D4B14E720CE198AC003195A3 /* MFCore.framework in Frameworks */,
-				D43548120CE3DAF100EE39C6 /* MFCore.framework in Frameworks */,
+				D4FC0C9A0CF128480029B133 /* MFCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -209,12 +239,10 @@
 		D4B14E620CE1987F003195A3 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				D4B14E710CE198AC003195A3 /* MFCore.framework */,
 				D4B14E730CE198AC003195A3 /* macfusionctl */,
-				D4B14EE50CE246BF003195A3 /* macfusiond */,
-				D441521F0CE2933C001EEF36 /* sshfs.mfplugin */,
+				D441521F0CE2933C001EEF36 /* sshfs.bundle */,
 				D435480E0CE3DAF100EE39C6 /* macfusiond */,
-				D43548100CE3DAF100EE39C6 /* MFCore.framework */,
+				D4FC0C980CF128480029B133 /* MFCore.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -231,7 +259,7 @@
 		D4E5200C0CE03B82009B1A30 /* Daemon */ = {
 			isa = PBXGroup;
 			children = (
-				08FB7796FE84155DC02AAC07 /* macfusiond.m */,
+				08FB7796FE84155DC02AAC07 /* macfusionAgent.m */,
 				32A70AAB03705E1F00C91783 /* macfusiond_Prefix.pch */,
 				D42E13E40CDFC69500C81814 /* MFMainController.h */,
 				D42E13E50CDFC69500C81814 /* MFMainController.m */,
@@ -286,9 +314,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		8DD76F960486AA7600D96B5E /* macfusiond */ = {
+		8DD76F960486AA7600D96B5E /* macfusionAgent */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 1DEB927408733DD40010E9CD /* Build configuration list for PBXNativeTarget "macfusiond" */;
+			buildConfigurationList = 1DEB927408733DD40010E9CD /* Build configuration list for PBXNativeTarget "macfusionAgent" */;
 			buildPhases = (
 				8DD76F990486AA7600D96B5E /* Sources */,
 				8DD76F9B0486AA7600D96B5E /* Frameworks */,
@@ -300,7 +328,7 @@
 				D4B14C7E0CE04501003195A3 /* PBXTargetDependency */,
 				D4E51FED0CE03AD3009B1A30 /* PBXTargetDependency */,
 			);
-			name = macfusiond;
+			name = macfusionAgent;
 			productInstallPath = "$(HOME)/bin";
 			productName = macfusiond;
 			productReference = D435480E0CE3DAF100EE39C6 /* macfusiond */;
@@ -321,7 +349,7 @@
 			);
 			name = MFCore;
 			productName = MFCore;
-			productReference = D43548100CE3DAF100EE39C6 /* MFCore.framework */;
+			productReference = D4FC0C980CF128480029B133 /* MFCore.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		D4B14BB50CE03CC3003195A3 /* sshfs */ = {
@@ -338,7 +366,7 @@
 			);
 			name = sshfs;
 			productName = SSHFS;
-			productReference = D441521F0CE2933C001EEF36 /* sshfs.mfplugin */;
+			productReference = D441521F0CE2933C001EEF36 /* sshfs.bundle */;
 			productType = "com.apple.product-type.bundle";
 		};
 		D4B14D6B0CE19545003195A3 /* macfusionctl */ = {
@@ -370,11 +398,12 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				8DD76F960486AA7600D96B5E /* macfusiond */,
+				8DD76F960486AA7600D96B5E /* macfusionAgent */,
 				D42E15540CE03A8200C81814 /* MFCore */,
 				D4B14BB50CE03CC3003195A3 /* sshfs */,
 				D4B14C5F0CE044C0003195A3 /* Plugin Install */,
 				D4B14D6B0CE19545003195A3 /* macfusionctl */,
+				D4FC0DA30CF23CFE0029B133 /* All */,
 			);
 		};
 /* End PBXProject section */
@@ -406,7 +435,7 @@
 			files = (
 				D44152720CE2E344001EEF36 /* MFMainController.m in Sources */,
 				D44152730CE2E344001EEF36 /* MFPluginController.m in Sources */,
-				8DD76F9A0486AA7600D96B5E /* macfusiond.m in Sources */,
+				8DD76F9A0486AA7600D96B5E /* macfusionAgent.m in Sources */,
 				D4B14FC20CE25A88003195A3 /* MFFilesystemController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -459,34 +488,24 @@
 			target = D42E15540CE03A8200C81814 /* MFCore */;
 			targetProxy = D4E51FEC0CE03AD3009B1A30 /* PBXContainerItemProxy */;
 		};
+		D4FC0DA70CF23D040029B133 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8DD76F960486AA7600D96B5E /* macfusionAgent */;
+			targetProxy = D4FC0DA60CF23D040029B133 /* PBXContainerItemProxy */;
+		};
+		D4FC0DA90CF23D060029B133 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D42E15540CE03A8200C81814 /* MFCore */;
+			targetProxy = D4FC0DA80CF23D060029B133 /* PBXContainerItemProxy */;
+		};
+		D4FC0DAB0CF23D0D0029B133 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D4B14C5F0CE044C0003195A3 /* Plugin Install */;
+			targetProxy = D4FC0DAA0CF23D0D0029B133 /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		1DEB927508733DD40010E9CD /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../Build/Debug\"",
-				);
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				GCC_ENABLE_OBJC_GC = required;
-				GCC_MODEL_TUNING = G5;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = macfusiond_Prefix.pch;
-				INSTALL_PATH = /usr/local/bin;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/SSHFS\"",
-				);
-				PRODUCT_NAME = macfusiond;
-				ZERO_LINK = YES;
-			};
-			name = Debug;
-		};
 		1DEB927608733DD40010E9CD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -507,16 +526,6 @@
 			};
 			name = Release;
 		};
-		1DEB927908733DD40010E9CD /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				GCC_WARN_ABOUT_RETURN_TYPE = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				PREBINDING = NO;
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
-			};
-			name = Debug;
-		};
 		1DEB927A08733DD40010E9CD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -530,34 +539,6 @@
 				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
 			};
 			name = Release;
-		};
-		D42E15580CE03A8200C81814 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				FRAMEWORK_VERSION = A;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				GCC_ENABLE_OBJC_GC = supported;
-				GCC_MODEL_TUNING = G5;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
-				INFOPLIST_FILE = "MFCore-Info.plist";
-				INSTALL_PATH = "$(HOME)/Library/Frameworks";
-				OTHER_LDFLAGS = (
-					"-framework",
-					Foundation,
-					"-framework",
-					AppKit,
-				);
-				PREBINDING = NO;
-				PRODUCT_NAME = MFCore;
-				ZERO_LINK = YES;
-			};
-			name = Debug;
 		};
 		D42E15590CE03A8200C81814 /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -585,14 +566,13 @@
 			};
 			name = Release;
 		};
-		D4B14BB80CE03CC4003195A3 /* Debug */ = {
+		D4B14BB90CE03CC4003195A3 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_MODEL_TUNING = G5;
-				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INFOPLIST_FILE = "SSHFS/sshfs-info.plist";
@@ -605,44 +585,10 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = sshfs;
-				WRAPPER_EXTENSION = mfplugin;
-				ZERO_LINK = YES;
-			};
-			name = Debug;
-		};
-		D4B14BB90CE03CC4003195A3 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_MODEL_TUNING = G5;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
-				INFOPLIST_FILE = "SSHFS-Info.plist";
-				INSTALL_PATH = "$(HOME)/Library/Bundles";
-				OTHER_LDFLAGS = (
-					"-framework",
-					Foundation,
-					"-framework",
-					AppKit,
-				);
-				PREBINDING = NO;
-				PRODUCT_NAME = SSHFS;
 				WRAPPER_EXTENSION = bundle;
 				ZERO_LINK = NO;
 			};
 			name = Release;
-		};
-		D4B14C600CE044C0003195A3 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				PRODUCT_NAME = "Plugin Install";
-			};
-			name = Debug;
 		};
 		D4B14C610CE044C0003195A3 /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -654,33 +600,6 @@
 				ZERO_LINK = NO;
 			};
 			name = Release;
-		};
-		D4B14D6E0CE19545003195A3 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../Build/Debug\"",
-				);
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				GCC_MODEL_TUNING = G5;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
-				INSTALL_PATH = /usr/local/bin;
-				OTHER_LDFLAGS = (
-					"-framework",
-					Foundation,
-					"-framework",
-					AppKit,
-				);
-				PREBINDING = NO;
-				PRODUCT_NAME = macfusionctl;
-				ZERO_LINK = YES;
-			};
-			name = Debug;
 		};
 		D4B14D6F0CE19545003195A3 /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -708,14 +627,153 @@
 			};
 			name = Release;
 		};
+		D4FC0DA50CF23CFE0029B133 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				PRODUCT_NAME = All;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+		D4FC0DC60CF23DE30029B133 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				PREBINDING = NO;
+				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
+			};
+			name = Debug;
+		};
+		D4FC0DC70CF23DE30029B133 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../Build/Debug\"",
+				);
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = macfusiond_Prefix.pch;
+				INSTALL_PATH = /usr/local/bin;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/SSHFS\"",
+				);
+				PRODUCT_NAME = macfusiond;
+			};
+			name = Debug;
+		};
+		D4FC0DC80CF23DE30029B133 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INFOPLIST_FILE = "MFCore-Info.plist";
+				INSTALL_PATH = "$(HOME)/Library/Frameworks";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = MFCore;
+				ZERO_LINK = NO;
+			};
+			name = Debug;
+		};
+		D4FC0DC90CF23DE30029B133 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INFOPLIST_FILE = "SSHFS/sshfs-info.plist";
+				INSTALL_PATH = "$(HOME)/Library/Bundles";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = sshfs;
+				WRAPPER_EXTENSION = bundle;
+				ZERO_LINK = NO;
+			};
+			name = Debug;
+		};
+		D4FC0DCA0CF23DE30029B133 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				PRODUCT_NAME = "Plugin Install";
+				ZERO_LINK = NO;
+			};
+			name = Debug;
+		};
+		D4FC0DCB0CF23DE30029B133 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../Build/Debug\"",
+				);
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INSTALL_PATH = /usr/local/bin;
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = macfusionctl;
+				ZERO_LINK = NO;
+			};
+			name = Debug;
+		};
+		D4FC0DCC0CF23DE30029B133 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				PRODUCT_NAME = All;
+				ZERO_LINK = NO;
+			};
+			name = Debug;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		1DEB927408733DD40010E9CD /* Build configuration list for PBXNativeTarget "macfusiond" */ = {
+		1DEB927408733DD40010E9CD /* Build configuration list for PBXNativeTarget "macfusionAgent" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				1DEB927508733DD40010E9CD /* Debug */,
 				1DEB927608733DD40010E9CD /* Release */,
+				D4FC0DC70CF23DE30029B133 /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -723,8 +781,8 @@
 		1DEB927808733DD40010E9CD /* Build configuration list for PBXProject "MacFusion2" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				1DEB927908733DD40010E9CD /* Debug */,
 				1DEB927A08733DD40010E9CD /* Release */,
+				D4FC0DC60CF23DE30029B133 /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -732,8 +790,8 @@
 		D42E155A0CE03A8300C81814 /* Build configuration list for PBXNativeTarget "MFCore" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				D42E15580CE03A8200C81814 /* Debug */,
 				D42E15590CE03A8200C81814 /* Release */,
+				D4FC0DC80CF23DE30029B133 /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -741,8 +799,8 @@
 		D4B14BBA0CE03CC4003195A3 /* Build configuration list for PBXNativeTarget "sshfs" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				D4B14BB80CE03CC4003195A3 /* Debug */,
 				D4B14BB90CE03CC4003195A3 /* Release */,
+				D4FC0DC90CF23DE30029B133 /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -750,8 +808,8 @@
 		D4B14C7C0CE044ED003195A3 /* Build configuration list for PBXAggregateTarget "Plugin Install" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				D4B14C600CE044C0003195A3 /* Debug */,
 				D4B14C610CE044C0003195A3 /* Release */,
+				D4FC0DCA0CF23DE30029B133 /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -759,8 +817,17 @@
 		D4B14D720CE19555003195A3 /* Build configuration list for PBXNativeTarget "macfusionctl" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				D4B14D6E0CE19545003195A3 /* Debug */,
 				D4B14D6F0CE19545003195A3 /* Release */,
+				D4FC0DCB0CF23DE30029B133 /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D4FC0DAC0CF23D2B0029B133 /* Build configuration list for PBXAggregateTarget "All" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D4FC0DA50CF23CFE0029B133 /* Release */,
+				D4FC0DCC0CF23DE30029B133 /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
