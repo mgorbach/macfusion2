@@ -37,6 +37,8 @@
 /* Begin PBXBuildFile section */
 		8DD76F9A0486AA7600D96B5E /* macfusionAgent.m in Sources */ = {isa = PBXBuildFile; fileRef = 08FB7796FE84155DC02AAC07 /* macfusionAgent.m */; settings = {ATTRIBUTES = (); }; };
 		8DD76F9C0486AA7600D96B5E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08FB779EFE84155DC02AAC07 /* Foundation.framework */; };
+		D40B79B40CF8B99500EB3137 /* SSHFilesystem.m in Sources */ = {isa = PBXBuildFile; fileRef = D40B79B30CF8B99500EB3137 /* SSHFilesystem.m */; };
+		D40B79B70CF8B9A200EB3137 /* SSHPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = D40B79B60CF8B9A200EB3137 /* SSHPlugin.m */; };
 		D44152720CE2E344001EEF36 /* MFMainController.m in Sources */ = {isa = PBXBuildFile; fileRef = D42E13E50CDFC69500C81814 /* MFMainController.m */; };
 		D44152730CE2E344001EEF36 /* MFPluginController.m in Sources */ = {isa = PBXBuildFile; fileRef = D4B14C850CE0455A003195A3 /* MFPluginController.m */; };
 		D4B14BC90CE03D25003195A3 /* sshnodelay.so in Resources */ = {isa = PBXBuildFile; fileRef = D4B14BAA0CE03C84003195A3 /* sshnodelay.so */; };
@@ -134,6 +136,10 @@
 		08FB7796FE84155DC02AAC07 /* macfusionAgent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = macfusionAgent.m; sourceTree = "<group>"; };
 		08FB779EFE84155DC02AAC07 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		32A70AAB03705E1F00C91783 /* macfusiond_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = macfusiond_Prefix.pch; sourceTree = "<group>"; };
+		D40B79B20CF8B99500EB3137 /* SSHFilesystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSHFilesystem.h; sourceTree = "<group>"; };
+		D40B79B30CF8B99500EB3137 /* SSHFilesystem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSHFilesystem.m; sourceTree = "<group>"; };
+		D40B79B50CF8B9A200EB3137 /* SSHPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSHPlugin.h; sourceTree = "<group>"; };
+		D40B79B60CF8B9A200EB3137 /* SSHPlugin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSHPlugin.m; sourceTree = "<group>"; };
 		D42E13E40CDFC69500C81814 /* MFMainController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFMainController.h; sourceTree = "<group>"; };
 		D42E13E50CDFC69500C81814 /* MFMainController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MFMainController.m; sourceTree = "<group>"; };
 		D42E141B0CDFC99A00C81814 /* MFPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFPlugin.h; sourceTree = "<group>"; };
@@ -293,6 +299,10 @@
 				D4B14BAA0CE03C84003195A3 /* sshnodelay.so */,
 				D4B14BAB0CE03C84003195A3 /* sshfs.plist */,
 				D4B14BAC0CE03C84003195A3 /* sshfs-static */,
+				D40B79B20CF8B99500EB3137 /* SSHFilesystem.h */,
+				D40B79B30CF8B99500EB3137 /* SSHFilesystem.m */,
+				D40B79B50CF8B9A200EB3137 /* SSHPlugin.h */,
+				D40B79B60CF8B9A200EB3137 /* SSHPlugin.m */,
 			);
 			path = SSHFS;
 			sourceTree = "<group>";
@@ -454,6 +464,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D40B79B40CF8B99500EB3137 /* SSHFilesystem.m in Sources */,
+				D40B79B70CF8B9A200EB3137 /* SSHPlugin.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

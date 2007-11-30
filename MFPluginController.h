@@ -18,7 +18,6 @@
 
 - (MFPlugin*)pluginWithID:(NSString*)ID;
 - (void)loadPlugins;
-- (MFPlugin*)pluginWithID:(NSString*)id;
 
 @property(readonly) NSMutableDictionary* plugins;
 

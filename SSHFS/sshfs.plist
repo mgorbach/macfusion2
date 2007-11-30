@@ -17,6 +17,8 @@
 		<key>Short Name</key>
 		<string>sshfs</string>
 	</dict>
+	<key>Filesystem Class</key>
+	<string>SSHFilesystem</string>
 	<key>Input Format</key>
 	<string>[user]@[host]:[dir] [mountpoint] [options]</string>
 	<key>Parameters</key>
@@ -62,5 +64,7 @@
 			<string>String</string>
 		</dict>
 	</dict>
+	<key>Plugin Class</key>
+	<string>SSHPlugin</string>
 </dict>
 </plist>

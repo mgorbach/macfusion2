@@ -50,10 +50,16 @@
 	
 	for(NSString* parameterKey in [defaultParams keyEnumerator])
 	{
-		if ([fsParams objectForKey:parameterKey] != nil)
+		id value;
+		if ((value = [fsParams objectForKey:parameterKey]) != nil)
 		{
 			// The fs specifies a value for this parameter, take it.
 			// Validation per-value goes here
+			if (! [self validateValue: value forParameterNamed:parameterKey])
+			{
+				MFLog("Parameter validation failed for parameter %@, plugin %@",
+					  parameterKey
+			}
 			[params setObject: [fsParams objectForKey:parameterKey]
 					forKey: parameterKey];
 		}
@@ -70,8 +76,16 @@
 	return params;
 }
 
+- (NSDictionary*)taskEnvironment
+{
+	// No modifications here
+	return [[NSProcessInfo processInfo] environment];
+}
+
 - (NSArray*)taskArgumentList
 {
+	// Default implementation will try to construct an argument list based
+	// on the options dictionary and input format string
 	NSMutableString* formatString = [[[self plugin] inputFormatString] mutableCopy];
 	NSArray* argParameters;
 	NSString* token;
@@ -109,6 +123,11 @@
 	
 	argParameters = [formatString componentsSeparatedByString:@" "];
 	return argParameters;
+}
+
+- (BOOL)validateValue:(id)value forParameterNamed:(NSString*)param
+{
+	return YES;
 }
 
 - (NSTask*)taskForLaunch
