@@ -17,10 +17,13 @@
 @property(readonly) NSMutableDictionary* dictionary;
 @property(readonly) NSString* ID;
 @property(readonly) NSString* inputFormatString;
+@property(readonly) NSBundle* bundle;
 
 + (MFPlugin*)pluginFromBundleAtPath:(NSString*)path;
 
 - (NSString*)tokenForParameter:(NSString*)param;
 - (NSDictionary*)defaultParameterDictionary;
+- (NSString*)taskPath;
+- (id)defaultValueForParameter:(NSString*)parameterName;
 
 @end

@@ -12,18 +12,31 @@
 @interface MFFilesystem : NSObject {
 	NSMutableDictionary* parameters;
 	MFPlugin* plugin;
+	NSTask* task;
+	NSString* status;
+	NSString* faliureReason;
+	NSString* recentOutput;
 }
 
 + (MFFilesystem*)filesystemFromParameters:(NSDictionary*)parameters
 								   plugin:(MFPlugin*)p;
 
-- (MFPlugin*)plugin;
 - (MFFilesystem*)initWithParameters:(NSDictionary*)parameters 
 							 plugin:(MFPlugin*)p;
 - (NSDictionary*)parameterDictionary;
-- (NSString*)pluginID;
-//- (void)mount;
-//- (void)unmount;
 
+- (NSMutableDictionary*)fullParametersWithDictionary: (NSDictionary*)fsParams;
+- (NSArray*)taskArguments;
+
+- (BOOL)validateValue:(id)value forParameterNamed:(NSString*)param;
+
+- (NSString*)pluginID;
+
+- (void)mount;
+
+// - (void)unmount;
+
+@property(readonly) MFPlugin* plugin;
+@property(retain) NSString* status;
 
 @end

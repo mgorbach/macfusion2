@@ -91,7 +91,7 @@ static MFPluginController* sharedController = nil;
 
 - (void)loadPlugins
 {
-	NSLog(@"Plugins being loaded. Searching...");
+	MFLog(@"Plugins being loaded. Searching...");
 	NSArray* pluginBundlePaths = [self pathsToPluginBundles];
 	for(NSString* path in pluginBundlePaths)
 	{
@@ -100,13 +100,13 @@ static MFPluginController* sharedController = nil;
 		if ([self validatePluginAtPath: path] && (newPlugin = [MFPlugin pluginFromBundleAtPath: path]))
 		{
 			[plugins setObject: newPlugin forKey: newPlugin.ID];
-			MFPrint(@"%@", plugins);
-			MFPrint(@"Loaded plugin at path %@ OK", path);
-			MFPrint(@"Name: %@", newPlugin.ID);
+			MFLog(@"%@", plugins);
+			MFLog(@"Loaded plugin at path %@ OK", path);
+			MFLog(@"Name: %@", newPlugin.ID);
 		}
 		else
 		{
-			NSLog(@"Failed to load plugin at path %@", path);
+			MFLog(@"Failed to load plugin at path %@", path);
 		}
 	}
 }

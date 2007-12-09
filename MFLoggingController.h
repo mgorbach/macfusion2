@@ -18,7 +18,7 @@ void MFLog(NSString* format, ...);
 void MFPrint(NSString* format, ...);
 
 @interface MFLoggingController : NSObject {
-
+	NSFileHandle* fileHandle;
 }
 
 + (MFLoggingController*)sharedController;

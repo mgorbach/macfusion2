@@ -7,7 +7,7 @@
 //
 
 #import <Cocoa/Cocoa.h>
-
+#import "MFFilesystem.h"
 
 @interface SSHFilesystem : MFFilesystem {
 

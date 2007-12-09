@@ -15,7 +15,8 @@
 
 + (MFFilesystemController*)sharedController;
 - (void)loadFilesystems;
-- (NSArray*)filesystems;
+
+@property(readonly) NSArray* filesystems;
 
 @end
 

@@ -8,7 +8,6 @@
 
 #import "SSHPlugin.h"
 
-
 @implementation SSHPlugin
 
 @end

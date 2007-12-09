@@ -7,7 +7,7 @@
 //
 
 #import <Cocoa/Cocoa.h>
-
+#import "MFPlugin.h"
 
 @interface SSHPlugin : MFPlugin {
 

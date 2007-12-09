@@ -40,6 +40,16 @@ static MFFilesystemController* sharedController = nil;
 	return nil;
 }
 
+- (id) init
+{
+	self = [super init];
+	if (self != nil) {
+		filesystems = [[NSMutableArray alloc] init];
+	}
+	return self;
+}
+
+
 - (id)copyWithZone:(NSZone*)zone
 {
 	return self;
@@ -77,11 +87,6 @@ static MFFilesystemController* sharedController = nil;
 	return [fsDefPaths copy];
 }
 
-- (NSArray*)filesystems
-{
-	return filesystems;
-}
-
 - (BOOL)validateFilesystemParameters:(NSDictionary*)params
 {
 	return YES;
@@ -89,11 +94,11 @@ static MFFilesystemController* sharedController = nil;
 
 - (void)loadFilesystems
 {
-	MFPrint(@"Filesystems loading. Searching ...");
+	MFLog(@"Filesystems loading. Searching ...");
 	NSArray* filesystemPaths = [self pathsToFilesystemDefs];
 	for(NSString* fsPath in filesystemPaths)
 	{
-		MFPrint(@"Loading fs at %@", fsPath);
+		MFLog(@"Loading fs at %@", fsPath);
 		NSDictionary* fsParams = [NSDictionary dictionaryWithContentsOfFile:fsPath];
 		if (fsParams && [self validateFilesystemParameters: fsParams])
 		{
@@ -101,17 +106,18 @@ static MFFilesystemController* sharedController = nil;
 			MFPlugin* plugin = [[MFPluginController sharedController] pluginWithID: type];
 			if (plugin)
 			{
-				MFFilesystem* fs = [MFFilesystem filesystemFromParameters:fsParams plugin:plugin];
-				MFPrint(@"%@", fs);
-				MFPrint(@"Args %@", [fs taskArgumentList]);
+				MFFilesystem* fs = [MFFilesystem filesystemFromParameters:fsParams 
+																   plugin:plugin];
+				[filesystems addObject: fs];
 			}
 			else
 			{
-				MFPrint(@"Failed to find plugin for Filesystem");
+				MFLog(@"Failed to find plugin for Filesystem");
 			}
 		}
 	}
-//	MFPrint(@"%@", filesystemPaths);
 }
+
+@synthesize filesystems;
 
 @end 

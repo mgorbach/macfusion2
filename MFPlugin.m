@@ -12,8 +12,29 @@
 @implementation MFPlugin
 + (MFPlugin*)pluginFromBundleAtPath:(NSString*)path
 {
-	MFPlugin* plugin = [[MFPlugin alloc] initWithPath:path];
-	return [plugin autorelease];
+	
+	MFPlugin* plugin = nil;
+	NSBundle* b = [NSBundle bundleWithPath:path];
+	NSString* pluginClassName = [b objectForInfoDictionaryKey:@"MFPluginClass"];
+	if (pluginClassName == nil || [pluginClassName isEqualToString:@"MFPlugin"])
+	{
+		plugin = [[MFPlugin alloc] initWithPath:path];
+	}
+	else
+	{
+		BOOL success = [b load];
+		if (success)
+		{
+			Class PluginClass = NSClassFromString(pluginClassName);
+			plugin = [[PluginClass alloc] initWithPath:path];
+		}
+		else
+		{
+			MFLog(@"Failed to load bundle for plugin at path %@", path);
+		}
+	}
+	
+	return plugin;
 }
 
 - (MFPlugin*)initWithPath:(NSString*)path
@@ -33,16 +54,55 @@
 	return self;
 }
 
+- (id)defaultValueForParameter:(NSString*)parameterName
+{
+	return nil;
+}
+
+- (void)fillDefaultsDictionary:(NSMutableDictionary*)defaultsDictionary fromParameterDescription:(NSDictionary*)parametersDict
+{
+	for(NSString* parameterKey in [parametersDict keyEnumerator])
+	{
+		NSDictionary* parameterDict = [parametersDict objectForKey:parameterKey];
+		id defaultValueForParam = [self defaultValueForParameter: parameterKey];
+		if (!defaultValueForParam)
+		{
+			defaultValueForParam = [parameterDict objectForKey:@"Default Value"];
+		}
+		
+		if (defaultValueForParam)
+		{
+			[defaultsDictionary setObject:defaultValueForParam 
+								   forKey:parameterKey];
+		}
+		else
+		{
+			MFLogS(self, @"Can not get a default value for parameter: %@",
+				   parameterKey);
+		}
+	}
+}
+
 - (NSDictionary*)defaultParameterDictionary
 {
 	NSMutableDictionary* defaultsDictionary = [NSMutableDictionary dictionary];
 	NSDictionary* parametersDict = [dictionary objectForKey:@"Parameters"];
-	for(NSString* parameterKey in [parametersDict keyEnumerator])
+	[self fillDefaultsDictionary:defaultsDictionary fromParameterDescription:parametersDict];
+	
+	// Add in parameters common across all FUSE filesystems
+	NSBundle* searchBundle  = [NSBundle bundleForClass: [MFPlugin class]];
+	MFLog(@"Bundle to search %@", searchBundle);
+	NSString* fusePlistPath = [searchBundle pathForResource:@"fuse" ofType:@"plist"];
+	NSDictionary* fusePlist = [NSDictionary dictionaryWithContentsOfFile:fusePlistPath];
+	NSDictionary* fuseParams = [fusePlist objectForKey:@"Parameters"];
+	if (fuseParams)
 	{
-		NSDictionary* parameterDict = [parametersDict objectForKey:parameterKey];
-		id defaultValueForParam = [parameterDict objectForKey:@"Default Value"];
-		[defaultsDictionary setObject:defaultValueForParam 
-							   forKey:parameterKey];
+		[self fillDefaultsDictionary:defaultsDictionary
+			fromParameterDescription:fuseParams];
+	}
+	else
+	{
+		MFLogS(@"Can not read parameters from FUSE dictionary");
 	}
 	
 	return defaultsDictionary;
@@ -94,5 +154,5 @@
 	return [self.dictionary objectForKey: @"BundleIdentifier"];
 }
 
-@synthesize dictionary;
+@synthesize dictionary, bundle;
 @end

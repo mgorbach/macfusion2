@@ -7,6 +7,7 @@
 //
 
 #import "MFLoggingController.h"
+#define LOG_FILE_PATH @"~/Library/Logs/MacFusion2.log"
 
 // Print to logging system
 void MFLog(NSString* format, ...)
@@ -49,7 +50,26 @@ void MFLogP(int type, NSString* format, ...)
 	
     [string release];
 }
- 
+
+void MFLogS(id sender, NSString* format, ...)
+{
+	MFLoggingController* logger = [MFLoggingController sharedController];
+	
+	// get a reference to the arguments on the stack that follow
+    // the format paramter
+    va_list argList;
+    va_start (argList, format);
+	
+    // NSString luckily provides us with this handy method which
+    // will do all the work for us, including %@
+    NSString *string;
+    string = [[NSString alloc] initWithFormat: format
+									arguments: argList];
+    va_end  (argList);
+	[logger logMessage:string ofType:0 sender:sender]; 
+	
+    [string release];
+}
 
 // Print directly to console
 void MFPrint(NSString* format, ...)
@@ -99,9 +119,60 @@ static MFLoggingController* sharedController = nil;
 	// Nothing here yet
 }
 
+- (NSString*)descriptionForObject:(id)object
+{
+	if (object == nil)
+	{
+		return @"NILL";
+	}
+	else
+	{
+		return [object description];
+	}
+}
+
+- (NSFileHandle*)handleForLogfile
+{
+	NSFileManager* fm = [NSFileManager defaultManager];
+	NSString* filePath = [ LOG_FILE_PATH stringByExpandingTildeInPath ];
+	
+	if (![fm fileExistsAtPath:filePath])
+	{
+		[fm createFileAtPath:filePath contents:nil attributes:nil];
+	}
+	
+	fileHandle = [NSFileHandle fileHandleForWritingAtPath:filePath];
+	return fileHandle;
+}
+
+- (void)logMessageToFile:(NSString*)message ofType:(int)type sender:(id)sender
+{
+	NSString* description = [self descriptionForObject: sender];
+	NSString* writeString = [NSString stringWithFormat: @"%@: %@",
+							 description, message];
+	
+	NSFileHandle* handle = [self handleForLogfile];
+	[handle truncateFileAtOffset: [fileHandle seekToEndOfFile]];
+	[handle writeData: [writeString dataUsingEncoding:NSUTF8StringEncoding]];
+	[handle synchronizeFile];
+}
+
 - (void)logMessage:(NSString*)message ofType:(int)type sender:(id)sender
 {
+	[self logMessageToFile:message ofType:type sender:sender];
+	if (!sender)
+		printf("%s\n", [message cStringUsingEncoding:NSUTF8StringEncoding]);
+	else
+		printf("%s: %s\n", [[sender description] cStringUsingEncoding:NSUTF8StringEncoding],
+			   [message cStringUsingEncoding: NSUTF8StringEncoding]);
 	return;
+}
+
+
+- (void)finalize
+{
+	[fileHandle closeFile];
+	[super finalize];
 }
 
 @end

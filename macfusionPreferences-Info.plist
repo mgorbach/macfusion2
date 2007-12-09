@@ -7,20 +7,24 @@
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
 	<key>CFBundleIdentifier</key>
-	<string>org.mgorbach.macfusion.sshfs</string>
+	<string>org.mgorbach.macfusion.prefpane</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>Macfusion Preferences</string>
 	<key>CFBundlePackageType</key>
 	<string>BNDL</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>1.0</string>
-	<key>MFFilesystemClass</key>
-	<string>SSHFilesystem</string>
-	<key>MFPluginClass</key>
-	<string>SSHPlugin</string>
-	<key>MFPluginPlist</key>
-	<string>sshfs.plist</string>
+	<key>NSMainNibFile</key>
+	<string>macfusionPrefs</string>
+	<key>NSPrefPaneIconFile</key>
+	<string>macfusionIcon</string>
+	<key>NSPrefPaneIconLabel</key>
+	<string>Macfusion 2</string>
+	<key>NSPrincipalClass</key>
+	<string>MFPreferencePane</string>
 </dict>
 </plist>

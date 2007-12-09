@@ -10,6 +10,8 @@
 #import "MFPlugin.h"
 #import "MFPluginController.h"
 #import "MFFilesystemController.h"
+#import "MFFilesystem.h"
+#import "MFCommunicationServer.h"
 
 @implementation MFMainController
 static MFMainController* sharedController = nil;
@@ -50,23 +52,16 @@ static MFMainController* sharedController = nil;
 - (void)startRunloop
 {
 	NSRunLoop* runloop = [NSRunLoop currentRunLoop];
-	NSLog(@"Runloop initialized! Let's roll!");
+	MFLog(@"Runloop initialized! Let's roll!");
 	[runloop run];
 }
 
-- (void)setupCommunication
+- (void)runTests:(id)timer
 {
-	NSConnection* connection = [NSConnection defaultConnection];
-	// TODO: Vend a proxy to set up protocol instead of, um , everything
-	[connection setRootObject:self];
-	if ([connection registerName:@"macfusion"] == YES)
-	{
-		NSLog(@"Now Vending distributed object");
-	}
-	else
-	{
-		NSLog(@"Failed to register connection name");
-	}
+	MFFilesystem* fs = [[[MFFilesystemController sharedController] filesystems]
+						objectAtIndex:0];
+	MFLogS(self,@"TICK %@", [MFFilesystemController sharedController].filesystems);
+	[fs mount];
 }
 
 - (void)initialize
@@ -75,8 +70,13 @@ static MFMainController* sharedController = nil;
 	MFFilesystemController* filesystemController = [MFFilesystemController sharedController];
 	[pluginController loadPlugins];
 	[filesystemController loadFilesystems];
-	[self setupCommunication];
-	[self startRunloop];
+	[NSTimer scheduledTimerWithTimeInterval:2.0
+									 target:self
+								   selector:@selector(runTests:)
+								   userInfo:nil
+									repeats:NO];
+	
+	[[MFCommunicationServer sharedServer] startServingRunloop];
 }
 
 @end

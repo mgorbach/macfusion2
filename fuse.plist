@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Parameters</key>
+	<dict>
+		<key>Mount Point</key>
+		<dict>
+			<key>Description</key>
+			<string>The location on this computer at which the filesystem will be located (mounted).</string>
+			<key>Token</key>
+			<string>mountpoint</string>
+			<key>Type</key>
+			<string>String</string>
+		</dict>
+		<key>Volume Name</key>
+		<dict>
+			<key>Description</key>
+			<string>Name of the volume</string>
+		</dict>
+	</dict>
+</dict>
+</plist>
