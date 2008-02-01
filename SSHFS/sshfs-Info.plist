@@ -16,11 +16,21 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>1.0</string>
-	<key>MFFilesystemClass</key>
-	<string>SSHFilesystem</string>
+	<key>MFClientFSClassName</key>
+	<string>SSHClientFS</string>
+	<key>MFFSDelegateClassName</key>
+	<string>SSHFSDelegate</string>
 	<key>MFPluginClass</key>
 	<string>SSHPlugin</string>
+	<key>MFPluginLongName</key>
+	<string>Secure Shell Filesystem</string>
+	<key>MFPluginNibName</key>
+	<string>sshfsConfiguration</string>
 	<key>MFPluginPlist</key>
 	<string>sshfs.plist</string>
+	<key>MFPluginShortName</key>
+	<string>SSHFS</string>
+	<key>MFServerFSClassName</key>
+	<string>SSHServerFS</string>
 </dict>
 </plist>

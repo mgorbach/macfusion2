@@ -7,23 +7,24 @@
 //
 
 #import <Cocoa/Cocoa.h>
-
+#import "MFFSDelegateProtocol.h"
 
 @interface MFPlugin : NSObject {
 	NSMutableDictionary* dictionary;
 	NSBundle* bundle;
+	id <MFFSDelegateProtocol> delegate;
 }
 
-@property(readonly) NSMutableDictionary* dictionary;
-@property(readonly) NSString* ID;
-@property(readonly) NSString* inputFormatString;
+- (id <MFFSDelegateProtocol>)delegate;
+
+@property(readonly) NSDictionary* dictionary;
+@property(readonly) NSString* shortName;
+@property(readonly) NSString* longName;
 @property(readonly) NSBundle* bundle;
+@property(readonly) NSString* ID;
+@property(readonly) NSString* bundlePath;
+@property(readonly) NSString* nibName;
 
-+ (MFPlugin*)pluginFromBundleAtPath:(NSString*)path;
 
-- (NSString*)tokenForParameter:(NSString*)param;
-- (NSDictionary*)defaultParameterDictionary;
-- (NSString*)taskPath;
-- (id)defaultValueForParameter:(NSString*)parameterName;
 
 @end

@@ -6,13 +6,19 @@
  *  Copyright 2007 Michael Gorbach. All rights reserved.
  *
  */
-@class MFPluginController, MFFilesystemController;
+@class MFPluginController, MFFilesystemController, MFServerFS;
 
 @protocol MFServerProtocol <NSObject>
 
-- (MFPluginController*)pluginController;
-- (MFFilesystemController*)filesystemController;
-- (void)sendStatus;
+- (NSArray*)filesystems;
+- (NSArray*)plugins;
+
+- (MFServerFS*)newFilesystemWithPluginName:(NSString*)pluginName;
+- (MFServerFS*)filesystemWithUUID:(NSString*)uuid;
+
+
+// - (void)mountURL:(NSURL*)url;
+
 
 @end
 

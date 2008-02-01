@@ -7,16 +7,21 @@
 //
 
 #import <Cocoa/Cocoa.h>
-
+@class MFServerFS, MFServerPlugin;
 
 @interface MFFilesystemController : NSObject {
+	NSMutableDictionary* filesystemsDictionary;
 	NSMutableArray* filesystems;
+	DASessionRef appearSession;
+	DASessionRef disappearSession;
 }
 
 + (MFFilesystemController*)sharedController;
 - (void)loadFilesystems;
-
-@property(readonly) NSArray* filesystems;
+- (NSDictionary*)filesystemsDictionary;
+- (NSArray*)filesystems;
+- (MFServerFS*)newFilesystemWithPlugin:(MFServerPlugin*)plugin;
+- (MFServerFS*)filesystemWithUUID:(NSString*)uuid;
 
 @end
 

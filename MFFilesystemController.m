@@ -8,17 +8,23 @@
 
 #import "MFFilesystemController.h"
 #import "MFPluginController.h"
-#import "MFPlugin.h"
-#import "MFFilesystem.h"
+#import "MFServerPlugin.h"
+#import "MFServerFS.h"
+#import <DiskArbitration/DiskArbitration.h>
 
 #define FSDEF_EXTENSION @"macfusion"
 
+@interface MFFilesystemController (PrivateAPI)
+- (void)setUpVolumeMonitoring;
+- (void)storeFilesystem:(MFServerFS*)fs 
+			   withUUID:(NSString*)uuid;
+@end
 
 @implementation MFFilesystemController
 
 static MFFilesystemController* sharedController = nil;
 
-
+#pragma mark Init and Singleton methods
 + (MFFilesystemController*)sharedController
 {
 	if (sharedController == nil)
@@ -40,21 +46,43 @@ static MFFilesystemController* sharedController = nil;
 	return nil;
 }
 
+- (void)registerGeneralNotifications
+{
+	/*
+	NSDistributedNotificationCenter* dnc = [NSDistributedNotificationCenter defaultCenter];
+	[dnc addObserver:self
+			selector:@selector(handleMountNotification:)
+				name:@"com.google.filesystems.fusefs.unotifications.mounted" 
+			  object:@"com.google.filesystems.fusefs.unotifications"];
+	[[[NSWorkspace sharedWorkspace] notificationCenter] addObserver:self
+														   selector:@selector(handleUnmountNotification:)
+															   name:NSWorkspaceDidUnmountNotification 
+															 object:nil];
+	 */
+}
+
 - (id) init
 {
 	self = [super init];
 	if (self != nil) {
-		filesystems = [[NSMutableArray alloc] init];
+		filesystemsDictionary = [[NSMutableDictionary alloc] init];
+		filesystems = [NSMutableArray array];
+		[self setUpVolumeMonitoring];
 	}
 	return self;
 }
 
++ (NSSet*)keyPathsForValuesAffectingFilesystems
+{
+	return [NSSet setWithObjects: @"filesystemsDictionary", nil];
+}
 
 - (id)copyWithZone:(NSZone*)zone
 {
 	return self;
 }
 
+#pragma mark Filesystem loading
 - (NSArray*)pathsToFilesystemDefs
 {
 	BOOL isDir = NO;
@@ -87,37 +115,185 @@ static MFFilesystemController* sharedController = nil;
 	return [fsDefPaths copy];
 }
 
-- (BOOL)validateFilesystemParameters:(NSDictionary*)params
-{
-	return YES;
-}
-
 - (void)loadFilesystems
 {
-	MFLog(@"Filesystems loading. Searching ...");
+	MFLogS(self, @"Filesystems loading. Searching for filesystems.");
 	NSArray* filesystemPaths = [self pathsToFilesystemDefs];
 	for(NSString* fsPath in filesystemPaths)
 	{
-		MFLog(@"Loading fs at %@", fsPath);
+		MFLogS(self, @"Loading fs at %@", fsPath);
 		NSDictionary* fsParams = [NSDictionary dictionaryWithContentsOfFile:fsPath];
-		if (fsParams && [self validateFilesystemParameters: fsParams])
+		if (fsParams)
 		{
 			NSString* type = [fsParams objectForKey:@"Type"];
-			MFPlugin* plugin = [[MFPluginController sharedController] pluginWithID: type];
+			MFServerPlugin* plugin = [[MFPluginController sharedController] pluginWithID: type];
 			if (plugin)
 			{
-				MFFilesystem* fs = [MFFilesystem filesystemFromParameters:fsParams 
-																   plugin:plugin];
-				[filesystems addObject: fs];
+				MFServerFS* fs = [MFServerFS filesystemFromParameters:fsParams 
+															   plugin:plugin];
+
+				if (!fs)
+				{
+					MFLogS(self, @"Failed to load filesystem at path %@", fsPath);
+				}
+				
+				if (YES)
+				{
+					[self storeFilesystem: fs
+								 withUUID: fs.uuid];
+					MFLogS(self, @"Filesystem loaded ok: %@", fs);
+				}
+				else
+				{
+					MFLogS(self, @"Failed to validate filesystem %@ on loading", fs);
+				}
 			}
 			else
 			{
-				MFLog(@"Failed to find plugin for Filesystem");
+				MFLogS(self, @"Failed to find plugin for filesystem at path %@",
+					   fsPath);
 			}
+		}
+		else
+		{
+			MFLogS(self, @"Unable to read filesystem dictionary at path %@",
+				   fsPath);
 		}
 	}
 }
 
-@synthesize filesystems;
+#pragma mark Action methods
+- (MFServerFS*)newFilesystemWithPlugin:(MFServerPlugin*)plugin
+{
+	NSDictionary* parameters = [NSDictionary dictionaryWithObject: plugin.ID
+														   forKey:@"Type"];
+	MFServerFS* fs = [MFServerFS filesystemFromParameters: parameters
+													plugin: plugin];
+	if (fs)
+	{
+		[self storeFilesystem: fs
+					 withUUID: fs.uuid];
+		return fs;
+	}
+	else
+	{
+		MFLogS(self, @"Failed to create new filesystem with plugin %@",
+			   plugin);
+		return nil;
+	}
+}
+
+#pragma mark Volume monitoring
+
+static void diskMounted(DADiskRef disk, void* mySelf) 
+{
+	CFDictionaryRef description = DADiskCopyDescription(disk);
+	CFURLRef pathURL = CFDictionaryGetValue(description, kDADiskDescriptionVolumePathKey);
+	
+	if (pathURL)
+	{
+		CFStringRef tempPath = CFURLCopyFileSystemPath(pathURL,kCFURLPOSIXPathStyle);
+		NSString* path = [(NSString*)tempPath stringByStandardizingPath];
+		for(MFServerFS* fs in [[MFFilesystemController sharedController] filesystems])
+		{
+			if ([fs.mountPath isEqualToString: path])
+			{
+				MFLogS( [MFFilesystemController sharedController],
+					   @"Mounted callback matches %@", fs.mountPath );
+				[fs handleMountNotification];
+			}
+		}
+	}
+	
+	CFRelease(description);
+}
+
+
+static void diskUnMounted(DADiskRef disk, void* mySelf)
+{
+	CFDictionaryRef description = DADiskCopyDescription(disk);
+	CFURLRef pathURL = CFDictionaryGetValue(description, kDADiskDescriptionVolumePathKey);
+	
+	if (pathURL)
+	{
+		CFStringRef tempPath = CFURLCopyFileSystemPath(pathURL,kCFURLPOSIXPathStyle);
+		NSString* path = [(NSString*)tempPath stringByStandardizingPath];
+		for(MFServerFS* fs in [[MFFilesystemController sharedController] filesystems])
+		{
+			if ([fs.mountPath isEqualToString: path])
+			{
+				MFLogS( [MFFilesystemController sharedController],
+					   @"Unmounted callback matches %@", fs.mountPath );
+				[fs handleUnmountNotification];
+			}
+		}
+	}
+	
+	CFRelease(description);
+}
+
+- (void) setUpVolumeMonitoring
+{
+	appearSession = DASessionCreate(kCFAllocatorDefault);
+	disappearSession = DASessionCreate(kCFAllocatorDefault);
+	
+	DASessionScheduleWithRunLoop(appearSession, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
+	DASessionScheduleWithRunLoop(disappearSession, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
+	
+	DARegisterDiskAppearedCallback(appearSession, kDADiskDescriptionMatchVolumeMountable, diskMounted, self);
+	DARegisterDiskDisappearedCallback(disappearSession, kDADiskDescriptionMatchVolumeMountable, diskUnMounted, self);	
+}
+
+# pragma mark Accessors and Getters
+
+- (void)storeFilesystem:(MFServerFS*)fs 
+			   withUUID:(NSString*)uuid
+{
+	NSAssert(fs && uuid, @"FS or UUID is nill, storeFilesystem in MFFilesystemController");
+	[filesystemsDictionary setObject: fs
+							  forKey: uuid];
+	if ([filesystems indexOfObject:fs] == NSNotFound)
+	{
+		[self willChange:NSKeyValueChangeInsertion
+		 valuesAtIndexes:[NSIndexSet indexSetWithIndex:[filesystems count]]
+				  forKey:@"filesystems"];
+		[filesystems addObject: fs];
+		[self didChange:NSKeyValueChangeInsertion
+		 valuesAtIndexes:[NSIndexSet indexSetWithIndex:[filesystems count]]
+				 forKey:@"filesystems"];
+	}
+}
+
+- (void)removeFilesystem:(MFServerFS*)fs
+{
+	NSAssert(fs, @"Asked to remove nil fs in MFFilesystemController");
+	[filesystemsDictionary removeObjectForKey: fs.uuid];
+	if ([filesystems indexOfObject:fs] != NSNotFound)
+	{
+		[self willChange:NSKeyValueChangeRemoval
+		 valuesAtIndexes:[filesystems objectAtIndex: [filesystems indexOfObject: fs]]
+				  forKey:@"filesystems"];
+		[filesystems removeObject:fs];
+		[self didChange:NSKeyValueChangeRemoval
+		 valuesAtIndexes:[filesystems objectAtIndex: [filesystems indexOfObject: fs]]
+				  forKey:@"filesystems"];
+	}
+}
+
+- (MFServerFS*)filesystemWithUUID:(NSString*)uuid
+{
+	NSAssert(uuid, @"UUID nill in filesystemWithUUID");
+	return [filesystemsDictionary objectForKey:uuid];
+}
+
+- (NSDictionary*)filesystemsDictionary
+{
+	return (NSDictionary*)filesystemsDictionary;
+}
+
+- (NSArray*)filesystems
+{
+	return (NSArray*)filesystems;
+}
 
 @end 

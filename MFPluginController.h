@@ -8,17 +8,17 @@
 
 #import <Cocoa/Cocoa.h>
 
-@class MFFilesystem, MFPlugin;
+@class MFServerFS, MFServerPlugin;
 
 @interface MFPluginController : NSObject {
-	NSMutableDictionary* plugins;
+	NSMutableDictionary* pluginsDictionary;
 }
 
 + (MFPluginController*)sharedController;
 
-- (MFPlugin*)pluginWithID:(NSString*)ID;
+- (MFServerPlugin*)pluginWithID:(NSString*)ID;
 - (void)loadPlugins;
-
-@property(readonly) NSMutableDictionary* plugins;
+- (NSArray*)plugins;
+- (NSDictionary*)pluginsDictionary;
 
 @end

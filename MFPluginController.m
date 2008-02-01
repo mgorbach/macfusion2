@@ -7,15 +7,13 @@
 //
 
 #import "MFPluginController.h"
-#import "MFPlugin.h"
-#import "MFFilesystem.h"
+#import "MFServerPlugin.h"
+#import "MFServerFS.h"
 
 #define PLUGIN_EXTENSION @"mfplugin"
 
 @implementation MFPluginController
 static MFPluginController* sharedController = nil;
-
-@synthesize plugins;
 
 #pragma mark Singleton Methods
 
@@ -47,7 +45,7 @@ static MFPluginController* sharedController = nil;
 
 - (MFPluginController*)init
 {
-	plugins = [[NSMutableDictionary alloc] init];
+	pluginsDictionary = [[NSMutableDictionary alloc] init];
 	return self;
 }
 
@@ -91,34 +89,43 @@ static MFPluginController* sharedController = nil;
 
 - (void)loadPlugins
 {
-	MFLog(@"Plugins being loaded. Searching...");
+	MFLogS(self, @"Plugins being loaded. Searching...");
 	NSArray* pluginBundlePaths = [self pathsToPluginBundles];
 	for(NSString* path in pluginBundlePaths)
 	{
 		// TODO: What if different version of the same plugin are located in multiple places?
-		MFPlugin* newPlugin;
-		if ([self validatePluginAtPath: path] && (newPlugin = [MFPlugin pluginFromBundleAtPath: path]))
+		MFServerPlugin* newPlugin;
+		if ([self validatePluginAtPath: path] && 
+			(newPlugin = [MFServerPlugin pluginFromBundleAtPath: path]))
 		{
-			[plugins setObject: newPlugin forKey: newPlugin.ID];
-			MFLog(@"%@", plugins);
-			MFLog(@"Loaded plugin at path %@ OK", path);
-			MFLog(@"Name: %@", newPlugin.ID);
+			[pluginsDictionary setObject: newPlugin forKey: newPlugin.ID];
+			MFLogS(self, @"Loaded plugin at path %@ OK: %@", path, newPlugin.ID);
 		}
 		else
 		{
-			MFLog(@"Failed to load plugin at path %@", path);
+			MFLogS(self, @"Failed to load plugin at path %@", path);
 		}
 	}
 }
 
-- (MFPlugin*)pluginWithID:(NSString*)ID
+- (MFServerPlugin*)pluginWithID:(NSString*)ID
 {
-	return [plugins objectForKey:ID];
+	return [pluginsDictionary objectForKey:ID];
 }
 
-- (MFPlugin*)pluginForFilesystem:(MFFilesystem*)fs
+- (MFServerPlugin*)pluginForFilesystem:(MFServerFS*)fs
 {
 	return [fs plugin];
+}
+
+- (NSArray*)plugins
+{
+	return [pluginsDictionary allValues];
+}
+
+- (NSDictionary*)pluginsDictionary
+{
+	return [pluginsDictionary copy];
 }
 
 @end

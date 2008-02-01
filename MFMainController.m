@@ -58,10 +58,10 @@ static MFMainController* sharedController = nil;
 
 - (void)runTests:(id)timer
 {
-	MFFilesystem* fs = [[[MFFilesystemController sharedController] filesystems]
-						objectAtIndex:0];
-	MFLogS(self,@"TICK %@", [MFFilesystemController sharedController].filesystems);
-	[fs mount];
+//	MFFilesystem* fs = [[[MFFilesystemController sharedController] filesystems]
+//						objectAtIndex:0];
+//	MFLogS(self,@"TICK %@", [MFFilesystemController sharedController].filesystems);
+//	[fs mount];
 }
 
 - (void)initialize
@@ -70,11 +70,6 @@ static MFMainController* sharedController = nil;
 	MFFilesystemController* filesystemController = [MFFilesystemController sharedController];
 	[pluginController loadPlugins];
 	[filesystemController loadFilesystems];
-	[NSTimer scheduledTimerWithTimeInterval:2.0
-									 target:self
-								   selector:@selector(runTests:)
-								   userInfo:nil
-									repeats:NO];
 	
 	[[MFCommunicationServer sharedServer] startServingRunloop];
 }

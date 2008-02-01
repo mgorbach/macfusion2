@@ -8,9 +8,16 @@
 
 #import <Cocoa/Cocoa.h>
 #import <PreferencePanes/NSPreferencePane.h>
+#import "MFServerProtocol.h"
 
 @interface MFPreferencePane : NSPreferencePane {
-
+	IBOutlet id <MFServerProtocol> server;
+	IBOutlet NSDictionaryController* filesystemDictionaryController;
+	IBOutlet NSDictionaryController* pluginDictionaryController;
+	IBOutlet NSObjectController* filesystemObjectController;
+	IBOutlet NSView* configurationView;
+	IBOutlet NSTabView* mainTabView;
+	IBOutlet NSBox* confViewBox;
 }
 
 @end

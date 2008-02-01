@@ -114,6 +114,12 @@ static MFLoggingController* sharedController = nil;
 	return nil;
 }
 
+- (void)registerNotifications
+{
+	// We need notifications here, but what about the differnece between
+	// client and server processes?
+}
+
 - (void)init
 {
 	// Nothing here yet

@@ -1,87 +1,90 @@
 #import <Foundation/Foundation.h>
 #import "MFLoggingController.h"
 #import "MFServerProtocol.h"
-#import "MFFilesystemController.h"
-#import "MFFilesystem.h"
+#import "MFClient.h"
+#import "MFClientFS.h"
 
 #include "stdarg.h"
-
-static id serverObject = nil;
-
-BOOL connectToServer(void)
-{
-	serverObject = [NSConnection rootProxyForConnectionWithRegisteredName:@"macfusion" host:nil];
-	[serverObject setProtocolForProxy:@protocol(MFServerProtocol)];
-	if (serverObject)
-	{
-		return YES;
-	}
-	else
-	{
-		return NO;
-	}
-}
-
-void listPlugins(void)
-{
-	return;
-}
-
-void listFilesystems(void)
-{
-	if (connectToServer())
-	{
-		[serverObject sendStatus];
-		NSArray* filesystems = [[serverObject filesystemController] filesystems];
-		NSMutableArray* stringsToPrint = [NSMutableArray array];
-		for(MFFilesystem* fs in filesystems)
-		{
-			[stringsToPrint addObject:
-			 [NSString stringWithFormat:@"%@: %@",
-			  [fs valueForKey:@"Volume Name"],
-			  [fs valueForKey:@"status"]]];
-		}
-		MFPrint(@"%@", serverObject);
-		MFPrint(@"%@", stringsToPrint);
-	}
-	else
-	{
-		MFPrint(@"Can not connect to macfusion agent. Exiting!");
-		exit(-1);
-	}
-}
 
 int main (int argc, const char * argv[]) {
     NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
 	
 	NSArray* args = [[NSProcessInfo processInfo] arguments];
-
+	MFClient* client = [MFClient sharedClient];
+	BOOL ok = [client establishCommunication];
+	[client fillInitialStatus];
+	
+	NSArray* filesystems = [client filesystems];
+//	NSArray* plugins = [client plugins];
+	
+	if (!ok)
+	{
+		MFPrint(@"Can not establish communication to the server. Quitting.");
+		return -1;
+	}
 	
 	if ([args count] < 2)
 	{
 		MFPrint(@"No arguments given. Exiting!");
 		return 0;
 	}
-	else if ([[args objectAtIndex: 1] isEqualToString:@"list"])
+	else if ([[args objectAtIndex: 1] isEqualToString:@"status"])
 	{
-		if ([args count] < 3)
+		for (MFClientFS* fs in filesystems)
 		{
-			MFPrint(@"Not enough arguments. What to list?");
-			return -1;
+			MFPrint(@"Filesystem %@", fs.uuid);
+			MFPrint(@"Parameters: %@", fs.parameters);
+			MFPrint(@"Statusinfo: %@", fs.statusInfo);
 		}
-		if ([[args objectAtIndex: 2] isEqualToString:@"filesystems"])
+	}
+	else if ([[args objectAtIndex: 1] isEqualToString:@"mount"])
+	{
+		if([args count] == 3)
 		{
-			listFilesystems();
-		}
-		else if ([[args objectAtIndex: 2] isEqualToString:@"plugins"])
-		{
-			listPlugins();
+			NSString* mountTarget = [args objectAtIndex: 2];
+			BOOL hit = NO;;
+			for(MFClientFS* fs in filesystems)
+			{
+				if ([[fs name] isEqualToString: mountTarget])
+				{
+					MFPrint(@"Mounting %@", mountTarget);
+					[fs mount];
+					hit = YES;
+				}
+			}
+			if (!hit)
+			{
+				MFPrint(@"Failed to mount. No such filesystem");
+			}
 		}
 		else
 		{
-			MFPrint(@"Syntax error: 'list' command must be followed by 'plugins' \
-					or 'filesystems'. Exiting!");
-			return -1;
+			MFPrint(@"Wrong number of arguments for mount command.");
+		}
+	}
+	else if ([[args objectAtIndex: 1] isEqualToString:@"unmount"])
+	{
+		if([args count] == 3)
+		{
+			NSString* mountTarget = [args objectAtIndex: 2];
+			BOOL hit = NO;;
+			for(MFClientFS* fs in filesystems)
+			{
+				if ([[fs name] isEqualToString: mountTarget])
+				{
+					MFPrint(@"Unmounting %@", mountTarget);
+					[fs unmount];
+					hit = YES;
+				}
+			}
+			if (!hit)
+			{
+				MFPrint(@"Failed to unmount. No such filesystem");
+			}
+		}
+		else
+		{
+			MFPrint(@"Wrong number of arguments for unmount command.");
 		}
 	}
 	else

@@ -8,8 +8,9 @@
 
 #import <Cocoa/Cocoa.h>
 #import "MFPlugin.h"
+#import "MFServerPlugin.h"
 
-@interface SSHPlugin : MFPlugin {
+@interface SSHPlugin : MFServerPlugin {
 
 }
 
