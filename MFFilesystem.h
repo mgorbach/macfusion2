@@ -7,11 +7,14 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import "MFFSDelegateProtocol.h"
+
 @class MFPlugin;
 
 @interface MFFilesystem : NSObject {
 	NSMutableDictionary* parameters;
 	NSMutableDictionary* statusInfo;
+	id <MFFSDelegateProtocol> delegate;
 }
 
 
@@ -23,14 +26,23 @@
 - (BOOL)isMounted;
 - (BOOL)isWaiting;
 - (BOOL)isUnmounted;
+- (BOOL)isFailedToMount;
+- (BOOL)isPersistent;
+
+- (NSMutableDictionary*)parametersWithImpliedValues;
+- (NSArray*)parameterList;
+- (id)valueForParameterNamed:(NSString*)paramName;
+- (NSMutableDictionary*)fillParametersWithImpliedValues:(NSDictionary*)params;
 
 @property(readwrite, assign) NSString* status;
 @property(readonly, assign) NSString* uuid;
 @property(readonly) NSString* mountPath;
 @property(readonly) NSString* name;
-@property(readonly) NSDictionary* parameters;
+@property(readonly) NSMutableDictionary* parameters;
 @property(readonly) NSDictionary* statusInfo;
 @property(readonly) NSString* pluginID;
 @property(readonly) NSString* descriptionString;
+@property(readonly) NSString* iconPath;
+@property(readonly) NSString* filePath;
 
 @end

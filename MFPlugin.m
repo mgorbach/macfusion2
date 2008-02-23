@@ -10,7 +10,7 @@
 #import "MFConstants.h"
 
 @interface MFPlugin(PrivateAPI)
-- (id <MFFSDelegateProtocol>)setupDelegate;
+
 @end
 
 @implementation MFPlugin

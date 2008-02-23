@@ -14,29 +14,6 @@
 {
 	
 	MFServerPlugin* plugin = nil;
-	
-	/*
-	NSBundle* b = [NSBundle bundleWithPath:path];
-	NSString* pluginClassName = [b objectForInfoDictionaryKey:@"MFPluginClass"];
-	if (pluginClassName == nil || [pluginClassName isEqualToString:@"MFPlugin"])
-	{
-		plugin = [[MFPlugin alloc] initWithPath:path];
-	}
-	else
-	{
-		BOOL success = [b load];
-		if (success)
-		{
-			Class PluginClass = NSClassFromString(pluginClassName);
-			plugin = [[PluginClass alloc] initWithPath:path];
-		}
-		else
-		{
-			MFLog(@"Failed to load bundle for plugin at path %@", path);
-		}
-	}
-	*/
-	
 	plugin = [[MFServerPlugin alloc] initWithPath:path];
 	
 	return plugin;

@@ -52,16 +52,7 @@ static MFMainController* sharedController = nil;
 - (void)startRunloop
 {
 	NSRunLoop* runloop = [NSRunLoop currentRunLoop];
-	MFLog(@"Runloop initialized! Let's roll!");
 	[runloop run];
-}
-
-- (void)runTests:(id)timer
-{
-//	MFFilesystem* fs = [[[MFFilesystemController sharedController] filesystems]
-//						objectAtIndex:0];
-//	MFLogS(self,@"TICK %@", [MFFilesystemController sharedController].filesystems);
-//	[fs mount];
 }
 
 - (void)initialize

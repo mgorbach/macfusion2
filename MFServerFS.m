@@ -9,71 +9,99 @@
 #import "MFServerFS.h"
 #import "MFConstants.h"
 #import "MFPluginController.h"
+#import "MFError.h"
 
 @interface MFServerFS (PrivateAPI)
+- (MFServerFS*)initWithPlugin:(MFServerPlugin*)p;
+- (MFServerFS*)initWithParameters:(NSDictionary*)params 
+						   plugin:(MFServerPlugin*)p;
+
 - (NSMutableDictionary*)fullParametersWithDictionary:(NSDictionary*)fsParams;
 - (void)registerGeneralNotifications;
 - (NSMutableDictionary*)initializedStatusInfo;
+- (void)writeOutData;
+- (NSString*)getNewUUID;
+- (BOOL)validateParameters:(NSDictionary*)params
+				 WithError:(NSError**)error;
 @end
 
 @implementation MFServerFS
-+ (MFServerFS*)filesystemFromParameters:(NSDictionary*)parameters 
-								 plugin:(MFServerPlugin*)plugin
-{
 
-	/*
-	NSString* filesystemClassName = [bundle objectForInfoDictionaryKey:@"MFServerFSClassName"];
-	if (filesystemClassName == nil)
++ (MFServerFS*)newFilesystemWithPlugin:(MFServerPlugin*)plugin
+{
+	if (plugin)
 	{
-		MFLogS(self, @"Failed to instantiate filesystem with parameters %@. No Server Filesystem class specified.",
-			   parameters);
+		return [[self alloc] initWithPlugin: plugin];
 	}
-	else
+	
+	return nil;
+}
+
++ (MFServerFS*)loadFilesystemAtPath:(NSString*)path 
+							  error:(NSError**)error
+{
+	MFServerFS* fs;
+	NSMutableDictionary* fsParameters = [NSMutableDictionary dictionaryWithContentsOfFile: path];
+	if (!fsParameters)
 	{
-		BOOL success = [bundle load];
-		if (success)
+		NSDictionary* errorDict = [NSDictionary dictionaryWithObjectsAndKeys: 
+								   @"Could not read dictionary data for filesystem", NSLocalizedDescriptionKey,
+								   [NSString stringWithFormat: @"File at path %@", path],
+								   NSLocalizedRecoverySuggestionErrorKey, nil];
+		*error = [NSError errorWithDomain: kMFErrorDomain
+							code: kMFErrorCodeDataCannotBeRead
+						userInfo: errorDict ];
+		return nil;
+	}
+	
+	[fsParameters setObject: path forKey:kMFFSFilePathParameter];
+	[fsParameters setObject: [NSNumber numberWithBool:YES] forKey:kMFFSPersistentParameter ];
+	
+	NSString* pluginID = [fsParameters objectForKey: kMFFSTypeParameter];
+	if (!pluginID)
+	{
+		NSDictionary* errorDict = [NSDictionary dictionaryWithObjectsAndKeys: 
+								   @"Could not read plugin id key for filesystem", NSLocalizedDescriptionKey,
+								   [NSString stringWithFormat: @"File at path %@", path],
+								   NSLocalizedRecoverySuggestionErrorKey, nil];
+		*error = [NSError errorWithDomain: kMFErrorDomain
+									 code: kMFErrorCodeMissingParameter
+								 userInfo: errorDict ];
+		return nil;
+	}
+	
+	MFServerPlugin* plugin = [[MFPluginController sharedController] 
+							  pluginWithID:pluginID];
+	if (plugin)
+	{
+		fs = [[MFServerFS alloc] initWithParameters: fsParameters
+											 plugin: plugin ];
+		NSError* validationError;
+		BOOL ok = [fs validateParametersWithError: &validationError];
+		if (ok)
 		{
-			Class filesystemClass = NSClassFromString(filesystemClassName);
-			if ([filesystemClass isSubclassOfClass: [MFServerFS class]])
-			{
-				fs = [[filesystemClass alloc] initWithParameters: parameters Plugin: plugin];
-			}
-			else
-			{
-				MFLogS(self, @"Server Filesystem class %@ is not a subclass of MFServerFS",
-					   filesystemClass);
-			}
-				
+			return fs;
 		}
 		else
 		{
-			MFLogS(self, @"Failed to load bundle for filesystem, bundle path %@", 
-				   [bundle bundlePath]);
-		}
-	}
-	 */
-	
-	/*
-	NSString* fsDelegateClassName = [bundle objectForInfoDictionaryKey:@"MFFSDelegateClassName"];
-	if (fsDelegateClassName == nil)
-	{
-		MFLogS(self, @"Failed to instantiate filesystem with bundle path %@. No delegate class name specified.",
-			   [bundle bundlePath]);
-	}
-	else 
-	{
-		BOOL success = [bundle load];
-		if (success)
-		{
-			Class fsDelegateClass = NSClassFromString(filesystemClassName);
+			MFLogS(self, @"Validation failed on fs at path %@. Parameters %@", path,
+				   fs.parameters);				   
+			*error = validationError;
+			return nil;
 			
 		}
 	}
-	 */
-	
-	return [[MFServerFS alloc] initWithParameters: parameters
-										   plugin: plugin];
-	
+	else
+	{
+		NSDictionary* errorDict = [NSDictionary dictionaryWithObjectsAndKeys: 
+								   @"Invalid plugin ID given", NSLocalizedDescriptionKey,
+								   [NSString stringWithFormat: @"File at path %@", path],
+								   NSLocalizedRecoverySuggestionErrorKey, nil];
+		*error = [NSError errorWithDomain: kMFErrorDomain
+									 code: kMFErrorInvalidParameterValue
+								 userInfo: errorDict ];
+		return nil;
+	}
 }
 
 - (MFServerFS*)initWithParameters:(NSDictionary*)params 
@@ -85,28 +113,39 @@
 		delegate = [p delegate];
 		parameters = [self fullParametersWithDictionary: params];
 		statusInfo = [self initializedStatusInfo];
+		if ( ![parameters objectForKey: KMFFSUUIDParameter] )
+		{
+			[parameters setObject: [self getNewUUID]
+						   forKey: KMFFSUUIDParameter ];
+		}
+		
 		[self registerGeneralNotifications];
 	}
 	return self;
 }
+		 
+- (MFServerFS*)initWithPlugin:(MFServerPlugin*)p
+{
+	NSAssert(p, @"Plugin null in MFServerFS initWithPlugin");
+	NSDictionary* newFSParameters = [NSDictionary dictionaryWithObjectsAndKeys: 
+									 p.ID, kMFFSTypeParameter,
+									 [NSNumber numberWithBool: YES], kMFFSPersistentParameter,
+									 nil ];
+									 
+	return [self initWithParameters: newFSParameters plugin: p ];
+}
+
 
 - (void)registerGeneralNotifications
 {
 	[self addObserver:self
-		   forKeyPath:@"status"
+		   forKeyPath:KMFStatusDict
 			  options:NSKeyValueObservingOptionOld || NSKeyValueObservingOptionNew
 			  context:nil];
-	
-	/*
-	 [dnc addObserver:self
-	 selector:@selector(handleMountNotification:)
-	 name:@"mounted" 
-	 object:@"com.google.filesystems.fusefs.unotifications"];
-	 [[[NSWorkspace sharedWorkspace] notificationCenter] addObserver:self
-	 selector:@selector(handleUnmountNotification:)
-	 name:NSWorkspaceDidUnmountNotification 
-	 object:nil];
-	 */
+	[self addObserver:self
+		   forKeyPath:kMFParameterDict
+			  options:NSKeyValueObservingOptionOld || NSKeyValueObservingOptionNew
+			  context:nil];
 }
 
 - (NSMutableDictionary*)initializedStatusInfo
@@ -114,55 +153,53 @@
 	NSMutableDictionary* initialStatusInfo = [NSMutableDictionary dictionaryWithCapacity:5];
 	// Initialize the important keys in the status dictionary
 	[initialStatusInfo setObject:kMFStatusFSUnmounted
-						  forKey:@"status"];
-	[initialStatusInfo setObject:@"None"
-						  forKey:@"faliureReason"];
+						  forKey: kMFSTStatusKey];
 	[initialStatusInfo setObject:[NSMutableString stringWithString:@""]
-						  forKey:@"output"];
-	
-	// get A UUID to identify this filesystem by
+						  forKey: kMFSTOutputKey ];
+	return initialStatusInfo;
+}
+
+- (NSString*)getNewUUID
+{
 	CFUUIDRef theUUID = CFUUIDCreate(NULL);
     CFStringRef string = CFUUIDCreateString(NULL, theUUID);
     CFRelease(theUUID);
     NSString* uuid = [(NSString *)string autorelease];
-	[initialStatusInfo setObject:uuid
-						  forKey:@"uuid"];
-	return initialStatusInfo;
+	return uuid;
 }
 
 
+- (NSDictionary*)defaultParameterDictionary
+{
+	NSMutableDictionary* defaultParameterDictionary =[NSMutableDictionary dictionary];
+	NSDictionary* delegateDict = [delegate defaultParameterDictionary];
+	
+	[defaultParameterDictionary addEntriesFromDictionary: delegateDict];
+	
+	return [defaultParameterDictionary copy];
+}
 
 # pragma mark Parameter processing
 - (NSMutableDictionary*)fullParametersWithDictionary:(NSDictionary*)fsParams
 {
-	NSDictionary* defaultParams = [delegate defaultParameterDictionary];
+	NSDictionary* defaultParams = [self defaultParameterDictionary];
 	NSMutableDictionary* params = [fsParams mutableCopy];
 	if(!params)
 	{
 		params = [NSMutableDictionary dictionary];
 	}
 	
-	for(NSString* parameterKey in [defaultParams keyEnumerator])
+
+	for(NSString* parameterKey in [defaultParams allKeys])
 	{
 		id value;
 		if ((value = [fsParams objectForKey:parameterKey]) != nil)
 		{
-			/*
-			MFLogS(self, @"Validated value %@ for parameter %@",
-				   [fsParams objectForKey: parameterKey],
-				   parameterKey);
-			 */
 		}
 		else 
 		{
-			/*
-			// The fs doesn't specify a value for this parameter.
-			// Use the default
-			[params setObject: [defaultParams objectForKey:parameterKey]
+			[params setObject: [defaultParams objectForKey: parameterKey]
 					   forKey: parameterKey];
-			MFLogS(self, @"Using default value for parameter %@",
-				   parameterKey);
-			 */
 		}
 		
 	}
@@ -176,7 +213,7 @@
 - (NSDictionary*)taskEnvironment
 {
 	if ([delegate respondsToSelector:@selector(taskEnvironmentForParameters:)])
-		return [delegate taskEnvironmentForParameters: parameters];
+		return [delegate taskEnvironmentForParameters: [self parametersWithImpliedValues]];
 	else
 		return [[NSProcessInfo processInfo] environment];
 }
@@ -185,7 +222,7 @@
 {
 	if ([delegate respondsToSelector:@selector(taskArgumentsForParameters:)])
 	{
-		return [delegate taskArgumentsForParameters: parameters];
+		return [delegate taskArgumentsForParameters: [self parametersWithImpliedValues]];
 	}
 	else
 	{
@@ -241,6 +278,13 @@
 	NSString* mountPath = [self mountPath];
 	BOOL pathExists, isDir;
 	
+	if (!mountPath)
+	{
+		MFLogS(self, @"Failed to mount. Mount path is nil");
+		self.status = kMFStatusFSFailed;
+		return NO; 
+	}
+		
 	pathExists = [fm fileExistsAtPath:mountPath isDirectory:&isDir];
 	if (pathExists && isDir == YES) // directory already exists
 	{
@@ -280,7 +324,7 @@
 - (void)removeMountPoint
 {
 	NSFileManager* fm = [NSFileManager defaultManager];
-	NSString* mountPath = [[self parameters] objectForKey:@"Mount Path"];
+	NSString* mountPath = [self mountPath];
 	BOOL pathExists, isDir;
 	
 	pathExists = [fm fileExistsAtPath:mountPath isDirectory:&isDir];
@@ -339,14 +383,62 @@
 }
 
 # pragma mark Validation
-- (NSString*)validateAndSetParameters:(NSDictionary*)params
+- (NSError*)validateAndSetParameters:(NSDictionary*)params 
 {
-	// For subclassing
+	NSError* error;
+	if ([self validateParameters: params
+					   WithError: &error])
+	{
+		[self willChangeValueForKey: kMFParameterDict];
+		parameters = [params mutableCopy];
+		[self didChangeValueForKey: kMFParameterDict];
+	}
+	else
+	{
+		return error;
+	}
 	
-	[self willChangeValueForKey:@"parameters"];
-	parameters = [params mutableCopy];
-	[self didChangeValueForKey:@"parameters"];
 	return nil;
+}
+
+- (BOOL)validateParameters:(NSDictionary*)params
+				 WithError:(NSError**)error
+{
+	NSDictionary* impliedParams = [self fillParametersWithImpliedValues: params];
+	BOOL ok = [delegate validateParameters: impliedParams
+									 error: error];
+	if (!ok) // Delegate didn't validate
+	{
+		NSLog(@"DELEGATE VALIDATE FAIL");
+		return NO;
+	}
+	else
+	{
+		NSLog(@"DELEGATE VALIDATE OK");
+		// Continue validation for general macfusion keys
+		if (![impliedParams objectForKey: kMFFSVolumeNameParameter])
+		{
+			*error = [MFError parameterMissingErrorWithParameterName: kMFFSVolumeNameParameter];
+			return NO;
+		}
+		if (![impliedParams objectForKey: kMFFSMountPathParameter])
+		{
+			*error = [MFError parameterMissingErrorWithParameterName: kMFFSMountPathParameter];
+			return NO;
+		}
+		if (![impliedParams objectForKey: KMFFSUUIDParameter])
+		{
+			*error = [MFError parameterMissingErrorWithParameterName: KMFFSUUIDParameter];
+			return NO;
+		}
+	}
+	
+	return YES;
+}
+
+- (BOOL)validateParametersWithError:(NSError**)error
+{
+	return [self validateParameters: parameters WithError: error];
 }
 
 # pragma mark Notification handlers
@@ -375,7 +467,7 @@
 
 - (void)appendToOutput:(NSString*)newOutput
 {
-	NSMutableString* output = [statusInfo objectForKey:@"output"];
+	NSMutableString* output = [statusInfo objectForKey: kMFSTOutputKey];
 	[output appendString: newOutput];
 }
 
@@ -409,12 +501,16 @@
                         change:(NSDictionary *)change
                        context:(void *)context
 {
-	MFLogS(self, @"Value change on %@ to %@", keyPath, [change objectForKey: NSKeyValueChangeNewKey]);
-	if ([keyPath isEqualToString:@"status"] &&
+	if ([keyPath isEqualToString: KMFStatusDict ] &&
 		object == self && 
 		[change objectForKey:NSKeyValueChangeNewKey] == kMFStatusFSUnmounted)
 	{
 		[self removeMountPoint];
+	}
+	
+	if ([keyPath isEqualToString: kMFParameterDict])
+	{
+		[self writeOutData];
 	}
 	
 	/*
@@ -425,17 +521,43 @@
 	 */
 }
 
-- (NSMutableDictionary*)parameters
-{
-	return parameters;
-}
-
 
 - (void)handleMountTimeout:(NSTimer*)timer
 {
 	if (self.status != kMFStatusFSUnmounted && self.status != kMFStatusFSMounted)
 		self.status = kMFStatusFSFailed;
 }
+
+# pragma mark Write out
+- (void)writeOutData
+{
+	if  ([self isPersistent])
+	{
+		NSLog(@"Writing out %@", [self parametersWithImpliedValues]);
+		NSString* dirPath = [@"~/Library/Application Support/Macfusion/Filesystems"
+							 stringByExpandingTildeInPath];
+		
+		BOOL isDir;
+		if (![[NSFileManager defaultManager] fileExistsAtPath:dirPath isDirectory:&isDir] || !isDir) 
+		{
+			NSError* error = nil;
+			BOOL ok = [[NSFileManager defaultManager] createDirectoryAtPath:dirPath
+												withIntermediateDirectories:YES
+																 attributes:nil error:&error];
+			if (!ok)
+			{
+				MFLogS(self, @"Failed to create directory save filesystem %@", 
+					   [error localizedDescription]);
+			}
+			
+		}
+		
+		NSString* path = [self valueForParameterNamed: kMFFSFilePathParameter ];
+		[parameters writeToFile: [dirPath stringByAppendingFormat: @"/%@.macfusion", path]
+					 atomically: YES];
+	}
+}
+
 
 @synthesize plugin;
 @end

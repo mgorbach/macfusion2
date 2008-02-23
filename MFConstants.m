@@ -8,6 +8,7 @@
 
 #import "MFConstants.h"
 
+/*
 NSString* kMFStatusFSMounted = @"Mounted";
 NSString* kMFStatusFSUnmounted = @"Unmounted";
 NSString* kMFStatusFSWaiting = @"Waiting to Mount";
@@ -25,3 +26,5 @@ NSString* kMFDistributedObjectName = @"org.mgorbach.macfusion.do";
 NSString* kMFFilesystemNameKey = @"name";
 NSString* kMFFilesystemStatusKey = @"status";
 NSString* kMFFilesystemUUIDKey = @"status";
+
+*/

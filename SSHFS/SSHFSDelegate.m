@@ -7,27 +7,36 @@
 //
 
 #import "SSHFSDelegate.h"
+#import "MFConstants.h"
+#import "MGUtilities.h"
+#import "MFError.h"
 
+// SSHFS Parameter Names
+#define kSSHFSHostParameter @"Host"
+#define kSSHFSPortParameter @"Port"
+#define kSSHFSDirectoryParameter @"Directory"
+#define kSSHFSUserParameter @"User"
 
 @implementation SSHFSDelegate
 - (NSArray*)taskArgumentsForParameters:(NSDictionary*)parameters
 {
 	NSMutableArray* arguments = [NSMutableArray array];
 	[arguments addObject: [NSString stringWithFormat:@"%@@%@:%@",
-						   [parameters objectForKey:@"User"],
-						   [parameters objectForKey:@"Host"],
-						   [parameters objectForKey:@"Directory"]]];
+						   [parameters objectForKey: kSSHFSUserParameter],
+						   [parameters objectForKey: kSSHFSHostParameter],
+						   [parameters objectForKey: kSSHFSDirectoryParameter]]];
 	
-	[arguments addObject: [parameters objectForKey: @"Mount Path"]];
+	[arguments addObject: [parameters objectForKey: kMFFSMountPathParameter ]];
 	[arguments addObject: [NSString stringWithFormat: @"-p%@", 
-						   [parameters objectForKey: @"Port"]]];
+						   [parameters objectForKey: kSSHFSPortParameter ]]];
 	
 	[arguments addObject: @"-oCheckHostIP=no"];
 	[arguments addObject: @"-oStrictHostKeyChecking=no"];
 	[arguments addObject: @"-oNumberOfPasswordPrompts=1"];
 	[arguments addObject: @"-ofollow_symlinks"];
+	
 	[arguments addObject: [NSString stringWithFormat: @"-ovolname=%@", 
-						   [parameters objectForKey:@"Volume Name"]]];
+						   [parameters objectForKey: kMFFSVolumeNameParameter]]];
 	[arguments addObject: @"-f"];
 	return [arguments copy];
 }
@@ -37,15 +46,19 @@
 	return @"/usr/local/bin/sshfs";
 }
 
+- (NSArray*)parameterList
+{
+	return [NSArray arrayWithObjects: kSSHFSUserParameter, 
+			kSSHFSHostParameter, kSSHFSDirectoryParameter, kSSHFSUserParameter,
+			kSSHFSPortParameter, nil ];
+}
+
 - (NSDictionary*)defaultParameterDictionary
 {
 	NSDictionary* defaultParameters = [NSDictionary dictionaryWithObjectsAndKeys: 
-						 [NSNull null], @"name",
-						 NSUserName(), @"User",
-						 [NSNull null], @"Host",
-						 @"", @"Directory",
-						 [NSNull null], @"Mount Path",
-						 [NSNumber numberWithInt: 22], @"Port",
+						 NSUserName(), kSSHFSUserParameter,
+						 @"", kSSHFSDirectoryParameter,
+						 [NSNumber numberWithInt: 22], kSSHFSPortParameter,
 								nil];
 	
 	return defaultParameters;
@@ -54,43 +67,49 @@
 - (NSString*)descriptionForParameters:(NSDictionary*)parameters
 {
 	NSString* description = nil;
-	if (![parameters objectForKey:@"Host"])
+	if ( isNilOrNull( [parameters objectForKey: kSSHFSHostParameter] ) )
 	{
 		description = @"No host specified";
 	}
 	else
 	{
-		if([parameters objectForKey:@"User"])
+		if( isNotNilOrNull( [parameters objectForKey: kSSHFSUserParameter] ) )
 		{
 			description = [NSString stringWithFormat:@"%@@%@",
-						   [parameters objectForKey:@"User"],
-						   [parameters objectForKey:@"Host"]];
+						   [parameters objectForKey: kSSHFSUserParameter],
+						   [parameters objectForKey: kSSHFSHostParameter]];
 		}
 		else
 		{
 			description = [NSString stringWithString: 
-						   [parameters objectForKey:@"Host"]];
+						   [parameters objectForKey: kSSHFSHostParameter]];
 		}
 	}
 	
 	return description;
 }
 
-- (id)impliedValueParameterNamed:(NSString*)name 
+- (id)impliedValueParameterNamed:(NSString*)parameterName 
 				 otherParameters:(NSDictionary*)parameters;
 {
-	if ([name isEqualToString: @"Mount Path"] && 
-		[parameters objectForKey: @"Host"] != [NSNull null])
+	if ([parameterName isEqualToString: kMFFSMountPathParameter] && 
+		[parameters objectForKey: kSSHFSHostParameter] )
 	{
 		NSString* mountPath = [NSString stringWithFormat: 
 							   @"/Volumes/%@", 
-							   [parameters objectForKey:@"Host"]];
+							   [parameters objectForKey: kSSHFSHostParameter]];
 		return mountPath;
 	}
-	if ([name isEqualToString: @"Volume Name"] &&
-		[parameters objectForKey: @"Host"] != [NSNull null])
+	if ([parameterName isEqualToString: kMFFSVolumeNameParameter] &&
+		[parameters objectForKey: kSSHFSHostParameter] )
 	{
-		return [parameters objectForKey:@"Host"];
+		return [parameters objectForKey: kSSHFSHostParameter];
+	}
+	
+	if ([parameterName isEqualToString: kMFFSVolumeIconPathParameter])
+	{
+		return [[NSBundle bundleForClass: [self class]] 
+				pathForImageResource:@"sshfs"];
 	}
 	
 	return nil;
@@ -100,7 +119,7 @@
 	 forParameterName:(NSString*)paramName 
 				error:(NSError**)error
 {
-	if ([paramName isEqualToString: @"Port"])
+	if ([paramName isEqualToString: kSSHFSPortParameter ])
 	{
 		if( [value isKindOfClass: [NSNumber class]] && 
 			[(NSNumber*)value intValue] > 1 &&
@@ -110,6 +129,9 @@
 		}
 		else
 		{
+			*error = [MFError invalidParameterValueErrorWithParameterName: kSSHFSPortParameter
+																	value: value
+															  description: @"Port must be positive number < 10000"];
 			return NO;
 		}
 	}
@@ -120,6 +142,23 @@
 - (BOOL)validateParameters:(NSDictionary*)parameters
 					 error:(NSError**)error
 {
+	for (NSString* paramName in [parameters allKeys])
+	{
+		BOOL ok = [self validateValue: [parameters objectForKey: paramName]
+					 forParameterName: paramName
+								error: error];
+		
+		if (!ok)
+		{
+			return NO;
+		}
+	}
+	
+	if (![parameters objectForKey: kSSHFSHostParameter ])
+	{
+		*error = [MFError parameterMissingErrorWithParameterName: kSSHFSHostParameter ];
+		return NO;
+	}
 	return YES;
 }
 

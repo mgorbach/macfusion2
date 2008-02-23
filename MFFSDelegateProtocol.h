@@ -12,6 +12,7 @@
 
 - (NSArray*)taskArgumentsForParameters:(NSDictionary*)parameters;
 
+- (NSArray*)parameterList;
 - (NSDictionary*)defaultParameterDictionary;
 
 - (id)impliedValueParameterNamed:(NSString*)name 

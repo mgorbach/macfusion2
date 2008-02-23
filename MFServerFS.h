@@ -14,22 +14,23 @@
 @interface MFServerFS : MFFilesystem {
 	NSTask* task;
 	MFServerPlugin* plugin;
-	id <MFFSDelegateProtocol> delegate;
 }
 
 
 // Server-specific initialization
-+ (MFServerFS*)filesystemFromParameters:(NSDictionary*)parameters
-								   plugin:(MFServerPlugin*)p;
++ (MFServerFS*)loadFilesystemAtPath:(NSString*)path 
+							  error:(NSError**)error;
 
-- (MFServerFS*)initWithParameters:(NSDictionary*)params 
-						   plugin:(MFServerPlugin*)p;
-
++ (MFServerFS*)newFilesystemWithPlugin:(MFServerPlugin*)plugin;
 
 
 // Notification handling
 - (void)handleMountNotification;
 - (void)handleUnmountNotification;
+
+
+// validate
+- (BOOL)validateParametersWithError:(NSError**)error;
 
 @property(retain) MFServerPlugin* plugin;
 @end

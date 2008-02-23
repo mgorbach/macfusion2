@@ -13,6 +13,8 @@
 @interface MFClientFS (PrivateAPI)
 - (void)fillInitialData;
 - (void)registerNotifications;
+- (void)copyParameters;
+- (void)copyStatusInfo;
 @end
 
 @implementation MFClientFS
@@ -21,34 +23,19 @@
 					   clientPlugin:(MFClientPlugin*)plugin
 {
 	MFClientFS* fs = nil;
-	NSBundle* bundle = plugin.bundle;
-	NSString* filesystemClassName = [bundle objectForInfoDictionaryKey:
-									 @"MFClientFSClassName"];
-	if (filesystemClassName == nil)
-	{
-		MFLogS(self, @"Failed to instantiate filesystem with remote fs %@. No Client Filesystem class specified.",
-			   remoteFS);
-	}
-	else
-	{
-		BOOL success = [bundle load];
-		if (success)
-		{
-			Class filesystemClass = NSClassFromString(filesystemClassName);
-			if ([filesystemClass isSubclassOfClass: [MFClientFS class]])
-			{
-				fs = [[filesystemClass alloc] initWithRemoteFS: remoteFS 
-												  clientPlugin: plugin];
-			}
-			else
-			{
-				MFLogS(self, @"Client filesystem class %@ is not a subclass of MFClientFS",
-					   filesystemClass);
-			}
-		}
-	}
 	
+	fs = [[MFClientFS alloc] initWithRemoteFS: remoteFS
+								 clientPlugin: plugin];
 	return fs;
+}
+
++ (NSSet*)keyPathsForValuesAffectingValueForKey:(NSString*)key
+{
+	if ([key isEqualToString: @"displayDictionary"])
+		return [NSSet setWithObjects: 
+				KMFStatusDict, kMFParameterDict, nil];
+	else
+		return [super keyPathsForValuesAffectingValueForKey: key];
 }
 
 - (id)initWithRemoteFS:(id)remoteFS 
@@ -59,6 +46,7 @@
 	{
 		remoteFilesystem = remoteFS;
 		plugin = p;
+		delegate = [plugin delegate];
 		[self fillInitialData];
 		[self registerNotifications];
 	}
@@ -69,20 +57,34 @@
 
 - (void)registerNotifications
 {
+	/*
 	[self addObserver:self
-		   forKeyPath:@"parameters"
+		   forKeyPath:kMFParameterDict
 			  options:NSKeyValueObservingOptionNew
 			  context:nil];
+	 */
+}
+
+- (void)copyStatusInfo
+{
+	[self willChangeValueForKey:KMFStatusDict];
+	statusInfo = [[remoteFilesystem statusInfo] mutableCopy];
+	NSAssert(![statusInfo isProxy], @"Status Info from DO is a Proxy. Oh shit.");
+	[self didChangeValueForKey:KMFStatusDict];
+}
+
+- (void)copyParameters
+{
+	[self willChangeValueForKey:kMFParameterDict];
+	parameters = [[remoteFilesystem parameters] mutableCopy];
+	NSAssert(![parameters isProxy], @"Parameters from DO is a Proxy. Oh shit.");
+	[self didChangeValueForKey:kMFParameterDict];
 }
 
 - (void)fillInitialData
 {
-	[self willChangeValueForKey:@"parameters"];
-	parameters = [[remoteFilesystem parameters] mutableCopy];
-	[self didChangeValueForKey:@"parameters"];
-	[self willChangeValueForKey:@"statusInfo"];
-	statusInfo = [[remoteFilesystem statusInfo] mutableCopy];
-	[self didChangeValueForKey:@"statusInfo"];
+	[self copyStatusInfo];
+	[self copyParameters];
 }
 
 - (void)toggleMount:(id)sender
@@ -93,44 +95,23 @@
 #pragma mark Synchronization across IPC
 - (void)handleStatusInfoChangedNotification:(NSNotification*)note
 {
-//	NSDictionary* info = [note userInfo];
-	[self willChangeValueForKey: @"status"];
-	statusInfo = [[remoteFilesystem statusInfo] mutableCopy];
-	[self didChangeValueForKey: @"status"];
+	[self copyStatusInfo];
 }
 
 - (void)handleParametersChangedNotification:(NSNotification*)note
 {
-	
+	[self copyParameters];
 }
 
-- (void) observeValueForKeyPath:(NSString *)keyPath 
-					   ofObject:(id)object 
-						 change:(NSDictionary *)change 
-						context:(void *)context
+- (NSDictionary*)displayDictionary
 {
-	NSLog(@"Change detected on keypath %@, object %@, change %@",
-		  keyPath, object, change);
+	NSMutableDictionary* dict = [NSMutableDictionary dictionary];
+	[dict addEntriesFromDictionary: parameters];
+	[dict addEntriesFromDictionary: statusInfo];
+	return [dict copy];
 }
 
-// Hack to make sure we are notified if any parameters change
-- (void)setValue:(id)value 
-	  forKeyPath:(NSString*)keyPath
-{
-	if ([keyPath isLike:@"parameters.*"])
-	{
-		[self willChangeValueForKey:@"parameters"];
-	}
-	[super setValue:value
-		 forKeyPath:keyPath];
-	if ([keyPath isLike:@"parameters.*"])
-	{
-		[self didChangeValueForKey:@"parameters"];
-		[remoteFilesystem setValue:value
-						forKeyPath:keyPath];
-	}
-}
-
+# pragma mark Action Methods
 - (void)mount
 {
 	[remoteFilesystem mount];
@@ -141,9 +122,62 @@
 	[remoteFilesystem unmount];
 }
 
-- (NSMutableDictionary*)parameters
+
+#pragma mark Editing
+
+- (void)setParameters:(NSMutableDictionary*)p
 {
-	return parameters;
+	parameters = p;
+}
+
+- (void)beginEditing
+{
+	isEditing = YES;
+	backupParameters = [NSDictionary dictionaryWithDictionary: 
+						[self parameters]];
+}
+
+- (NSError*)endEditingAndCommitChanges:(BOOL)commit
+{
+	if (!isEditing)
+	{
+		[[NSException exceptionWithName:kMFBadAPIUsageException
+								 reason:@"endEditing without beginEditing"
+							   userInfo:nil] raise];
+	}
+	
+	if (commit)
+	{
+		NSError* result = [remoteFilesystem validateAndSetParameters: parameters];
+		if (result)
+		{
+			return result;
+		}
+		else
+		{
+			isEditing = NO;
+			return nil;
+		}
+	}
+	else
+	{
+		isEditing = NO;
+		[self setParameters: [backupParameters mutableCopy] ];
+	}
+	
+	return nil;
+}
+
+- (void)willChangeValueForKey:(NSString*)key
+{
+	if ([key isLike:@"parameters.*"] && !isEditing)
+	{
+		[[NSException exceptionWithName:@"MFBadAPIUsage"
+								reason:@"Trying to modify parameters without beginEditing"
+							  userInfo:nil] raise];
+	}
+	
+	[super willChangeValueForKey:key];
 }
 
 @end

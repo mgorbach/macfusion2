@@ -20,7 +20,6 @@
 	
 	
 	NSViewController* filesystemConfigurationViewController;
-//	NSViewController* fsTestViewController;
 	MFClient* client;
 }
 

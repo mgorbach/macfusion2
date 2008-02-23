@@ -12,8 +12,8 @@
 #import "MFConstants.h"
 
 @interface MFClient(PrivateAPI)
-- (void)storeFilesystem:(MFClientFS*)fs withUUID:(NSString*)uuid;
-- (void)storePlugin:(MFClientPlugin*)plugin withID:(NSString*)id;
+- (void)storeFilesystem:(MFClientFS*)fs;
+- (void)storePlugin:(MFClientPlugin*)plugin;
 - (void)removeFilesystem:(MFClientFS*)fs;
 @end
 
@@ -84,8 +84,7 @@ static MFClient* sharedClient = nil;
 	{
 		MFClientPlugin* plugin = [[MFClientPlugin alloc] initWithRemotePlugin: 
 								  remotePlugin];
-		[self storePlugin: plugin
-				   withID: plugin.ID];
+		[self storePlugin: plugin];
 	}
 	
 	// Fill filesystems
@@ -95,10 +94,8 @@ static MFClient* sharedClient = nil;
 		MFClientPlugin* plugin = [pluginsDictionary objectForKey: [remoteFS pluginID]];
 		MFClientFS* fs = [MFClientFS clientFSWithRemoteFS: remoteFS
 											 clientPlugin: plugin];
-		[self storeFilesystem: fs
-					 withUUID: fs.uuid];
+		[self storeFilesystem: fs];
 	}
-	
 }
 
 - (BOOL)establishCommunication
@@ -118,28 +115,30 @@ static MFClient* sharedClient = nil;
 	}
 }
 
+- (BOOL)setup
+{
+	if ([self establishCommunication])
+	{
+		[self fillInitialStatus];
+		return YES;
+	}
+	
+	return NO;
+}
+
 #pragma mark Notification handling
 - (void)handleStatusChangedNotification:(NSNotification*)note
 {
-//	MFLogS(self, @"Status changed in MFClient");
 	NSDictionary* info = [note userInfo];
-	NSString* uuid = [info objectForKey: kMFFilesystemUUIDKey];
-	MFClientFS* fs = [filesystemsDictionary objectForKey:uuid];
-	if (fs)
-	{
-		[fs handleStatusInfoChangedNotification:note];
-	}
-	
-	if ([delegate respondsToSelector:@selector(clientStatusChanged)])
-	{
-		[delegate clientStatusChanged];
-	}
+	NSString* uuid = [info objectForKey: KMFFSUUIDParameter];
+	MFClientFS* fs = [self filesystemWithUUID: uuid];
+	[fs handleStatusInfoChangedNotification:note];
 }
 
 - (void)handleFilesystemAddedNotification:(NSNotification*)note
 {
 	NSDictionary* info = [note userInfo];
-	NSString* uuid = [info objectForKey: kMFFilesystemUUIDKey];
+	NSString* uuid = [info objectForKey:  KMFFSUUIDParameter];
 	MFLogS(self, @"Filesystem Added: uuid %@",
 		   uuid);
 	id remoteFilesystem = [server filesystemWithUUID: uuid];
@@ -150,15 +149,14 @@ static MFClient* sharedClient = nil;
 											 clientPlugin:plugin];
 		
 		
-		[self storeFilesystem:fs
-					 withUUID:uuid];
+		[self storeFilesystem:fs ];
 	}
 }
 
 - (void)handleFilesystemRemovedNotification:(NSNotification*)note
 {
 	NSDictionary* info = [note userInfo];
-	NSString* uuid = [info objectForKey: kMFFilesystemUUIDKey];
+	NSString* uuid = [info objectForKey: KMFFSUUIDParameter];
 	MFLogS(self, @"Filesystem Deleted: uuid %@",
 		   uuid);
 	MFClientFS* fs = [self filesystemWithUUID: uuid];
@@ -168,21 +166,20 @@ static MFClient* sharedClient = nil;
 #pragma mark Action methods
 - (MFClientFS*)newFilesystemWithPlugin:(MFClientPlugin*)plugin
 {
-	NSAssert(plugin, @"Asked to make new filesystem with nil plugin, MFClient");
+	NSAssert(plugin, @"MFClient asked to make new filesystem with nil plugin");
 	id newRemoteFS = [server newFilesystemWithPluginName: plugin.ID];
 	MFClientFS* newFS = [[MFClientFS alloc]	initWithRemoteFS: newRemoteFS
 												clientPlugin: plugin];
-	[self storeFilesystem:newFS
-				 withUUID:newFS.uuid];
+	[self storeFilesystem:newFS ];
 	return newFS;
 }
 
 #pragma Accessors and Setters
 
-- (void)storePlugin:(MFClientPlugin*)plugin withID:(NSString*)id
+- (void)storePlugin:(MFClientPlugin*)plugin
 {
-	NSAssert(id, @"ID null when storing plugin in MfClient");
-	[pluginsDictionary setObject: plugin forKey:id];
+	NSAssert(plugin && plugin.ID, @"plugin or ID null when storing plugin in MfClient");
+	[pluginsDictionary setObject: plugin forKey: plugin.ID ];
 	if ([plugins indexOfObject: plugin] == NSNotFound)
 	{
 		[self willChange:NSKeyValueChangeInsertion
@@ -195,11 +192,11 @@ static MFClient* sharedClient = nil;
 	}
 }
 
-- (void)storeFilesystem:(MFClientFS*)fs withUUID:(NSString*)uuid
+- (void)storeFilesystem:(MFClientFS*)fs
 {
-	NSAssert(fs && uuid, @"FS or UUID is nill when storing fs in MFClient");
+	NSAssert(fs && fs.uuid, @"FS or fs.uuid is nil when storing fs in MFClient");
 	[filesystemsDictionary setObject: fs
-							  forKey: uuid];
+							  forKey: fs.uuid];
 	if ([filesystems indexOfObject: fs] == NSNotFound)
 	{
 		[self willChange:NSKeyValueChangeInsertion

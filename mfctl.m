@@ -11,9 +11,7 @@ int main (int argc, const char * argv[]) {
 	
 	NSArray* args = [[NSProcessInfo processInfo] arguments];
 	MFClient* client = [MFClient sharedClient];
-	BOOL ok = [client establishCommunication];
-	[client fillInitialStatus];
-	
+	BOOL ok = [client setup];
 	NSArray* filesystems = [client filesystems];
 //	NSArray* plugins = [client plugins];
 	

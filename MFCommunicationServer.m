@@ -92,7 +92,7 @@ static MFCommunicationServer* sharedServer = nil;
 						 change:(NSDictionary *)change
 						context:(void *)context
 {
-	MFLogS(self, @"Observe triggered on keypath %@, object %@ change %@", keyPath, object, change);
+//	MFLogS(self, @"Observe triggered on keypath %@, object %@", keyPath, object);
 	
 	// TODO: This observation method will not be called on objects added to filesystems after registerNotifications is called
 	// We need to observe filesystems itself, and add/remove observations on filesystems as they appear and dissapear
@@ -102,8 +102,8 @@ static MFCommunicationServer* sharedServer = nil;
 	{
 		MFFilesystem* fs = (MFFilesystem*)object;
 		NSDictionary* userInfoDict = [NSDictionary dictionaryWithObjectsAndKeys: 
-									  fs.uuid, kMFFilesystemUUIDKey,
-									  fs.status, kMFFilesystemStatusKey,
+									  fs.uuid, KMFFSUUIDParameter,
+									  fs.status, kMFSTStatusKey,
 									  nil];
 		[dnc postNotificationName:kMFStatusChangedNotification
 						   object:kMFDNCObject
@@ -127,7 +127,7 @@ static MFCommunicationServer* sharedServer = nil;
 						context:nil];
 
 				NSDictionary* userInfoDict = [NSDictionary dictionaryWithObject: [fs uuid]
-																		 forKey: kMFFilesystemUUIDKey];
+																		 forKey: KMFFSUUIDParameter];
 				[dnc postNotificationName:kMFFilesystemAddedNotification
 								   object:kMFDNCObject
 								 userInfo:userInfoDict];
@@ -170,27 +170,19 @@ static MFCommunicationServer* sharedServer = nil;
 # pragma mark Action Methods
 - (MFServerFS*)newFilesystemWithPluginName:(NSString*)pluginName
 {
+	NSAssert(pluginName, @"MFCommunicationServer: Asked for new filesystem with nil plugin name");
 	MFServerPlugin* plugin = [[[MFPluginController sharedController] pluginsDictionary]
 						objectForKey:pluginName];
-	if (plugin)
-	{
-		MFServerFS* fs = [[MFFilesystemController sharedController] 
+	NSAssert(plugin, @"MFCommunicationServer: Asked for FS with invalid plugin name");
+	MFServerFS* fs = [[MFFilesystemController sharedController] 
 						  newFilesystemWithPlugin: plugin];
-		return fs;
-	}
-	else
-	{
-		MFLogS(self, @"Request failed to create new filesystem. Now plugin named %@", 
-			   pluginName);
-		return nil;
-	}
+	return fs;
 }
 				 
 - (MFServerFS*)filesystemWithUUID:(NSString*)uuid
 {
 	NSAssert(uuid, @"Filesystem requested with nil uuid in server");
-	return [[MFFilesystemController sharedController] 
-			filesystemWithUUID:uuid];
+	return [[MFFilesystemController sharedController] filesystemWithUUID:uuid];
 }
 				 
 

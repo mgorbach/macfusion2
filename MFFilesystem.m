@@ -41,53 +41,34 @@
 
 # pragma mark Accessors
 
-- (NSDictionary*)parameters
-{
-	// We want an immutable dictionary
-	return [parameters copy];
-}
-
 - (NSDictionary*)statusInfo
 {
 	return [statusInfo copy];
 }
 
-/*
-- (id)valueForUndefinedKey:(NSString*)key
-{
-	id value = [parameters valueForKey:key];
-	if (value)
-	{
-		return value;
-	}
-	
-	return [super valueForUndefinedKey:key];
-}
-*/
-
 - (NSString*)mountPath
 {
-	return [parameters objectForKey:@"Mount Path"];
+	return [self valueForParameterNamed: kMFFSMountPathParameter ];
 }
 
 - (NSString*)uuid
 {
-	return [statusInfo objectForKey:@"uuid"];
+	return [self valueForParameterNamed: KMFFSUUIDParameter ];
 }
 
 - (NSString*)status
 {
-	return [statusInfo objectForKey:@"status"];
+	return [statusInfo objectForKey: kMFSTStatusKey];
 }
 
 - (NSString*)name
 {
-	return [parameters objectForKey:@"name"];
+	return [self valueForParameterNamed: kMFFSNameParameter ];
 }
 
 - (NSString*)pluginID
 {
-	return [parameters objectForKey:@"Type"];
+	return [self valueForParameterNamed: kMFFSTypeParameter ];
 }
 
 # pragma mark Setters
@@ -97,13 +78,8 @@
 	if (status)
 	{
 		[statusInfo setObject:status
-					   forKey:@"status"];
+					   forKey:kMFSTStatusKey];
 	}
-}
-
-- (NSString*)descriptionString
-{
-	return [parameters objectForKey:@"Description"];
 }
 
 - (void)mount
@@ -114,6 +90,127 @@
 - (void)unmount
 {
 	// Abstract
+}
+
+- (NSMutableDictionary*)parameters
+{
+	return parameters;
+}
+
+
+- (id)findImpliedValueForParameterNamed:(NSString*)paramName 
+						givenParameters:(NSDictionary*)params
+{
+	if ([parameters objectForKey:paramName])
+		return [parameters objectForKey: paramName];
+	
+	id delegateValue = [delegate impliedValueParameterNamed: paramName
+											otherParameters: params];
+	if (delegateValue)
+	{
+		return delegateValue;
+	}
+	
+	NSLog(@"FIND IMPLIED %@", paramName);
+	if ([paramName isEqualToString: kMFFSVolumeNameParameter])
+	{
+		return [parameters objectForKey: kMFFSNameParameter] ?
+		[parameters objectForKey: kMFFSNameParameter] :
+		@"Unnamed";
+	}
+	if ([paramName isEqualToString: kMFFSNameParameter])
+	{
+		return @"Unnamed";
+	}
+	if ([paramName isEqualToString: kMFFSFilePathParameter])
+	{
+		return self.uuid;
+	}
+	
+	return nil;
+}
+
+- (id)valueForParameterNamed:(NSString*)paramName
+{
+	//	return [[self parametersWithImpliedValues] objectForKey: paramName];
+	return [self findImpliedValueForParameterNamed: paramName
+								   givenParameters: parameters ];
+}
+
+
+- (NSArray*)parameterList
+{
+	NSMutableArray* parameterList = [NSMutableArray array];
+	NSArray* delegateParameterList = [delegate parameterList];
+	if (delegateParameterList)
+	{
+		[parameterList addObjectsFromArray: delegateParameterList];
+	}
+
+	[parameterList addObject: kMFFSNameParameter ];
+	[parameterList addObject: kMFFSMountPathParameter ];
+	[parameterList addObject: kMFFSVolumeNameParameter ];
+	[parameterList addObject: kMFFSVolumeIconPathParameter ];
+	[parameterList addObject: kMFFSFilePathParameter ];
+	[parameterList addObject: kMFFSPersistentParameter ];
+	
+	return [parameterList copy];
+}
+
+- (NSMutableDictionary*)fillParametersWithImpliedValues:(NSDictionary*)params
+{
+	NSMutableDictionary* impliedParameters = [params mutableCopy];
+	for(NSString* key in [self parameterList])
+	{
+		if (![impliedParameters objectForKey: key])
+		{
+			id value = [self findImpliedValueForParameterNamed: key
+											   givenParameters: params];
+			if (value)
+			{
+				[impliedParameters setObject: value
+									  forKey: key];
+			}
+			else
+			{
+			}
+		}
+	}
+	
+	return impliedParameters;
+}
+
+- (NSMutableDictionary*)parametersWithImpliedValues
+{
+	return [self fillParametersWithImpliedValues: parameters];
+}
+
+- (NSString*)iconPath
+{
+	return [self valueForParameterNamed: kMFFSVolumeIconPathParameter ];
+}
+
+- (NSString*)descriptionString
+{
+	NSString* delegateDescription = [delegate descriptionForParameters: 
+						  [self parametersWithImpliedValues]];
+	return delegateDescription ? delegateDescription : @"No description";
+}
+
+- (BOOL)isPersistent
+{
+	return [[self valueForParameterNamed: kMFFSPersistentParameter]
+			boolValue];
+}
+
+- (void)setPersistent:(BOOL)b
+{
+	[self valueForParameterNamed: kMFFSPersistentParameter ];
+}
+
+- (NSString*)filePath
+{
+	return [self valueForParameterNamed: kMFFSFilePathParameter];
 }
 
 @end

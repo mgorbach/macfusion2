@@ -12,6 +12,8 @@
 @interface MFFilesystemController : NSObject {
 	NSMutableDictionary* filesystemsDictionary;
 	NSMutableArray* filesystems;
+	NSMutableArray* mountedPaths;
+	
 	DASessionRef appearSession;
 	DASessionRef disappearSession;
 }
@@ -21,7 +23,11 @@
 - (NSDictionary*)filesystemsDictionary;
 - (NSArray*)filesystems;
 - (MFServerFS*)newFilesystemWithPlugin:(MFServerPlugin*)plugin;
+- (void)storeFilesystem:(MFServerFS*)fs;
 - (MFServerFS*)filesystemWithUUID:(NSString*)uuid;
+
+- (void)addMountedPath:(NSString*)path;
+- (void)removeMountedPath:(NSString*)path;
 
 @end
 

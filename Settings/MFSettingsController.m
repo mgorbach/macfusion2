@@ -16,12 +16,13 @@
 - (id) init
 {
 	self = [super init];
-	if (self != nil) {
+	if (self != nil) 
+	{
 		client = [MFClient sharedClient];
 		[client setDelegate: self];
-		if ([client establishCommunication])
+		if ([client setup])
 		{
-			[client fillInitialStatus];
+			
 		}
 		else
 		{
@@ -52,8 +53,10 @@
 							 action:@selector(editSelectedFilesystem:)
 					  keyEquivalent:@""];
 	
-	NSLog(@"Key equivalent value is %@", [mountButton keyEquivalent]);
-	[filesystemCollectionView setMenu: tableViewMenu];
+	NSTableColumn* c = [[filesystemTableView tableColumns] objectAtIndex: 0];
+	[c setDataCell: [[MFFilesystemCell alloc] init]];
+	[filesystemTableView setMenu: tableViewMenu];
+	[[filesystemTableView window] center];
 }
 
 # pragma mark Table Delegate Methods
@@ -97,12 +100,10 @@
 	}
 }
 
-- (NSCell *) tableView: (NSTableView *) tableView dataCellForTableColumn: (NSTableColumn *) tableColumn row: (NSInteger) row
-{
-    return [[MFFilesystemCell alloc] init];
-}
-
-- (void) tableView: (NSTableView *) tableView willDisplayCell: (NSCell*) cell forTableColumn: (NSTableColumn *) tableColumn row: (int) row
+- (void) tableView: (NSTableView *) tableView 
+   willDisplayCell: (NSCell*) cell 
+	forTableColumn: (NSTableColumn *) tableColumn 
+			   row: (int) row
 {
 	[cell setRepresentedObject: [[client filesystems] objectAtIndex: row]];
 }
@@ -114,17 +115,11 @@
 	MFClientPlugin* selectedPlugin = [[filesystemAddButton selectedItem]
 									  representedObject];
 	MFClientFS* fs = [client newFilesystemWithPlugin: selectedPlugin];
-	NSLog(@"fs %@", fs);
-	NSLog(@"list %@", [client filesystems]);
 	NSUInteger selectionIndex = [[client filesystems] indexOfObject: fs];
 	if (selectionIndex != NSNotFound)
 	{
 		[filesystemArrayController setSelectionIndex: selectionIndex];
-	}
-	else
-	{
-		NSLog(@"Failed to locate selection index for fs: %@",
-			  fs);
+		[self editSelectedFilesystem: self];
 	}
 }
 
@@ -201,12 +196,13 @@
 			[mySheetWindow setFrame: [editView frame] display:YES];
 			[mySheetWindow setContentSize: [editView frame].size];
 			[mySheetWindow setContentView: editView];
+			[fs beginEditing];
 
 			[NSApp beginSheet: mySheetWindow
 			   modalForWindow: parent
 				modalDelegate: self 
 			   didEndSelector: @selector(sheetDidEnd:)
-				  contextInfo: nil];
+				  contextInfo: fs];
 
 			
 		}
@@ -231,11 +227,34 @@
 
 - (void)filesystemEditOKClicked:(id)sender
 {
-	[NSApp endSheet: [sender window]];
+	MFClientFS* fs = [[filesystemArrayController selectedObjects]
+						objectAtIndex: 0];
+	
+	NSError* error = [fs endEditingAndCommitChanges: YES];
+	if (error)
+	{
+		[[filesystemTableView window] presentError: error
+							modalForWindow: [sender window]
+								  delegate: self
+								didPresentSelector: @selector(didPresentErrorWithRecovery: contextInfo:)
+							  contextInfo: nil ];
+	}
+	else
+	{
+		[NSApp endSheet: [sender window]];
+	}
+}
+
+- (void)didPresentErrorWithRecovery:(BOOL)recovered contextInfo:(id)context
+{
+	NSLog(@"PRESENTED OK!");
 }
 
 - (void)filesystemEditCancelClicked:(id)sender
 {
+	MFClientFS* fs = [[filesystemArrayController selectedObjects]
+					  objectAtIndex: 0];
+	[fs endEditingAndCommitChanges: NO];
 	[NSApp endSheet: [sender window]];
 }
 

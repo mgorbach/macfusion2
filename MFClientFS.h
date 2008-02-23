@@ -8,12 +8,15 @@
 
 #import <Cocoa/Cocoa.h>
 #import "MFFilesystem.h"
+#import "MFServerFSProtocol.h"
 
 @class MFClientPlugin;
 
 @interface MFClientFS : MFFilesystem {
-	id remoteFilesystem;
+	id<MFServerFSProtocol> remoteFilesystem;
 	MFClientPlugin* plugin;
+	NSDictionary* backupParameters;
+	BOOL isEditing;
 }
 
 + (MFClientFS*)clientFSWithRemoteFS:(id)remoteFS 
@@ -27,5 +30,10 @@
 // Notification handling
 - (void)handleStatusInfoChangedNotification:(NSNotification*)note;
 - (void)handleParametersChangedNotification:(NSNotification*)note;
+
+// Editing
+- (NSError*)endEditingAndCommitChanges:(BOOL)commit;
+- (void)beginEditing;
+- (NSDictionary*)displayDictionary;
 
 @end

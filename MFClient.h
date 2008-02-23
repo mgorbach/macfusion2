@@ -20,8 +20,7 @@
 }
 
 + (MFClient*)sharedClient;
-- (void)fillInitialStatus;
-- (BOOL)establishCommunication;
+- (BOOL)setup;
 
 - (NSArray*)filesystems;
 - (NSArray*)plugins;
