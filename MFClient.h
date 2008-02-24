@@ -8,6 +8,7 @@
 
 #import <Cocoa/Cocoa.h>
 #import "MFServerProtocol.h"
+
 @class MFClientFS, MFClientPlugin;
 
 @interface MFClient : NSObject {

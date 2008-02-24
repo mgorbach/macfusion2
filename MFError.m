@@ -37,19 +37,21 @@
 
 - (NSString*)localizedDescription
 {
-	if ( ![[self userInfo] objectForKey: NSLocalizedDescriptionKey ] && 
-		[[self userInfo] objectForKey: kMFErrorParameterKey])
+	NSString* paramName = [[self userInfo] objectForKey: kMFErrorParameterKey];
+	NSString* faliureReason = [[self userInfo] objectForKey: NSLocalizedFailureReasonErrorKey ];
+	if ( ![[self userInfo] objectForKey: NSLocalizedDescriptionKey ] &&  paramName)
 	{
+
 		if ([self code] == kMFErrorCodeMissingParameter)
 		{
-			return [NSString stringWithFormat: @"Missing required value for paramter %@",
-					[[self userInfo] objectForKey: kMFErrorParameterKey] ];
+			return [NSString stringWithFormat: @"Missing required value for %@",
+					 paramName ];
 		}
 		if ([self code] == kMFErrorInvalidParameterValue)
 		{
-			return [NSString stringWithFormat: @"Invalid value for parameter %@: %@",
+			return [NSString stringWithFormat: @"Invalid value for %@\n%@",
 					[[self userInfo] objectForKey: kMFErrorParameterKey],
-					[[self userInfo] objectForKey: NSLocalizedFailureReasonErrorKey ] ];
+					faliureReason ? faliureReason : @"" ];
 		}
 	}
 	

@@ -131,7 +131,7 @@
 		{
 			*error = [MFError invalidParameterValueErrorWithParameterName: kSSHFSPortParameter
 																	value: value
-															  description: @"Port must be positive number < 10000"];
+															  description: @"Must be positive number < 10000"];
 			return NO;
 		}
 	}

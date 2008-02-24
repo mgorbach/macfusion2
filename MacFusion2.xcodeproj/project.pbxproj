@@ -25,8 +25,8 @@
 			buildPhases = (
 			);
 			dependencies = (
+				D48DB9890D70D7BB008A62BB /* PBXTargetDependency */,
 				D4FC0DAB0CF23D0D0029B133 /* PBXTargetDependency */,
-				D4B656560D0CB01700ED34B3 /* PBXTargetDependency */,
 				D439D6490D0A06DD0025574A /* PBXTargetDependency */,
 				D4FC0DA90CF23D060029B133 /* PBXTargetDependency */,
 				D4FC0DA70CF23D040029B133 /* PBXTargetDependency */,
@@ -46,11 +46,7 @@
 		D403BD6F0D650D630049201D /* MFError.m in Sources */ = {isa = PBXBuildFile; fileRef = D403BD6D0D650D630049201D /* MFError.m */; };
 		D412AFC40D596E890091C12B /* MGUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = D412AFC20D596E890091C12B /* MGUtilities.m */; };
 		D412AFC60D596F4B0091C12B /* MGUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = D412AFC50D596F4B0091C12B /* MGUtilities.h */; };
-		D4386BB70D0B44070078C19F /* macfusionPrefs.xib in Resources */ = {isa = PBXBuildFile; fileRef = D4386BB60D0B44070078C19F /* macfusionPrefs.xib */; };
-		D4386BBB0D0B44D10078C19F /* MFPreferencePane.m in Sources */ = {isa = PBXBuildFile; fileRef = D4386BBA0D0B44D10078C19F /* MFPreferencePane.m */; };
-		D4386BC00D0B461A0078C19F /* PreferencePanes.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D4386BBF0D0B461A0078C19F /* PreferencePanes.framework */; };
 		D4386C0E0D0B472D0078C19F /* macfusionIcon.icns in CopyFiles */ = {isa = PBXBuildFile; fileRef = D4386C0B0D0B47240078C19F /* macfusionIcon.icns */; };
-		D4386C0F0D0B47340078C19F /* macfusionIcon.icns in Copy Resources */ = {isa = PBXBuildFile; fileRef = D4386C0B0D0B47240078C19F /* macfusionIcon.icns */; };
 		D439D5950D09E4390025574A /* MFServerProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = D439D5940D09E4390025574A /* MFServerProtocol.h */; };
 		D439D5980D09E4480025574A /* MFCommunicationServer.m in Sources */ = {isa = PBXBuildFile; fileRef = D439D5910D09E1510025574A /* MFCommunicationServer.m */; };
 		D439D6D60D0A0FDE0025574A /* sshfsConfiguration.xib in Resources */ = {isa = PBXBuildFile; fileRef = D439D6D50D0A0FDE0025574A /* sshfsConfiguration.xib */; };
@@ -62,6 +58,10 @@
 		D4656C8E0D6FD6DC00DE2208 /* sshfs.png in Resources */ = {isa = PBXBuildFile; fileRef = D4656C8C0D6FD6DC00DE2208 /* sshfs.png */; };
 		D4656C9F0D6FDBF900DE2208 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D4656C9E0D6FDBF900DE2208 /* QuartzCore.framework */; };
 		D46E4C0E0D02593B004926CE /* MFConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = D46E4C0D0D02593B004926CE /* MFConstants.m */; };
+		D48DB98A0D70D7C6008A62BB /* MFMenulingAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D48DB9740D70D73A008A62BB /* MFMenulingAppDelegate.m */; };
+		D48DB9B10D70D9D4008A62BB /* menulingMain.m in Sources */ = {isa = PBXBuildFile; fileRef = D48DB9AF0D70D968008A62BB /* menulingMain.m */; };
+		D48DB9E60D70DA28008A62BB /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = D48DB9A90D70D910008A62BB /* MainMenu.xib */; };
+		D48DBA520D70DF31008A62BB /* MFCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D4FC0C980CF128480029B133 /* MFCore.framework */; };
 		D49059750D35681F00E21C1E /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D49059740D35681F00E21C1E /* AppKit.framework */; };
 		D490597E0D35682D00E21C1E /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D49059740D35681F00E21C1E /* AppKit.framework */; };
 		D4905BD70D380B6B00E21C1E /* DiskArbitration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D4905BD60D380B6B00E21C1E /* DiskArbitration.framework */; };
@@ -76,8 +76,6 @@
 		D4B14EE30CE2468B003195A3 /* MFLoggingController.h in Headers */ = {isa = PBXBuildFile; fileRef = D4B14EE10CE2468B003195A3 /* MFLoggingController.h */; };
 		D4B14EE40CE2468B003195A3 /* MFLoggingController.m in Sources */ = {isa = PBXBuildFile; fileRef = D4B14EE20CE2468B003195A3 /* MFLoggingController.m */; };
 		D4B14FC20CE25A88003195A3 /* MFFilesystemController.m in Sources */ = {isa = PBXBuildFile; fileRef = D4B14FC10CE25A88003195A3 /* MFFilesystemController.m */; };
-		D4B656F70D0D02CE00ED34B3 /* MFCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D4FC0C980CF128480029B133 /* MFCore.framework */; };
-		D4B6572E0D0D056400ED34B3 /* MFCore.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = D4FC0C980CF128480029B133 /* MFCore.framework */; };
 		D4B657990D0DE41300ED34B3 /* MFClient.h in Headers */ = {isa = PBXBuildFile; fileRef = D4B657970D0DE41300ED34B3 /* MFClient.h */; };
 		D4B6579A0D0DE41300ED34B3 /* MFClient.m in Sources */ = {isa = PBXBuildFile; fileRef = D4B657980D0DE41300ED34B3 /* MFClient.m */; };
 		D4CEE0F30D3045590064042E /* MFClientFS.h in Headers */ = {isa = PBXBuildFile; fileRef = D4CEE0F10D3045580064042E /* MFClientFS.h */; };
@@ -114,6 +112,13 @@
 			remoteGlobalIDString = D4B14D6B0CE19545003195A3;
 			remoteInfo = mfctl;
 		};
+		D48DB9880D70D7BB008A62BB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D48DB97E0D70D7A4008A62BB /* MacfusionMenuling */;
+			remoteInfo = MacfusionMenuling;
+		};
 		D4B14C620CE044C5003195A3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
@@ -129,20 +134,6 @@
 			remoteInfo = "Plugin Install";
 		};
 		D4B14F240CE24F1A003195A3 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = D42E15540CE03A8200C81814;
-			remoteInfo = MFCore;
-		};
-		D4B656550D0CB01700ED34B3 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = D4386BB00D0B43B20078C19F;
-			remoteInfo = macfusionPreferences;
-		};
-		D4B656F30D0D02BC00ED34B3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
 			proxyType = 1;
@@ -204,17 +195,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 		};
-		D4386C070D0B46CF0078C19F /* Copy Resources */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 7;
-			files = (
-				D4386C0F0D0B47340078C19F /* macfusionIcon.icns in Copy Resources */,
-			);
-			name = "Copy Resources";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		D4B14C5E0CE044C0003195A3 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -223,17 +203,6 @@
 			files = (
 				D4FC0D1C0CF148720029B133 /* sshfs.mfplugin in CopyFiles */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		D4B657330D0D056800ED34B3 /* Copy Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				D4B6572E0D0D056400ED34B3 /* MFCore.framework in Copy Frameworks */,
-			);
-			name = "Copy Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		D4DB432E0D3EAEF500C99914 /* CopyFiles */ = {
@@ -263,10 +232,6 @@
 		D42E14540CDFCF9000C81814 /* MFFilesystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFFilesystem.h; sourceTree = "<group>"; };
 		D42E14550CDFCF9000C81814 /* MFFilesystem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MFFilesystem.m; sourceTree = "<group>"; };
 		D42E15560CE03A8200C81814 /* MFCore-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "MFCore-Info.plist"; sourceTree = "<group>"; };
-		D4386BB20D0B43B20078C19F /* macfusionPreferences-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "macfusionPreferences-Info.plist"; path = "../macfusionPreferences-Info.plist"; sourceTree = "<group>"; };
-		D4386BB60D0B44070078C19F /* macfusionPrefs.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = macfusionPrefs.xib; sourceTree = "<group>"; };
-		D4386BB90D0B44D10078C19F /* MFPreferencePane.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFPreferencePane.h; sourceTree = "<group>"; };
-		D4386BBA0D0B44D10078C19F /* MFPreferencePane.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MFPreferencePane.m; sourceTree = "<group>"; };
 		D4386BBF0D0B461A0078C19F /* PreferencePanes.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PreferencePanes.framework; path = /System/Library/Frameworks/PreferencePanes.framework; sourceTree = "<absolute>"; };
 		D4386C0A0D0B46EE0078C19F /* macfusion.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = macfusion.tiff; path = Images/macfusion.tiff; sourceTree = "<group>"; };
 		D4386C0B0D0B47240078C19F /* macfusionIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = macfusionIcon.icns; path = Images/macfusionIcon.icns; sourceTree = "<group>"; };
@@ -284,6 +249,12 @@
 		D4656C8C0D6FD6DC00DE2208 /* sshfs.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = sshfs.png; sourceTree = "<group>"; };
 		D4656C9E0D6FDBF900DE2208 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = /System/Library/Frameworks/QuartzCore.framework; sourceTree = "<absolute>"; };
 		D46E4C0D0D02593B004926CE /* MFConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MFConstants.m; sourceTree = "<group>"; };
+		D48DB9730D70D73A008A62BB /* MFMenulingAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFMenulingAppDelegate.h; sourceTree = "<group>"; };
+		D48DB9740D70D73A008A62BB /* MFMenulingAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MFMenulingAppDelegate.m; sourceTree = "<group>"; };
+		D48DB97F0D70D7A4008A62BB /* MacfusionMenuling.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MacfusionMenuling.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D48DB9810D70D7A4008A62BB /* MacfusionMenuling-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "MacfusionMenuling-Info.plist"; path = "../MacfusionMenuling-Info.plist"; sourceTree = "<group>"; };
+		D48DB9A90D70D910008A62BB /* MainMenu.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MainMenu.xib; sourceTree = "<group>"; };
+		D48DB9AF0D70D968008A62BB /* menulingMain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = menulingMain.m; sourceTree = "<group>"; };
 		D49059740D35681F00E21C1E /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		D4905BD60D380B6B00E21C1E /* DiskArbitration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DiskArbitration.framework; path = /System/Library/Frameworks/DiskArbitration.framework; sourceTree = "<absolute>"; };
 		D4905C310D393F8300E21C1E /* MFClientPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFClientPlugin.h; sourceTree = "<group>"; };
@@ -324,7 +295,6 @@
 		D4DB43740D3EB6A100C99914 /* main.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = main.xib; sourceTree = "<group>"; };
 		D4DB45D20D3FEBE300C99914 /* MFFilesystemCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFFilesystemCell.h; sourceTree = "<group>"; };
 		D4DB45D30D3FEBE300C99914 /* MFFilesystemCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MFFilesystemCell.m; sourceTree = "<group>"; };
-		D4F147B40D6A0B6C00C45D81 /* macfusionPreferences.prefpane */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = macfusionPreferences.prefpane; sourceTree = BUILT_PRODUCTS_DIR; };
 		D4F499ED0D52601B00CDA4A9 /* SSHFSDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSHFSDelegate.h; sourceTree = "<group>"; };
 		D4F499EE0D52601B00CDA4A9 /* SSHFSDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSHFSDelegate.m; sourceTree = "<group>"; };
 		D4F499F00D52609400CDA4A9 /* MFFSDelegateProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFFSDelegateProtocol.h; sourceTree = "<group>"; };
@@ -352,12 +322,11 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		D4386BAF0D0B43B20078C19F /* Frameworks */ = {
+		D48DB97D0D70D7A4008A62BB /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D4B656F70D0D02CE00ED34B3 /* MFCore.framework in Frameworks */,
-				D4386BC00D0B461A0078C19F /* PreferencePanes.framework in Frameworks */,
+				D48DBA520D70DF31008A62BB /* MFCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -392,7 +361,6 @@
 		08FB7794FE84155DC02AAC07 /* macfusiond */ = {
 			isa = PBXGroup;
 			children = (
-				D4656C9E0D6FDBF900DE2208 /* QuartzCore.framework */,
 				D4386C060D0B46CF0078C19F /* Resources */,
 				D4B14EE00CE24671003195A3 /* Shared */,
 				D4E5200C0CE03B82009B1A30 /* Server */,
@@ -418,6 +386,7 @@
 		08FB779DFE84155DC02AAC07 /* External Frameworks and Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				D4656C9E0D6FDBF900DE2208 /* QuartzCore.framework */,
 				D4905BD60D380B6B00E21C1E /* DiskArbitration.framework */,
 				D49059740D35681F00E21C1E /* AppKit.framework */,
 				D4386BBF0D0B461A0078C19F /* PreferencePanes.framework */,
@@ -462,15 +431,17 @@
 			name = Images;
 			sourceTree = "<group>";
 		};
-		D439D5310D090E040025574A /* Prefpane */ = {
+		D48DB9720D70D70C008A62BB /* Menuling */ = {
 			isa = PBXGroup;
 			children = (
-				D4386BB60D0B44070078C19F /* macfusionPrefs.xib */,
-				D4386BB90D0B44D10078C19F /* MFPreferencePane.h */,
-				D4386BBA0D0B44D10078C19F /* MFPreferencePane.m */,
-				D4386BB20D0B43B20078C19F /* macfusionPreferences-Info.plist */,
+				D48DB9810D70D7A4008A62BB /* MacfusionMenuling-Info.plist */,
+				D48DB9730D70D73A008A62BB /* MFMenulingAppDelegate.h */,
+				D48DB9740D70D73A008A62BB /* MFMenulingAppDelegate.m */,
+				D48DB9A90D70D910008A62BB /* MainMenu.xib */,
+				D48DB9AF0D70D968008A62BB /* menulingMain.m */,
 			);
-			path = Prefpane;
+			name = Menuling;
+			path = menuling;
 			sourceTree = "<group>";
 		};
 		D4905BAA0D38061F00E21C1E /* Protocols */ = {
@@ -514,7 +485,7 @@
 				D4FC0C980CF128480029B133 /* MFCore.framework */,
 				D439D4370D05D58D0025574A /* macfusionAgent */,
 				D4DB42040D3E863100C99914 /* MacfusionSettings.app */,
-				D4F147B40D6A0B6C00C45D81 /* macfusionPreferences.prefpane */,
+				D48DB97F0D70D7A4008A62BB /* MacfusionMenuling.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -620,9 +591,9 @@
 		D4E5200E0CE03B9D009B1A30 /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				D48DB9720D70D70C008A62BB /* Menuling */,
 				D4DB41FF0D3E860400C99914 /* Settings */,
 				D4B14D660CE19514003195A3 /* Console */,
-				D439D5310D090E040025574A /* Prefpane */,
 			);
 			name = UI;
 			sourceTree = "<group>";
@@ -708,25 +679,22 @@
 			productReference = D4FC0C980CF128480029B133 /* MFCore.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		D4386BB00D0B43B20078C19F /* macfusionPreferences */ = {
+		D48DB97E0D70D7A4008A62BB /* MacfusionMenuling */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = D4386BB50D0B43B20078C19F /* Build configuration list for PBXNativeTarget "macfusionPreferences" */;
+			buildConfigurationList = D48DB9840D70D7A5008A62BB /* Build configuration list for PBXNativeTarget "MacfusionMenuling" */;
 			buildPhases = (
-				D4386BAD0D0B43B20078C19F /* Resources */,
-				D4386BAE0D0B43B20078C19F /* Sources */,
-				D4386BAF0D0B43B20078C19F /* Frameworks */,
-				D4386C070D0B46CF0078C19F /* Copy Resources */,
-				D4B657330D0D056800ED34B3 /* Copy Frameworks */,
+				D48DB97B0D70D7A4008A62BB /* Resources */,
+				D48DB97C0D70D7A4008A62BB /* Sources */,
+				D48DB97D0D70D7A4008A62BB /* Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				D4B656F40D0D02BC00ED34B3 /* PBXTargetDependency */,
 			);
-			name = macfusionPreferences;
-			productName = macfusionPreferences;
-			productReference = D4F147B40D6A0B6C00C45D81 /* macfusionPreferences.prefpane */;
-			productType = "com.apple.product-type.bundle";
+			name = MacfusionMenuling;
+			productName = MacfusionMenuling;
+			productReference = D48DB97F0D70D7A4008A62BB /* MacfusionMenuling.app */;
+			productType = "com.apple.product-type.application";
 		};
 		D4B14BB50CE03CC3003195A3 /* sshfs */ = {
 			isa = PBXNativeTarget;
@@ -795,12 +763,12 @@
 			targets = (
 				8DD76F960486AA7600D96B5E /* macfusionAgent */,
 				D42E15540CE03A8200C81814 /* MFCore */,
-				D4B14BB50CE03CC3003195A3 /* sshfs */,
-				D4386BB00D0B43B20078C19F /* macfusionPreferences */,
-				D4B14C5F0CE044C0003195A3 /* Plugin Install */,
 				D4B14D6B0CE19545003195A3 /* mfctl */,
+				D4B14BB50CE03CC3003195A3 /* sshfs */,
+				D4B14C5F0CE044C0003195A3 /* Plugin Install */,
 				D4FC0DA30CF23CFE0029B133 /* All */,
 				D4DB42030D3E863100C99914 /* MacfusionSettings */,
+				D48DB97E0D70D7A4008A62BB /* MacfusionMenuling */,
 			);
 		};
 /* End PBXProject section */
@@ -815,11 +783,11 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		D4386BAD0D0B43B20078C19F /* Resources */ = {
+		D48DB97B0D70D7A4008A62BB /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D4386BB70D0B44070078C19F /* macfusionPrefs.xib in Resources */,
+				D48DB9E60D70DA28008A62BB /* MainMenu.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -878,11 +846,12 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		D4386BAE0D0B43B20078C19F /* Sources */ = {
+		D48DB97C0D70D7A4008A62BB /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D4386BBB0D0B44D10078C19F /* MFPreferencePane.m in Sources */,
+				D48DB98A0D70D7C6008A62BB /* MFMenulingAppDelegate.m in Sources */,
+				D48DB9B10D70D9D4008A62BB /* menulingMain.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -925,6 +894,11 @@
 			target = D4B14D6B0CE19545003195A3 /* mfctl */;
 			targetProxy = D439D6480D0A06DD0025574A /* PBXContainerItemProxy */;
 		};
+		D48DB9890D70D7BB008A62BB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D48DB97E0D70D7A4008A62BB /* MacfusionMenuling */;
+			targetProxy = D48DB9880D70D7BB008A62BB /* PBXContainerItemProxy */;
+		};
 		D4B14C630CE044C5003195A3 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = D4B14BB50CE03CC3003195A3 /* sshfs */;
@@ -939,16 +913,6 @@
 			isa = PBXTargetDependency;
 			target = D42E15540CE03A8200C81814 /* MFCore */;
 			targetProxy = D4B14F240CE24F1A003195A3 /* PBXContainerItemProxy */;
-		};
-		D4B656560D0CB01700ED34B3 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = D4386BB00D0B43B20078C19F /* macfusionPreferences */;
-			targetProxy = D4B656550D0CB01700ED34B3 /* PBXContainerItemProxy */;
-		};
-		D4B656F40D0D02BC00ED34B3 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = D42E15540CE03A8200C81814 /* MFCore */;
-			targetProxy = D4B656F30D0D02BC00ED34B3 /* PBXContainerItemProxy */;
 		};
 		D4D6A11F0D03548100BC2E2D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -1046,18 +1010,17 @@
 			};
 			name = Release;
 		};
-		D4386BB30D0B43B20078C19F /* Release */ = {
+		D48DB9820D70D7A4008A62BB /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_ENABLE_OBJC_GC = required;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
-				INFOPLIST_FILE = "macfusionPreferences-Info.plist";
-				INSTALL_PATH = "$(HOME)/Library/Bundles";
+				INFOPLIST_FILE = "MacfusionMenuling-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -1065,25 +1028,25 @@
 					AppKit,
 				);
 				PREBINDING = NO;
-				PRODUCT_NAME = macfusionPreferences;
-				WRAPPER_EXTENSION = prefpane;
+				PRODUCT_NAME = MacfusionMenuling;
+				WRAPPER_EXTENSION = app;
 				ZERO_LINK = NO;
 			};
 			name = Release;
 		};
-		D4386BB40D0B43B20078C19F /* Debug */ = {
+		D48DB9830D70D7A4008A62BB /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				GCC_ENABLE_OBJC_GC = required;
+				GCC_ENABLE_OBJC_GC = supported;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
-				INFOPLIST_FILE = "macfusionPreferences-Info.plist";
-				INSTALL_PATH = "$(HOME)/Library/Bundles";
+				INFOPLIST_FILE = "MacfusionMenuling-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -1091,8 +1054,8 @@
 					AppKit,
 				);
 				PREBINDING = NO;
-				PRODUCT_NAME = macfusionPreferences;
-				WRAPPER_EXTENSION = prefpane;
+				PRODUCT_NAME = MacfusionMenuling;
+				WRAPPER_EXTENSION = app;
 				ZERO_LINK = YES;
 			};
 			name = Debug;
@@ -1385,11 +1348,11 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		D4386BB50D0B43B20078C19F /* Build configuration list for PBXNativeTarget "macfusionPreferences" */ = {
+		D48DB9840D70D7A5008A62BB /* Build configuration list for PBXNativeTarget "MacfusionMenuling" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				D4386BB30D0B43B20078C19F /* Release */,
-				D4386BB40D0B43B20078C19F /* Debug */,
+				D48DB9820D70D7A4008A62BB /* Release */,
+				D48DB9830D70D7A4008A62BB /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

@@ -4,27 +4,25 @@
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
+	<key>CFBundleDocumentTypes</key>
+	<array/>
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
 	<key>CFBundleIdentifier</key>
-	<string>org.mgorbach.macfusion.prefpane</string>
+	<string>org.mgorbach.macfusion.MacfusionMenuling</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
-	<key>CFBundleName</key>
-	<string>Macfusion Preferences</string>
 	<key>CFBundlePackageType</key>
-	<string>BNDL</string>
+	<string>APPL</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>1.0</string>
+	<key>LSUIElement</key>
+	<true/>
 	<key>NSMainNibFile</key>
-	<string>macfusionPrefs</string>
-	<key>NSPrefPaneIconFile</key>
-	<string>macfusionIcon</string>
-	<key>NSPrefPaneIconLabel</key>
-	<string>Macfusion</string>
+	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
-	<string>MFPreferencePane</string>
+	<string>NSApplication</string>
 </dict>
 </plist>
