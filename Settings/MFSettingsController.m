@@ -10,7 +10,7 @@
 #import "MFClient.h"
 #import "MFClientFS.h"
 #import "MFFilesystemCell.h"
-#import "TestView.h"
+
 
 @implementation MFSettingsController
 - (id) init
@@ -26,11 +26,13 @@
 		}
 		else
 		{
-			[[NSAlert alertWithMessageText:@"Could not connect to macfusion agent."
+			NSAlert* alert = [NSAlert alertWithMessageText:@"Could not connect to macfusion agent."
 							defaultButton:@"OK"
 						  alternateButton:@""
 							  otherButton:@""
-				informativeTextWithFormat:@"Macfusion settings will now quit."] runModal];
+								 informativeTextWithFormat:@"Macfusion settings will now quit."];
+			[alert setAlertStyle: NSCriticalAlertStyle];
+			[alert runModal];
 			[NSApp terminate:self];
 		}
 	}

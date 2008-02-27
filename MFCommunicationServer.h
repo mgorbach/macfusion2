@@ -13,7 +13,7 @@
 
 @interface MFCommunicationServer : NSObject <MFServerProtocol>
 {
-	
+	NSError* recentError;
 }
 
 + (MFCommunicationServer*)sharedServer;
@@ -21,5 +21,6 @@
 - (MFFilesystemController*)filesystemController;
 - (MFPluginController*)pluginController;
 - (void)startServingRunloop;
+- (NSError*)recentError;
 
 @end

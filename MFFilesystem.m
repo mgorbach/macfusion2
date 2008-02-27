@@ -77,8 +77,7 @@
 {
 	if (status)
 	{
-		[statusInfo setObject:status
-					   forKey:kMFSTStatusKey];
+		[statusInfo setObject:status forKey:kMFSTStatusKey];
 	}
 }
 
@@ -111,7 +110,6 @@
 		return delegateValue;
 	}
 	
-	NSLog(@"FIND IMPLIED %@", paramName);
 	if ([paramName isEqualToString: kMFFSVolumeNameParameter])
 	{
 		return [parameters objectForKey: kMFFSNameParameter] ?
@@ -192,6 +190,9 @@
 
 - (NSString*)descriptionString
 {
+	if ([parameters objectForKey: kMFFSDescriptionParameter ])
+		return [parameters objectForKey: kMFFSDescriptionParameter ];
+	
 	NSString* delegateDescription = [delegate descriptionForParameters: 
 						  [self parametersWithImpliedValues]];
 	return delegateDescription ? delegateDescription : @"No description";
@@ -211,6 +212,11 @@
 - (NSString*)filePath
 {
 	return [self valueForParameterNamed: kMFFSFilePathParameter];
+}
+
+- (NSError*)error
+{
+	return [statusInfo objectForKey: kMFSTErrorKey ];
 }
 
 @end

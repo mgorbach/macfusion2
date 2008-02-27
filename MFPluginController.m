@@ -89,7 +89,6 @@ static MFPluginController* sharedController = nil;
 
 - (void)loadPlugins
 {
-	MFLogS(self, @"Plugins being loaded. Searching...");
 	NSArray* pluginBundlePaths = [self pathsToPluginBundles];
 	for(NSString* path in pluginBundlePaths)
 	{

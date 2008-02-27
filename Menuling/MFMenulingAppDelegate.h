@@ -7,11 +7,12 @@
 //
 
 #import <Cocoa/Cocoa.h>
-@class MFClient;
+@class MFClient, MFQuickMountController;
 
 @interface MFMenulingAppDelegate : NSObject {
 	NSStatusItem* statusItem;
 	MFClient* client;
+	MFQuickMountController* qmController;
 }
 
 @end

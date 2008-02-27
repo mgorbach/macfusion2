@@ -10,11 +10,16 @@
 #import "MFClientFS.h"
 #import "MFClientPlugin.h"
 #import "MFConstants.h"
+#import "MFClientRecent.h"
 
 @interface MFClient(PrivateAPI)
 - (void)storeFilesystem:(MFClientFS*)fs;
 - (void)storePlugin:(MFClientPlugin*)plugin;
 - (void)removeFilesystem:(MFClientFS*)fs;
+
+@property(readwrite, retain) NSMutableArray* filesystems;
+@property(readwrite, retain) NSMutableArray* plugins;
+@property(readwrite, retain) NSMutableArray* recents;
 @end
 
 @implementation MFClient
@@ -31,6 +36,16 @@ static MFClient* sharedClient = nil;
 	
 	return sharedClient;
 }
+
++ (NSSet*)keyPathsForValuesAffectingValueForKey:(NSString*)key
+{
+	if ([key isEqualToString:@"persistentFilesystems"]
+		|| [key isEqualToString:@"mountedFilesystems"])
+		return [NSSet setWithObject:@"filesystems"];
+	else
+		return [super keyPathsForValuesAffectingValueForKey: key];
+}
+
 
 + (MFClient*)allocWithZone:(NSZone*)zone
 {
@@ -59,6 +74,10 @@ static MFClient* sharedClient = nil;
 			selector:@selector(handleFilesystemRemovedNotification:)
 				name:kMFFilesystemRemovedNotification 
 			  object:kMFDNCObject];
+	[dnc addObserver:self
+			selector:@selector(handleRecentsUpdatedNotification:)
+				name:kMFRecentsUpdatedNotification 
+			  object:kMFDNCObject];
 }
 
 - (id) init
@@ -68,6 +87,7 @@ static MFClient* sharedClient = nil;
 		[self registerForGeneralNotifications];
 		filesystems = [NSMutableArray array];
 		plugins = [NSMutableArray array];
+		recents = [NSMutableArray array];
 	}
 	return self;
 }
@@ -96,6 +116,12 @@ static MFClient* sharedClient = nil;
 											 clientPlugin: plugin];
 		[self storeFilesystem: fs];
 	}
+	
+	// Fill Recents
+	NSMutableArray* recentsFromServer = [[server recents] mutableCopy];
+	for (NSDictionary* recent in recentsFromServer)
+		[[self mutableArrayValueForKey:@"recents"] addObject:
+		 [[MFClientRecent alloc] initWithParameterDictionary: recent]];
 }
 
 - (BOOL)establishCommunication
@@ -139,15 +165,13 @@ static MFClient* sharedClient = nil;
 {
 	NSDictionary* info = [note userInfo];
 	NSString* uuid = [info objectForKey:  KMFFSUUIDParameter];
-	MFLogS(self, @"Filesystem Added: uuid %@",
-		   uuid);
+ 
 	id remoteFilesystem = [server filesystemWithUUID: uuid];
 	if (![self filesystemWithUUID:uuid])
 	{
 		MFClientPlugin* plugin = [pluginsDictionary objectForKey: [remoteFilesystem pluginID]];
 		MFClientFS* fs = [MFClientFS clientFSWithRemoteFS:remoteFilesystem
 											 clientPlugin:plugin];
-		
 		
 		[self storeFilesystem:fs ];
 	}
@@ -157,8 +181,6 @@ static MFClient* sharedClient = nil;
 {
 	NSDictionary* info = [note userInfo];
 	NSString* uuid = [info objectForKey: KMFFSUUIDParameter];
-	MFLogS(self, @"Filesystem Deleted: uuid %@",
-		   uuid);
 	MFClientFS* fs = [self filesystemWithUUID: uuid];
 	[self removeFilesystem:fs];
 }
@@ -174,7 +196,56 @@ static MFClient* sharedClient = nil;
 	return newFS;
 }
 
-#pragma Accessors and Setters
+- (MFClientFS*)quickMountFilesystemWithURL:(NSURL*)url
+									 error:(NSError**)error
+{
+	id remoteFS = [server quickMountWithURL:url];
+	if (!remoteFS)
+	{
+		NSError* serverError = [server recentError];
+		if (serverError)
+			*error = serverError;
+		return nil;
+	}
+	else
+	{
+		if ([self filesystemWithUUID:[remoteFS uuid]])
+		{
+			return [self filesystemWithUUID: [remoteFS uuid]];
+		}
+		
+		MFClientPlugin* plugin = [self pluginWithID: [remoteFS pluginID]];
+		MFClientFS* newFS = [[MFClientFS alloc] initWithRemoteFS: remoteFS
+													clientPlugin: plugin ];
+		[self storeFilesystem: newFS];
+		return newFS;
+	}
+}
+
+#pragma mark Recents
+- (void)handleRecentsUpdatedNotification:(NSNotification*)note
+{
+	NSDictionary* recentParameterDict = [[note userInfo] objectForKey: kMFRecentKey ];
+	[[self mutableArrayValueForKey:@"recents"] addObject: 
+	 [[MFClientRecent alloc] initWithParameterDictionary: recentParameterDict ]];
+	
+	if ([[self recents] count] > 10)
+		[[self mutableArrayValueForKey:@"recents"] removeObjectAtIndex: 0];
+}
+
+#pragma mark Accessors and Setters
+
+- (NSArray*)persistentFilesystems
+{
+	return [self.filesystems filteredArrayUsingPredicate:
+			[NSPredicate predicateWithFormat:@"self.isPersistent == YES"]];
+}
+
+- (NSArray*)mountedFilesystems
+{
+	return [self.filesystems filteredArrayUsingPredicate:
+			[NSPredicate predicateWithFormat:@"self.isMounted == YES"]];
+}
 
 - (void)storePlugin:(MFClientPlugin*)plugin
 {
@@ -182,13 +253,8 @@ static MFClient* sharedClient = nil;
 	[pluginsDictionary setObject: plugin forKey: plugin.ID ];
 	if ([plugins indexOfObject: plugin] == NSNotFound)
 	{
-		[self willChange:NSKeyValueChangeInsertion
-		 valuesAtIndexes: [NSIndexSet indexSetWithIndex: [plugins count]]
-				  forKey:@"plugins"];
-		[plugins addObject: plugin];
-		[self didChange:NSKeyValueChangeInsertion
-		 valuesAtIndexes: [NSIndexSet indexSetWithIndex: [plugins count]]
-				  forKey:@"plugins"];
+		[[self mutableArrayValueForKey:@"plugins"]
+		 addObject: plugin];
 	}
 }
 
@@ -199,13 +265,8 @@ static MFClient* sharedClient = nil;
 							  forKey: fs.uuid];
 	if ([filesystems indexOfObject: fs] == NSNotFound)
 	{
-		[self willChange:NSKeyValueChangeInsertion
-		 valuesAtIndexes: [NSIndexSet indexSetWithIndex: [filesystems count]]
-				  forKey:@"filesystems"];
-		[filesystems addObject: fs];
-		[self didChange:NSKeyValueChangeInsertion
-		 valuesAtIndexes: [NSIndexSet indexSetWithIndex: [filesystems count]]
-				  forKey:@"filesystems"];
+		[[self mutableArrayValueForKey:@"filesystems"]
+		 addObject: fs];
 	}
 }
 
@@ -215,13 +276,8 @@ static MFClient* sharedClient = nil;
 	[filesystemsDictionary removeObjectForKey: fs.uuid];
 	if ([filesystems indexOfObject:fs] != NSNotFound)
 	{
-		[self willChange:NSKeyValueChangeRemoval
-		 valuesAtIndexes:[NSIndexSet indexSetWithIndex:[filesystems indexOfObject: fs]]
-				  forKey:@"filesystems"];
-		[filesystems removeObject: fs];
-		[self didChange:NSKeyValueChangeRemoval
-		 valuesAtIndexes:[NSIndexSet indexSetWithIndex:[filesystems indexOfObject: fs]]
-				 forKey:@"filesystems"];
+		[[self mutableArrayValueForKey:@"filesystems"]
+		 removeObject: fs];
 	}
 }
 
@@ -238,15 +294,5 @@ static MFClient* sharedClient = nil;
 	return [pluginsDictionary objectForKey:id];
 }
 
-- (NSArray*)plugins
-{
-	return (NSArray*)plugins;
-}
-
-- (NSArray*)filesystems
-{
-	return (NSArray*)filesystems;
-}
-
-@synthesize delegate;
+@synthesize delegate, filesystems, plugins, recents;
 @end

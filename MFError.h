@@ -19,4 +19,7 @@
 												  value:(id)value
 											description:(NSString*)description;
 
++ (MFError*)errorWithErrorCode:(NSInteger)code 
+				   description:(NSString*)description;
+
 @end

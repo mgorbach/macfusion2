@@ -83,9 +83,7 @@
 			return fs;
 		}
 		else
-		{
-			MFLogS(self, @"Validation failed on fs at path %@. Parameters %@", path,
-				   fs.parameters);				   
+		{		   
 			*error = validationError;
 			return nil;
 			
@@ -98,10 +96,45 @@
 								   [NSString stringWithFormat: @"File at path %@", path],
 								   NSLocalizedRecoverySuggestionErrorKey, nil];
 		*error = [NSError errorWithDomain: kMFErrorDomain
-									 code: kMFErrorInvalidParameterValue
+									 code: kMFErrorCodeInvalidParameterValue
 								 userInfo: errorDict ];
 		return nil;
 	}
+}
+
+
++ (MFServerFS*)filesystemFromURL:(NSURL*)url
+						  plugin:(MFServerPlugin*)p
+						   error:(NSError**)error
+{
+	NSMutableDictionary* params = [[[p delegate] parameterDictionaryForURL: url 
+																	 error: error] 
+								   mutableCopy];
+	if (!params) 
+	{
+		NSLog(@"ERROR DETECTED %@", params);
+		return nil;
+	}
+	[params setValue: [NSNumber numberWithBool: NO] 
+			  forKey: kMFFSPersistentParameter ];
+	[params setValue: p.ID
+			  forKey: kMFFSTypeParameter ];
+	[params setValue: [NSString stringWithFormat: @"%@", url]
+			  forKey: kMFFSDescriptionParameter ];
+	MFServerFS* fs = [[MFServerFS alloc] initWithParameters: params
+													 plugin: p];
+	NSError* validationError;
+	BOOL ok = [fs validateParametersWithError: &validationError];
+	if (!ok)
+	{
+		error = &validationError;
+		return nil;
+	}
+	else
+	{
+		return fs;
+	}
+	
 }
 
 - (MFServerFS*)initWithParameters:(NSDictionary*)params 
@@ -409,12 +442,10 @@
 									 error: error];
 	if (!ok) // Delegate didn't validate
 	{
-		NSLog(@"DELEGATE VALIDATE FAIL");
 		return NO;
 	}
 	else
 	{
-		NSLog(@"DELEGATE VALIDATE OK");
 		// Continue validation for general macfusion keys
 		if (![impliedParams objectForKey: kMFFSVolumeNameParameter])
 		{
@@ -524,8 +555,9 @@
 
 - (void)handleMountTimeout:(NSTimer*)timer
 {
-	if (self.status != kMFStatusFSUnmounted && self.status != kMFStatusFSMounted)
-		self.status = kMFStatusFSFailed;
+	if (![self isUnmounted] && ![self isMounted])
+		if (![self isFailedToMount])
+			self.status = kMFStatusFSFailed;
 }
 
 # pragma mark Write out
@@ -533,7 +565,6 @@
 {
 	if  ([self isPersistent])
 	{
-		NSLog(@"Writing out %@", [self parametersWithImpliedValues]);
 		NSString* dirPath = [@"~/Library/Application Support/Macfusion/Filesystems"
 							 stringByExpandingTildeInPath];
 		
@@ -555,6 +586,43 @@
 		NSString* path = [self valueForParameterNamed: kMFFSFilePathParameter ];
 		[parameters writeToFile: [dirPath stringByAppendingFormat: @"/%@.macfusion", path]
 					 atomically: YES];
+	}
+}
+
+- (NSError*)errorForFaliure
+{
+	NSDictionary* dictionary = [NSDictionary dictionaryWithObjectsAndKeys: 
+								self.uuid, kMFErrorFilesystemKey,
+								@"Mount has failed.", NSLocalizedDescriptionKey,
+								nil];
+	return [MFError errorWithDomain: kMFErrorDomain
+							   code: kMFErrorCodeMountFaliure
+						   userInfo: dictionary];
+}
+
+
+#pragma mark Accessors and Setters
+- (void)setStatus:(NSString*)newStatus
+{
+	if (newStatus)
+	{
+		[statusInfo setObject: newStatus forKey:kMFSTStatusKey ];
+		if( [newStatus isEqualToString: kMFStatusFSFailed] )
+		{
+			// Hack this a bit so that we can set an error on faliure
+			NSError* error = nil;
+			if ([delegate respondsToSelector:@selector(errorForParameters:output:)] &&
+				(error = [delegate errorForParameters:[self parametersWithImpliedValues] 
+									  output:[statusInfo objectForKey: kMFSTOutputKey]]) && error)
+			{
+			}
+			else
+			{
+				error = [self errorForFaliure];
+			}
+			
+			[statusInfo setObject: error forKey:kMFSTErrorKey ];
+		}
 	}
 }
 

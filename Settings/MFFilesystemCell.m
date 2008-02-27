@@ -10,22 +10,11 @@
 #import "MFClientFS.h"
 #import "MFConstants.h"
 #import <QuartzCore/QuartzCore.h>
+#import "MGNSImage.h"
 
 #define IMAGE_SIZE 48
 
 @implementation MFFilesystemCell
-
-static CGColorRef CGColorCreateFromNSColor (CGColorSpaceRef  colorSpace, NSColor *color)
-{
-	NSColor *deviceColor = [color colorUsingColorSpaceName:  
-							NSDeviceRGBColorSpace];
-	
-	float components[4];
-	[deviceColor getRed: &components[0] green: &components[1] blue:  
-	 &components[2] alpha: &components[3]];
-	
-	return CGColorCreate (colorSpace, components);
-}
 
 - (NSColor*)tintColor
 {
@@ -42,41 +31,19 @@ static CGColorRef CGColorCreateFromNSColor (CGColorSpaceRef  colorSpace, NSColor
 	return nil;
 }
 
-- (CIImage*)iconToDraw
+- (NSImage*)iconToDraw
 {
 	MFClientFS* fs = [self representedObject];
+	
 	NSImage* icon = [[NSImage alloc] initWithContentsOfFile: 
 					 fs.iconPath];
-	CIImage* iconCI = [[CIImage alloc] initWithContentsOfURL: [NSURL fileURLWithPath: fs.iconPath]];
-	
-	// Scale
-	CIFilter* scalingFilter = [CIFilter filterWithName: @"CILanczosScaleTransform"];
-	[scalingFilter setValue: iconCI forKey:@"inputImage"];
-	[scalingFilter setValue: [NSNumber numberWithFloat: IMAGE_SIZE / [icon size].height]
-					 forKey:@"inputScale"];
-	[scalingFilter setValue: [NSNumber numberWithFloat: 1.0]
-					 forKey:@"inputAspectRatio"];
-	iconCI = [scalingFilter valueForKey:@"outputImage"];
-	
-	CIFilter* coloringFilter =  [CIFilter filterWithName: @"CIColorMonochrome"];
-	[coloringFilter setDefaults];
-	CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-	CGColorRef cgcolor = CGColorCreateFromNSColor( colorSpace, [self tintColor] );
-	[coloringFilter setValue: [CIColor colorWithCGColor:cgcolor]
-					  forKey: @"inputColor"];
-	[coloringFilter setValue:[NSNumber numberWithFloat:0.4] forKey:@"inputIntensity"];
-	[coloringFilter setValue: iconCI forKey:@"inputImage"];
-	iconCI = [coloringFilter valueForKey:@"outputImage"];
-	
-	// Transform (Flip)
-	CIFilter* transform = [CIFilter filterWithName:@"CIAffineTransform"];
-	[transform setValue: iconCI forKey:@"inputImage"];
-	NSAffineTransform *affineTransform = [NSAffineTransform transform];
-	[affineTransform translateXBy:0 yBy:IMAGE_SIZE];
-	[affineTransform scaleXBy:1 yBy:-1];
-	[transform setValue:affineTransform forKey:@"inputTransform"];
-	iconCI =  [transform valueForKey:@"outputImage"];
-	return iconCI;
+	CIImage* ciImageIcon = [icon ciImageRepresentation];
+	CIImage* scaledImage = [ciImageIcon ciImageByScalingToSize: NSMakeSize(IMAGE_SIZE, IMAGE_SIZE) ];
+	CIImage* coloredImage = [scaledImage ciImageByColoringMonochromeWithColor: [self tintColor]
+																	intenisty: [NSNumber numberWithFloat: 0.4] ];
+
+	return [coloredImage nsImageRepresentation];
+//	return [icon imageScaledToSize: NSMakeSize(IMAGE_SIZE, IMAGE_SIZE)];
 }
 
 - (void)drawInteriorWithFrame:(NSRect)cellFrame inView:(NSView*)controlView
@@ -133,10 +100,9 @@ static CGColorRef CGColorCreateFromNSColor (CGColorSpaceRef  colorSpace, NSColor
 	}
 	
 	[[NSGraphicsContext currentContext] setImageInterpolation: NSImageInterpolationHigh];
-//	[icon drawInRect: iconBox fromRect:NSZeroRect operation:NSCompositeSourceOver fraction:1.0];
-	CIImage* outputIcon = [self iconToDraw];
-	CIContext* context = [[NSGraphicsContext currentContext] CIContext];
-	[context drawImage: outputIcon atPoint:NSPointToCGPoint(iconBox.origin) fromRect:CGRectMake(0, 0, iconSize.width, iconSize.height)];
+
+	NSImage* outputIcon = [controlView isFlipped] ? [[self iconToDraw] flippedImage] : [self iconToDraw];
+	[outputIcon drawAtPoint:iconBox.origin fromRect:NSMakeRect(0, 0, IMAGE_SIZE, IMAGE_SIZE) operation:NSCompositeSourceOver fraction:1.0];
 	
 	[mainText drawInRect:mainTextBox withAttributes:mainTextAttributes];
 	[secondaryText drawInRect:secondaryTextBox withAttributes:secondaryTextAttributes];

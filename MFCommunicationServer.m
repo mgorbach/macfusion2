@@ -61,6 +61,10 @@ static MFCommunicationServer* sharedServer = nil;
 												forKeyPath: @"plugins"
 												   options: NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld
 												   context: nil];
+	[[MFFilesystemController sharedController] addObserver: self
+												forKeyPath: @"recents"
+												   options: NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld
+												   context: nil];
 }
 
 - (id) init
@@ -78,7 +82,6 @@ static MFCommunicationServer* sharedServer = nil;
 	[connection setRootObject:self];
 	if ([connection registerName:kMFDistributedObjectName] == YES)
 	{
-		MFLogS(self, @"Now Vending distributed object");
 	}
 	else
 	{
@@ -92,11 +95,12 @@ static MFCommunicationServer* sharedServer = nil;
 						 change:(NSDictionary *)change
 						context:(void *)context
 {
-//	MFLogS(self, @"Observe triggered on keypath %@, object %@", keyPath, object);
-	
+
 	// TODO: This observation method will not be called on objects added to filesystems after registerNotifications is called
 	// We need to observe filesystems itself, and add/remove observations on filesystems as they appear and dissapear
 	NSDistributedNotificationCenter* dnc = [NSDistributedNotificationCenter defaultCenter];
+	
+	// MFLogS(self, @"Observes: keypath %@ object %@, change %@", keyPath, object, change);
 	
 	if ([keyPath isEqualToString:@"status"] && [object isKindOfClass: [MFFilesystem class]])
 	{
@@ -142,11 +146,33 @@ static MFCommunicationServer* sharedServer = nil;
 						forKeyPath:@"status"];
 				[fs removeObserver: self
 						forKeyPath:@"parameters"];
+				NSDictionary* userInfoDict = [NSDictionary dictionaryWithObject: [fs uuid]
+																		forKey: KMFFSUUIDParameter ];
+				[dnc postNotificationName:kMFFilesystemRemovedNotification
+								   object:kMFDNCObject
+								 userInfo:userInfoDict];
 			}
 		}
 	}
 	
-	
+	if ([keyPath isEqualToString:@"recents"] && object == [MFFilesystemController sharedController])
+	{
+		NSUInteger changeKind = [[change objectForKey: NSKeyValueChangeKindKey] intValue];
+		if (changeKind == NSKeyValueChangeInsertion)
+		{
+			NSArray*  newRecent = [change objectForKey:NSKeyValueChangeNewKey];
+			NSDictionary* userInfoDict = [NSDictionary dictionaryWithObject:[newRecent objectAtIndex:0]
+																	 forKey:kMFRecentKey];
+			[dnc postNotificationName:kMFRecentsUpdatedNotification
+							   object:kMFDNCObject
+							 userInfo:userInfoDict ];
+		}
+	}
+}
+
+- (NSArray*)recents
+{
+	return [[MFFilesystemController sharedController] recents];
 }
 
 - (MFFilesystemController*)filesystemController
@@ -184,6 +210,15 @@ static MFCommunicationServer* sharedServer = nil;
 	NSAssert(uuid, @"Filesystem requested with nil uuid in server");
 	return [[MFFilesystemController sharedController] filesystemWithUUID:uuid];
 }
+
+- (MFServerFS*)quickMountWithURL:(NSURL*)url
+{
+	NSError* error;
+	MFServerFS* fs = [[MFFilesystemController sharedController] quickMountWithURL: url error:&error];
+	if (error)
+		recentError = error;
+	return fs;
+}
 				 
 
 #pragma mark Sever Protocol Methods
@@ -195,6 +230,11 @@ static MFCommunicationServer* sharedServer = nil;
 - (NSArray*)plugins
 {
 	return [[MFPluginController sharedController] plugins];
+}
+
+- (NSError*)recentError
+{
+	return recentError;
 }
 
 @end

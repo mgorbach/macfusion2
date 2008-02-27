@@ -30,7 +30,7 @@
 							   description, NSLocalizedFailureReasonErrorKey,
 							   nil];
 	return [MFError errorWithDomain: kMFErrorDomain
-							   code:kMFErrorInvalidParameterValue
+							   code: kMFErrorCodeInvalidParameterValue
 						   userInfo: errorDict];
 }
 
@@ -47,7 +47,7 @@
 			return [NSString stringWithFormat: @"Missing required value for %@",
 					 paramName ];
 		}
-		if ([self code] == kMFErrorInvalidParameterValue)
+		if ([self code] == kMFErrorCodeInvalidParameterValue)
 		{
 			return [NSString stringWithFormat: @"Invalid value for %@\n%@",
 					[[self userInfo] objectForKey: kMFErrorParameterKey],
@@ -56,6 +56,15 @@
 	}
 	
 	return [super localizedDescription];
+}
+
++ (MFError*)errorWithErrorCode:(NSInteger)code 
+				   description:(NSString*)description
+{
+	return [MFError errorWithDomain:kMFErrorDomain
+							   code:code
+						   userInfo: [NSDictionary dictionaryWithObject: description
+																 forKey: NSLocalizedDescriptionKey ] ];
 }
 
 @end

@@ -23,11 +23,16 @@
 
 + (MFServerFS*)newFilesystemWithPlugin:(MFServerPlugin*)plugin;
 
++ (MFServerFS*)filesystemFromURL:(NSURL*)url
+						  plugin:(MFServerPlugin*)p
+						   error:(NSError**)error;
+
 
 // Notification handling
 - (void)handleMountNotification;
 - (void)handleUnmountNotification;
 
+- (void)removeMountPoint;
 
 // validate
 - (BOOL)validateParametersWithError:(NSError**)error;

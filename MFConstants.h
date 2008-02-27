@@ -39,6 +39,12 @@ extern NSString* kMFFilesystemStatusKey;
 #define kMFStatusChangedNotification @"org.mgorbach.macfusion.notifications.statusChanged"
 #define kMFFilesystemAddedNotification @"org.mgorbach.macfusion.notifications.fsAdded"
 #define kMFFilesystemRemovedNotification @"org.mgorbach.macfusion.notifications.fsRemoved"
+#define kMFRecentsUpdatedNotification @"org.mgorbach.macfusion.notifications.recentsUpdated"
+
+// Client Notifications (Non-distributed)
+#define kMFClientFSMountedNotification @"org.mgorbach.macfusion.mfclient.fsMounted"
+#define kMFClientFSUnmountedNotification @"org.mgorbach.macfusion.mfclient.fsUnmounted"
+#define kMFClientFSFailedNotification @"org.mgorbach.macfusion.mfclient.fsFailed"
 
 // IPC Object Names
 #define kMFDNCObject @"org.mgorbach.macfusion"
@@ -47,6 +53,7 @@ extern NSString* kMFFilesystemStatusKey;
 // Keys for Notifications
 #define kMFFilesystemNameKey @"Name"
 #define kMFFilesystemStatusKey @"Status"
+#define kMFRecentKey @"recent"
 
 // Parameters Common to All FUSE Filesystems
 #define kMFFSNameParameter @"Name"
@@ -57,6 +64,7 @@ extern NSString* kMFFilesystemStatusKey;
 #define KMFFSUUIDParameter @"UUID"
 #define kMFFSFilePathParameter @"File Path"
 #define kMFFSPersistentParameter @"Is Persistent"
+#define kMFFSDescriptionParameter @"Description"
 
 // Status keys
 #define KMFStatusDict @"statusInfo"
@@ -76,7 +84,9 @@ enum macfusionErrorCodes {
 	kMFErrorCodeInvalidPath,
 	kMFErrorCodeDataCannotBeRead,
 	kMFErrorCodeMissingParameter,
-	kMFErrorInvalidParameterValue
+	kMFErrorCodeInvalidParameterValue,
+	kMFErrorCodeNoPluginFound,
+	kMFErrorCodeMountFaliure
 };
 
 #define kMFErrorParameterKey @"parameter"

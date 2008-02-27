@@ -44,10 +44,6 @@ static MFMainController* sharedController = nil;
 }
 
 #pragma mark Runloop and initialization methods
-- (void)fire
-{
-	NSLog(@"Tick");
-}
 
 - (void)startRunloop
 {

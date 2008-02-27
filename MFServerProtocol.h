@@ -15,9 +15,9 @@
 
 - (MFServerFS*)newFilesystemWithPluginName:(NSString*)pluginName;
 - (MFServerFS*)filesystemWithUUID:(NSString*)uuid;
-
-
-// - (void)mountURL:(NSURL*)url;
+- (MFServerFS*)quickMountWithURL:(NSURL*)url;
+- (NSError*)recentError;
+- (NSArray*)recents;
 
 
 @end

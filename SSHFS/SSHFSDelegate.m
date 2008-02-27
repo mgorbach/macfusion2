@@ -18,6 +18,14 @@
 #define kSSHFSUserParameter @"User"
 
 @implementation SSHFSDelegate
+
+#pragma mark Plugin Info
+- (NSString*)executablePath
+{
+	return @"/usr/local/bin/sshfs";
+}
+
+#pragma mark Mounting
 - (NSArray*)taskArgumentsForParameters:(NSDictionary*)parameters
 {
 	NSMutableArray* arguments = [NSMutableArray array];
@@ -41,11 +49,34 @@
 	return [arguments copy];
 }
 
-- (NSString*)executablePath
+# pragma mark Quickmount
+- (NSArray*)urlSchemesHandled
 {
-	return @"/usr/local/bin/sshfs";
+	return [NSArray arrayWithObjects: @"ssh", @"sftp", nil];
 }
 
+- (NSDictionary*)parameterDictionaryForURL:(NSURL*)url
+									 error:(NSError**)error
+{
+	NSString* host = [url host];
+	NSString* userName = [url user];
+	NSNumber* port = [url port];
+	NSString* directory = [url relativePath];
+	
+	NSMutableDictionary* params = [[self defaultParameterDictionary] mutableCopy];
+	if (host)
+		[params setObject:host forKey:kSSHFSHostParameter];
+	if (userName)
+		[params setObject:userName forKey:kSSHFSUserParameter];
+	if (port)
+		[params setObject:port forKey:kSSHFSPortParameter];
+	if (directory)
+		[params setObject:directory forKey:kSSHFSDirectoryParameter];
+	
+	return [params copy];
+}
+
+# pragma mark Parameters
 - (NSArray*)parameterList
 {
 	return [NSArray arrayWithObjects: kSSHFSUserParameter, 
@@ -111,10 +142,13 @@
 		return [[NSBundle bundleForClass: [self class]] 
 				pathForImageResource:@"sshfs"];
 	}
+	if ([parameterName isEqualToString: kMFFSNameParameter])
+		return [parameters objectForKey: kSSHFSHostParameter];
 	
 	return nil;
 }
 
+# pragma mark Validation
 - (BOOL)validateValue:(id)value 
 	 forParameterName:(NSString*)paramName 
 				error:(NSError**)error
@@ -160,6 +194,12 @@
 		return NO;
 	}
 	return YES;
+}
+
+- (NSError*)errorForParameters:(NSDictionary*)parameters 
+						output:(NSString*)output
+{
+	return nil;
 }
 
 @end

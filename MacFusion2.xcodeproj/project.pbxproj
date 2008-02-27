@@ -46,13 +46,17 @@
 		D403BD6F0D650D630049201D /* MFError.m in Sources */ = {isa = PBXBuildFile; fileRef = D403BD6D0D650D630049201D /* MFError.m */; };
 		D412AFC40D596E890091C12B /* MGUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = D412AFC20D596E890091C12B /* MGUtilities.m */; };
 		D412AFC60D596F4B0091C12B /* MGUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = D412AFC50D596F4B0091C12B /* MGUtilities.h */; };
+		D41867E70D729A31004975AF /* QuickMount.xib in Resources */ = {isa = PBXBuildFile; fileRef = D41867E60D729A31004975AF /* QuickMount.xib */; };
+		D41867EB0D729B81004975AF /* MFQuickMountController.m in Sources */ = {isa = PBXBuildFile; fileRef = D41867EA0D729B81004975AF /* MFQuickMountController.m */; };
+		D418688E0D729F0B004975AF /* macfusionIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = D4386C0B0D0B47240078C19F /* macfusionIcon.icns */; };
+		D420386F0D73A76B009EE78F /* MFClientRecent.h in Headers */ = {isa = PBXBuildFile; fileRef = D420386D0D73A76B009EE78F /* MFClientRecent.h */; };
+		D42038700D73A76B009EE78F /* MFClientRecent.m in Sources */ = {isa = PBXBuildFile; fileRef = D420386E0D73A76B009EE78F /* MFClientRecent.m */; };
 		D4386C0E0D0B472D0078C19F /* macfusionIcon.icns in CopyFiles */ = {isa = PBXBuildFile; fileRef = D4386C0B0D0B47240078C19F /* macfusionIcon.icns */; };
 		D439D5950D09E4390025574A /* MFServerProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = D439D5940D09E4390025574A /* MFServerProtocol.h */; };
 		D439D5980D09E4480025574A /* MFCommunicationServer.m in Sources */ = {isa = PBXBuildFile; fileRef = D439D5910D09E1510025574A /* MFCommunicationServer.m */; };
 		D439D6D60D0A0FDE0025574A /* sshfsConfiguration.xib in Resources */ = {isa = PBXBuildFile; fileRef = D439D6D50D0A0FDE0025574A /* sshfsConfiguration.xib */; };
 		D44152720CE2E344001EEF36 /* MFMainController.m in Sources */ = {isa = PBXBuildFile; fileRef = D42E13E50CDFC69500C81814 /* MFMainController.m */; };
 		D44152730CE2E344001EEF36 /* MFPluginController.m in Sources */ = {isa = PBXBuildFile; fileRef = D4B14C850CE0455A003195A3 /* MFPluginController.m */; };
-		D45579040D406DB600669882 /* NSEmptyGradientView.m in Sources */ = {isa = PBXBuildFile; fileRef = D45579030D406DB600669882 /* NSEmptyGradientView.m */; };
 		D45579170D40715F00669882 /* MFInertButton.m in Sources */ = {isa = PBXBuildFile; fileRef = D45579160D40715F00669882 /* MFInertButton.m */; };
 		D4656C8D0D6FD6DC00DE2208 /* sshfs_icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = D4656C8B0D6FD6DC00DE2208 /* sshfs_icon.icns */; };
 		D4656C8E0D6FD6DC00DE2208 /* sshfs.png in Resources */ = {isa = PBXBuildFile; fileRef = D4656C8C0D6FD6DC00DE2208 /* sshfs.png */; };
@@ -68,7 +72,6 @@
 		D4905C330D393F8300E21C1E /* MFClientPlugin.h in Headers */ = {isa = PBXBuildFile; fileRef = D4905C310D393F8300E21C1E /* MFClientPlugin.h */; };
 		D4905C340D393F8300E21C1E /* MFClientPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = D4905C320D393F8300E21C1E /* MFClientPlugin.m */; };
 		D4905D4D0D39791B00E21C1E /* MFServerPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = D4905C6F0D394A6700E21C1E /* MFServerPlugin.m */; };
-		D498488D0D4BD2B7009626A3 /* TestView.m in Sources */ = {isa = PBXBuildFile; fileRef = D498488C0D4BD2B7009626A3 /* TestView.m */; };
 		D4B14BC90CE03D25003195A3 /* sshnodelay.so in Resources */ = {isa = PBXBuildFile; fileRef = D4B14BAA0CE03C84003195A3 /* sshnodelay.so */; };
 		D4B14BCA0CE03D25003195A3 /* sshfs.plist in Resources */ = {isa = PBXBuildFile; fileRef = D4B14BAB0CE03C84003195A3 /* sshfs.plist */; };
 		D4B14BCB0CE03D25003195A3 /* sshfs-static in Resources */ = {isa = PBXBuildFile; fileRef = D4B14BAC0CE03C84003195A3 /* sshfs-static */; };
@@ -83,8 +86,6 @@
 		D4D6A0D80D025B4A00BC2E2D /* MFConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = D4D6A0D70D025B4A00BC2E2D /* MFConstants.h */; };
 		D4D6A1250D03548C00BC2E2D /* MFCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D4FC0C980CF128480029B133 /* MFCore.framework */; };
 		D4D6A2230D03686000BC2E2D /* fuse.plist in Resources */ = {isa = PBXBuildFile; fileRef = D4D6A2220D03686000BC2E2D /* fuse.plist */; };
-		D4D9FE8B0D4D808700A868F9 /* MFFSCollectionView.m in Sources */ = {isa = PBXBuildFile; fileRef = D4D9FE8A0D4D808700A868F9 /* MFFSCollectionView.m */; };
-		D4D9FE970D4D81D200A868F9 /* MFFSItemView.m in Sources */ = {isa = PBXBuildFile; fileRef = D4D9FE960D4D81D200A868F9 /* MFFSItemView.m */; };
 		D4DB420B0D3E867200C99914 /* MFCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D4FC0C980CF128480029B133 /* MFCore.framework */; };
 		D4DB42CE0D3EAC7000C99914 /* MFSettingsController.m in Sources */ = {isa = PBXBuildFile; fileRef = D4DB42CD0D3EAC7000C99914 /* MFSettingsController.m */; };
 		D4DB42EA0D3EAE4C00C99914 /* settingsMain.m in Sources */ = {isa = PBXBuildFile; fileRef = D4DB42E90D3EAE4C00C99914 /* settingsMain.m */; };
@@ -97,6 +98,9 @@
 		D4E51FE80CE03AC3009B1A30 /* MFFilesystem.h in Headers */ = {isa = PBXBuildFile; fileRef = D42E14540CDFCF9000C81814 /* MFFilesystem.h */; };
 		D4E51FEA0CE03ACA009B1A30 /* MFPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = D42E141C0CDFC99A00C81814 /* MFPlugin.m */; };
 		D4E51FEB0CE03ACA009B1A30 /* MFFilesystem.m in Sources */ = {isa = PBXBuildFile; fileRef = D42E14550CDFCF9000C81814 /* MFFilesystem.m */; };
+		D4E983450D7223CE0058AF73 /* MGNSImage.m in Sources */ = {isa = PBXBuildFile; fileRef = D4E983440D7223CE0058AF73 /* MGNSImage.m */; };
+		D4E983470D7223D70058AF73 /* MGNSImage.h in Headers */ = {isa = PBXBuildFile; fileRef = D4E983460D7223D70058AF73 /* MGNSImage.h */; };
+		D4E9834F0D7229970058AF73 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D4656C9E0D6FDBF900DE2208 /* QuartzCore.framework */; };
 		D4F499EF0D52601B00CDA4A9 /* SSHFSDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D4F499EE0D52601B00CDA4A9 /* SSHFSDelegate.m */; };
 		D4F499F10D52609400CDA4A9 /* MFFSDelegateProtocol.h in Resources */ = {isa = PBXBuildFile; fileRef = D4F499F00D52609400CDA4A9 /* MFFSDelegateProtocol.h */; };
 		D4FC0C990CF128480029B133 /* MFCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D4FC0C980CF128480029B133 /* MFCore.framework */; };
@@ -105,6 +109,20 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		D41867D80D72983C004975AF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D42E15540CE03A8200C81814;
+			remoteInfo = MFCore;
+		};
+		D41867DA0D72983E004975AF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D42E15540CE03A8200C81814;
+			remoteInfo = MFCore;
+		};
 		D439D6480D0A06DD0025574A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
@@ -116,7 +134,7 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = D48DB97E0D70D7A4008A62BB /* MacfusionMenuling */;
+			remoteGlobalIDString = D48DB97E0D70D7A4008A62BB;
 			remoteInfo = MacfusionMenuling;
 		};
 		D4B14C620CE044C5003195A3 /* PBXContainerItemProxy */ = {
@@ -225,6 +243,11 @@
 		D403BD6D0D650D630049201D /* MFError.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MFError.m; sourceTree = "<group>"; };
 		D412AFC20D596E890091C12B /* MGUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MGUtilities.m; sourceTree = "<group>"; };
 		D412AFC50D596F4B0091C12B /* MGUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MGUtilities.h; sourceTree = "<group>"; };
+		D41867E60D729A31004975AF /* QuickMount.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = QuickMount.xib; sourceTree = "<group>"; };
+		D41867E90D729B81004975AF /* MFQuickMountController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFQuickMountController.h; sourceTree = "<group>"; };
+		D41867EA0D729B81004975AF /* MFQuickMountController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MFQuickMountController.m; sourceTree = "<group>"; };
+		D420386D0D73A76B009EE78F /* MFClientRecent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFClientRecent.h; sourceTree = "<group>"; };
+		D420386E0D73A76B009EE78F /* MFClientRecent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MFClientRecent.m; sourceTree = "<group>"; };
 		D42E13E40CDFC69500C81814 /* MFMainController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFMainController.h; sourceTree = "<group>"; };
 		D42E13E50CDFC69500C81814 /* MFMainController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MFMainController.m; sourceTree = "<group>"; };
 		D42E141B0CDFC99A00C81814 /* MFPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFPlugin.h; sourceTree = "<group>"; };
@@ -241,8 +264,6 @@
 		D439D5940D09E4390025574A /* MFServerProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFServerProtocol.h; sourceTree = "<group>"; };
 		D439D6D50D0A0FDE0025574A /* sshfsConfiguration.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = sshfsConfiguration.xib; sourceTree = "<group>"; };
 		D441521F0CE2933C001EEF36 /* sshfs.mfplugin */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = sshfs.mfplugin; sourceTree = BUILT_PRODUCTS_DIR; };
-		D45579020D406DB600669882 /* NSEmptyGradientView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSEmptyGradientView.h; sourceTree = "<group>"; };
-		D45579030D406DB600669882 /* NSEmptyGradientView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSEmptyGradientView.m; sourceTree = "<group>"; };
 		D45579150D40715F00669882 /* MFInertButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFInertButton.h; sourceTree = "<group>"; };
 		D45579160D40715F00669882 /* MFInertButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MFInertButton.m; sourceTree = "<group>"; };
 		D4656C8B0D6FD6DC00DE2208 /* sshfs_icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = sshfs_icon.icns; sourceTree = "<group>"; };
@@ -263,8 +284,6 @@
 		D4905C6C0D394A5D00E21C1E /* MFServerFS.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MFServerFS.m; sourceTree = "<group>"; };
 		D4905C6E0D394A6700E21C1E /* MFServerPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFServerPlugin.h; sourceTree = "<group>"; };
 		D4905C6F0D394A6700E21C1E /* MFServerPlugin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MFServerPlugin.m; sourceTree = "<group>"; };
-		D498488B0D4BD2B7009626A3 /* TestView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestView.h; sourceTree = "<group>"; };
-		D498488C0D4BD2B7009626A3 /* TestView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestView.m; sourceTree = "<group>"; };
 		D4B14BAA0CE03C84003195A3 /* sshnodelay.so */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = sshnodelay.so; sourceTree = "<group>"; };
 		D4B14BAB0CE03C84003195A3 /* sshfs.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = sshfs.plist; sourceTree = "<group>"; };
 		D4B14BAC0CE03C84003195A3 /* sshfs-static */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = "sshfs-static"; sourceTree = "<group>"; };
@@ -283,10 +302,6 @@
 		D4CEE0F20D3045590064042E /* MFClientFS.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MFClientFS.m; sourceTree = "<group>"; };
 		D4D6A0D70D025B4A00BC2E2D /* MFConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFConstants.h; sourceTree = "<group>"; };
 		D4D6A2220D03686000BC2E2D /* fuse.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = fuse.plist; sourceTree = "<group>"; };
-		D4D9FE890D4D808700A868F9 /* MFFSCollectionView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFFSCollectionView.h; sourceTree = "<group>"; };
-		D4D9FE8A0D4D808700A868F9 /* MFFSCollectionView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MFFSCollectionView.m; sourceTree = "<group>"; };
-		D4D9FE950D4D81D200A868F9 /* MFFSItemView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFFSItemView.h; sourceTree = "<group>"; };
-		D4D9FE960D4D81D200A868F9 /* MFFSItemView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MFFSItemView.m; sourceTree = "<group>"; };
 		D4DB42040D3E863100C99914 /* MacfusionSettings.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MacfusionSettings.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D4DB42060D3E863100C99914 /* MacfusionSettings-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "MacfusionSettings-Info.plist"; path = "../MacfusionSettings-Info.plist"; sourceTree = "<group>"; };
 		D4DB42CC0D3EAC7000C99914 /* MFSettingsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFSettingsController.h; sourceTree = "<group>"; };
@@ -295,6 +310,8 @@
 		D4DB43740D3EB6A100C99914 /* main.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = main.xib; sourceTree = "<group>"; };
 		D4DB45D20D3FEBE300C99914 /* MFFilesystemCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFFilesystemCell.h; sourceTree = "<group>"; };
 		D4DB45D30D3FEBE300C99914 /* MFFilesystemCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MFFilesystemCell.m; sourceTree = "<group>"; };
+		D4E983440D7223CE0058AF73 /* MGNSImage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MGNSImage.m; sourceTree = "<group>"; };
+		D4E983460D7223D70058AF73 /* MGNSImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MGNSImage.h; sourceTree = "<group>"; };
 		D4F499ED0D52601B00CDA4A9 /* SSHFSDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSHFSDelegate.h; sourceTree = "<group>"; };
 		D4F499EE0D52601B00CDA4A9 /* SSHFSDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSHFSDelegate.m; sourceTree = "<group>"; };
 		D4F499F00D52609400CDA4A9 /* MFFSDelegateProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFFSDelegateProtocol.h; sourceTree = "<group>"; };
@@ -318,6 +335,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D4E9834F0D7229970058AF73 /* QuartzCore.framework in Frameworks */,
 				D49059750D35681F00E21C1E /* AppKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -409,8 +427,20 @@
 			children = (
 				D412AFC20D596E890091C12B /* MGUtilities.m */,
 				D412AFC50D596F4B0091C12B /* MGUtilities.h */,
+				D4E983460D7223D70058AF73 /* MGNSImage.h */,
+				D4E983440D7223CE0058AF73 /* MGNSImage.m */,
 			);
 			name = Utility;
+			sourceTree = "<group>";
+		};
+		D41867E50D729A0F004975AF /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				D48DB9810D70D7A4008A62BB /* MacfusionMenuling-Info.plist */,
+				D48DB9A90D70D910008A62BB /* MainMenu.xib */,
+				D41867E60D729A31004975AF /* QuickMount.xib */,
+			);
+			name = Resources;
 			sourceTree = "<group>";
 		};
 		D4386C060D0B46CF0078C19F /* Resources */ = {
@@ -434,11 +464,12 @@
 		D48DB9720D70D70C008A62BB /* Menuling */ = {
 			isa = PBXGroup;
 			children = (
-				D48DB9810D70D7A4008A62BB /* MacfusionMenuling-Info.plist */,
+				D41867E50D729A0F004975AF /* Resources */,
 				D48DB9730D70D73A008A62BB /* MFMenulingAppDelegate.h */,
 				D48DB9740D70D73A008A62BB /* MFMenulingAppDelegate.m */,
-				D48DB9A90D70D910008A62BB /* MainMenu.xib */,
 				D48DB9AF0D70D968008A62BB /* menulingMain.m */,
+				D41867E90D729B81004975AF /* MFQuickMountController.h */,
+				D41867EA0D729B81004975AF /* MFQuickMountController.m */,
 			);
 			name = Menuling;
 			path = menuling;
@@ -465,6 +496,8 @@
 				D4CEE0F20D3045590064042E /* MFClientFS.m */,
 				D4905C310D393F8300E21C1E /* MFClientPlugin.h */,
 				D4905C320D393F8300E21C1E /* MFClientPlugin.m */,
+				D420386D0D73A76B009EE78F /* MFClientRecent.h */,
+				D420386E0D73A76B009EE78F /* MFClientRecent.m */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -535,16 +568,8 @@
 			children = (
 				D4DB45D20D3FEBE300C99914 /* MFFilesystemCell.h */,
 				D4DB45D30D3FEBE300C99914 /* MFFilesystemCell.m */,
-				D4D9FE890D4D808700A868F9 /* MFFSCollectionView.h */,
-				D4D9FE8A0D4D808700A868F9 /* MFFSCollectionView.m */,
-				D45579020D406DB600669882 /* NSEmptyGradientView.h */,
-				D45579030D406DB600669882 /* NSEmptyGradientView.m */,
 				D45579150D40715F00669882 /* MFInertButton.h */,
 				D45579160D40715F00669882 /* MFInertButton.m */,
-				D498488B0D4BD2B7009626A3 /* TestView.h */,
-				D498488C0D4BD2B7009626A3 /* TestView.m */,
-				D4D9FE950D4D81D200A868F9 /* MFFSItemView.h */,
-				D4D9FE960D4D81D200A868F9 /* MFFSItemView.m */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -635,6 +660,8 @@
 				D412AFC60D596F4B0091C12B /* MGUtilities.h in Headers */,
 				D403BC8F0D64C3D00049201D /* MFServerFSProtocol.h in Headers */,
 				D403BD6E0D650D630049201D /* MFError.h in Headers */,
+				D4E983470D7223D70058AF73 /* MGNSImage.h in Headers */,
+				D420386F0D73A76B009EE78F /* MFClientRecent.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -690,6 +717,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				D41867DB0D72983E004975AF /* PBXTargetDependency */,
 			);
 			name = MacfusionMenuling;
 			productName = MacfusionMenuling;
@@ -743,6 +771,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				D41867D90D72983C004975AF /* PBXTargetDependency */,
 			);
 			name = MacfusionSettings;
 			productName = MacfusionSettings;
@@ -787,7 +816,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D418688E0D729F0B004975AF /* macfusionIcon.icns in Resources */,
 				D48DB9E60D70DA28008A62BB /* MainMenu.xib in Resources */,
+				D41867E70D729A31004975AF /* QuickMount.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -843,6 +874,8 @@
 				D4905D4D0D39791B00E21C1E /* MFServerPlugin.m in Sources */,
 				D412AFC40D596E890091C12B /* MGUtilities.m in Sources */,
 				D403BD6F0D650D630049201D /* MFError.m in Sources */,
+				D4E983450D7223CE0058AF73 /* MGNSImage.m in Sources */,
+				D42038700D73A76B009EE78F /* MFClientRecent.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -852,6 +885,7 @@
 			files = (
 				D48DB98A0D70D7C6008A62BB /* MFMenulingAppDelegate.m in Sources */,
 				D48DB9B10D70D9D4008A62BB /* menulingMain.m in Sources */,
+				D41867EB0D729B81004975AF /* MFQuickMountController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -878,17 +912,23 @@
 				D4DB42CE0D3EAC7000C99914 /* MFSettingsController.m in Sources */,
 				D4DB42EA0D3EAE4C00C99914 /* settingsMain.m in Sources */,
 				D4DB45D40D3FEBE300C99914 /* MFFilesystemCell.m in Sources */,
-				D45579040D406DB600669882 /* NSEmptyGradientView.m in Sources */,
 				D45579170D40715F00669882 /* MFInertButton.m in Sources */,
-				D498488D0D4BD2B7009626A3 /* TestView.m in Sources */,
-				D4D9FE8B0D4D808700A868F9 /* MFFSCollectionView.m in Sources */,
-				D4D9FE970D4D81D200A868F9 /* MFFSItemView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		D41867D90D72983C004975AF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D42E15540CE03A8200C81814 /* MFCore */;
+			targetProxy = D41867D80D72983C004975AF /* PBXContainerItemProxy */;
+		};
+		D41867DB0D72983E004975AF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D42E15540CE03A8200C81814 /* MFCore */;
+			targetProxy = D41867DA0D72983E004975AF /* PBXContainerItemProxy */;
+		};
 		D439D6490D0A06DD0025574A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = D4B14D6B0CE19545003195A3 /* mfctl */;

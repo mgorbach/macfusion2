@@ -57,12 +57,6 @@
 
 - (void)registerNotifications
 {
-	/*
-	[self addObserver:self
-		   forKeyPath:kMFParameterDict
-			  options:NSKeyValueObservingOptionNew
-			  context:nil];
-	 */
 }
 
 - (void)copyStatusInfo
@@ -92,10 +86,39 @@
 	[remoteFilesystem mount];
 }
 
+#pragma mark Notifications To Clients
+- (void)sendNotificationForStatusChangeFrom:(NSString*)previousStatus
+										 to:(NSString*)newStatus
+{
+	NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
+	if ([previousStatus isEqualToString: newStatus])
+	{
+		// Send No Notification
+	}
+	if ([previousStatus isEqualToString: kMFStatusFSWaiting]
+		&& [newStatus isEqualToString: kMFStatusFSMounted])
+	{
+		[nc postNotificationName: kMFClientFSMountedNotification
+						  object:self
+						userInfo:nil];
+	}
+	else if ([previousStatus isEqualToString: kMFStatusFSWaiting]
+			 && [newStatus isEqualToString: kMFStatusFSFailed])
+	{
+		[nc postNotificationName: kMFClientFSFailedNotification
+						  object:self
+						userInfo:nil];
+	}
+}
+
 #pragma mark Synchronization across IPC
 - (void)handleStatusInfoChangedNotification:(NSNotification*)note
 {
+	NSString* previousStatus = self.status;
 	[self copyStatusInfo];
+	NSString* newStatus = self.status;
+	[self sendNotificationForStatusChangeFrom:previousStatus
+										   to:newStatus];
 }
 
 - (void)handleParametersChangedNotification:(NSNotification*)note
@@ -142,7 +165,7 @@
 	if (!isEditing)
 	{
 		[[NSException exceptionWithName:kMFBadAPIUsageException
-								 reason:@"endEditing without beginEditing"
+								 reason:@"Calling endEditing without previous call to beginEditing"
 							   userInfo:nil] raise];
 	}
 	
@@ -172,7 +195,7 @@
 {
 	if ([key isLike:@"parameters.*"] && !isEditing)
 	{
-		[[NSException exceptionWithName:@"MFBadAPIUsage"
+		[[NSException exceptionWithName:kMFBadAPIUsageException
 								reason:@"Trying to modify parameters without beginEditing"
 							  userInfo:nil] raise];
 	}

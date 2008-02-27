@@ -33,6 +33,7 @@
 - (NSArray*)parameterList;
 - (id)valueForParameterNamed:(NSString*)paramName;
 - (NSMutableDictionary*)fillParametersWithImpliedValues:(NSDictionary*)params;
+- (NSError*)error;
 
 @property(readwrite, assign) NSString* status;
 @property(readonly, assign) NSString* uuid;

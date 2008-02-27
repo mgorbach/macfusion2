@@ -16,6 +16,7 @@
 	NSMutableArray* filesystems;
 	NSMutableDictionary* pluginsDictionary;
 	NSMutableArray* plugins;
+	NSMutableArray* recents;
 	id <MFServerProtocol> server;
 	id delegate;
 }
@@ -23,16 +24,26 @@
 + (MFClient*)sharedClient;
 - (BOOL)setup;
 
-- (NSArray*)filesystems;
-- (NSArray*)plugins;
-
 // Action methods
 - (MFClientFS*)newFilesystemWithPlugin:(MFClientPlugin*)plugin;
+- (MFClientFS*)quickMountFilesystemWithURL:(NSURL*)url
+									 error:(NSError**)error;
 
 // Accessors
 - (MFClientFS*)filesystemWithUUID:(NSString*)uuid;
 - (MFClientPlugin*)pluginWithID:(NSString*)id;
 
 @property(retain) id delegate;
+
+// All filesystems, including temporary ones
+@property(readonly) NSArray* filesystems;
+
+// Only filesystems that are not temporary
+@property(readonly) NSArray* persistentFilesystems;
+@property(readonly) NSArray* mountedFilesystems;
+
+// All plugins
+@property (readonly) NSArray* plugins;
+@property(readonly) NSArray* recents;
 
 @end

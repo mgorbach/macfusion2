@@ -28,8 +28,12 @@
 - (NSString*)descriptionForParameters:(NSDictionary*)parameters;
 
 - (NSString*)executablePath;
+- (NSArray*)urlSchemesHandled;
  
 @optional
 - (NSDictionary*)taskEnvironmentForParameters:(NSDictionary*)parameters;
-
+- (NSDictionary*)parameterDictionaryForURL:(NSURL*)url
+									 error:(NSError**)error;
+- (NSError*)errorForParameters:(NSDictionary*)parameters 
+						output:(NSString*)output;
 @end
