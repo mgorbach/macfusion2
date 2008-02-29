@@ -60,6 +60,8 @@
 	[[qmController window] makeKeyWindow];
 }
 
+
+
 - (void)addCurrentlyMountedFilesystemsToMenu:(NSMenu*)menu
 {
 	NSArray* mountedFilesystems = client.mountedFilesystems;

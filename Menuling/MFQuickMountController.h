@@ -11,6 +11,8 @@
 
 @interface MFQuickMountController : NSWindowController {
 	NSTextField* qmTextField;
+	NSTabView* qmTabView;
+	NSProgressIndicator* qmProgress;
 	MFClientFS* fs;
 	MFClient* client;
 }

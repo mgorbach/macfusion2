@@ -155,6 +155,7 @@ static MFClient* sharedClient = nil;
 #pragma mark Notification handling
 - (void)handleStatusChangedNotification:(NSNotification*)note
 {
+	MFLogS(self, @"Status change notification received %@", note);
 	NSDictionary* info = [note userInfo];
 	NSString* uuid = [info objectForKey: KMFFSUUIDParameter];
 	MFClientFS* fs = [self filesystemWithUUID: uuid];
@@ -231,6 +232,21 @@ static MFClient* sharedClient = nil;
 	
 	if ([[self recents] count] > 10)
 		[[self mutableArrayValueForKey:@"recents"] removeObjectAtIndex: 0];
+}
+
+- (MFClientFS*)mountRecent:(MFClientRecent*)recent
+					 error:(NSError**)error;
+{
+	NSURL* url = [NSURL URLWithString: recent.descriptionString];
+	if (url)
+	{
+		MFClientFS* fs = [self quickMountFilesystemWithURL: url
+									error: error ];
+		if (fs)
+			return fs;
+	}
+	
+	return nil;
 }
 
 #pragma mark Accessors and Setters

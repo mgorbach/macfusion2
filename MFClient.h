@@ -9,7 +9,7 @@
 #import <Cocoa/Cocoa.h>
 #import "MFServerProtocol.h"
 
-@class MFClientFS, MFClientPlugin;
+@class MFClientFS, MFClientPlugin, MFClientRecent;
 
 @interface MFClient : NSObject {
 	NSMutableDictionary* filesystemsDictionary;
@@ -28,6 +28,8 @@
 - (MFClientFS*)newFilesystemWithPlugin:(MFClientPlugin*)plugin;
 - (MFClientFS*)quickMountFilesystemWithURL:(NSURL*)url
 									 error:(NSError**)error;
+- (MFClientFS*)mountRecent:(MFClientRecent*)recent
+					 error:(NSError**)error;
 
 // Accessors
 - (MFClientFS*)filesystemWithUUID:(NSString*)uuid;

@@ -42,7 +42,6 @@
 	[arguments addObject: @"-oStrictHostKeyChecking=no"];
 	[arguments addObject: @"-oNumberOfPasswordPrompts=1"];
 	[arguments addObject: @"-ofollow_symlinks"];
-	
 	[arguments addObject: [NSString stringWithFormat: @"-ovolname=%@", 
 						   [parameters objectForKey: kMFFSVolumeNameParameter]]];
 	[arguments addObject: @"-f"];
@@ -188,17 +187,25 @@
 		}
 	}
 	
-	if (![parameters objectForKey: kSSHFSHostParameter ])
+	if (![parameters objectForKey: kSSHFSHostParameter])
 	{
 		*error = [MFError parameterMissingErrorWithParameterName: kSSHFSHostParameter ];
+		MFLogS(self, @"Delegate returning error for %@", parameters);
 		return NO;
 	}
+	
+	MFLogS(self, @"Delegate returning yes for %@", parameters);
 	return YES;
 }
 
 - (NSError*)errorForParameters:(NSDictionary*)parameters 
 						output:(NSString*)output
 {
+	if ([output rangeOfString: @"remote host has disconnected"].location != NSNotFound)
+	{
+		return [MFError errorWithErrorCode:kMFErrorCodeMountFaliure
+							   description:@"Remote host has disconnected."];
+	}
 	return nil;
 }
 

@@ -100,8 +100,8 @@
 - (id)findImpliedValueForParameterNamed:(NSString*)paramName 
 						givenParameters:(NSDictionary*)params
 {
-	if ([parameters objectForKey:paramName])
-		return [parameters objectForKey: paramName];
+	if ([params objectForKey:paramName])
+		return [params objectForKey: paramName];
 	
 	id delegateValue = [delegate impliedValueParameterNamed: paramName
 											otherParameters: params];

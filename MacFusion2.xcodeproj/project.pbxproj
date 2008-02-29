@@ -81,6 +81,7 @@
 		D4B14FC20CE25A88003195A3 /* MFFilesystemController.m in Sources */ = {isa = PBXBuildFile; fileRef = D4B14FC10CE25A88003195A3 /* MFFilesystemController.m */; };
 		D4B657990D0DE41300ED34B3 /* MFClient.h in Headers */ = {isa = PBXBuildFile; fileRef = D4B657970D0DE41300ED34B3 /* MFClient.h */; };
 		D4B6579A0D0DE41300ED34B3 /* MFClient.m in Sources */ = {isa = PBXBuildFile; fileRef = D4B657980D0DE41300ED34B3 /* MFClient.m */; };
+		D4C6334D0D7644B300734165 /* MGFadingWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = D4C6334C0D7644B300734165 /* MGFadingWindow.m */; };
 		D4CEE0F30D3045590064042E /* MFClientFS.h in Headers */ = {isa = PBXBuildFile; fileRef = D4CEE0F10D3045580064042E /* MFClientFS.h */; };
 		D4CEE0F40D3045590064042E /* MFClientFS.m in Sources */ = {isa = PBXBuildFile; fileRef = D4CEE0F20D3045590064042E /* MFClientFS.m */; };
 		D4D6A0D80D025B4A00BC2E2D /* MFConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = D4D6A0D70D025B4A00BC2E2D /* MFConstants.h */; };
@@ -298,6 +299,8 @@
 		D4B14FC10CE25A88003195A3 /* MFFilesystemController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MFFilesystemController.m; sourceTree = "<group>"; };
 		D4B657970D0DE41300ED34B3 /* MFClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFClient.h; sourceTree = "<group>"; };
 		D4B657980D0DE41300ED34B3 /* MFClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MFClient.m; sourceTree = "<group>"; };
+		D4C6334B0D7644B300734165 /* MGFadingWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MGFadingWindow.h; sourceTree = "<group>"; };
+		D4C6334C0D7644B300734165 /* MGFadingWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MGFadingWindow.m; sourceTree = "<group>"; };
 		D4CEE0F10D3045580064042E /* MFClientFS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFClientFS.h; sourceTree = "<group>"; };
 		D4CEE0F20D3045590064042E /* MFClientFS.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MFClientFS.m; sourceTree = "<group>"; };
 		D4D6A0D70D025B4A00BC2E2D /* MFConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFConstants.h; sourceTree = "<group>"; };
@@ -470,6 +473,8 @@
 				D48DB9AF0D70D968008A62BB /* menulingMain.m */,
 				D41867E90D729B81004975AF /* MFQuickMountController.h */,
 				D41867EA0D729B81004975AF /* MFQuickMountController.m */,
+				D4C6334B0D7644B300734165 /* MGFadingWindow.h */,
+				D4C6334C0D7644B300734165 /* MGFadingWindow.m */,
 			);
 			name = Menuling;
 			path = menuling;
@@ -886,6 +891,7 @@
 				D48DB98A0D70D7C6008A62BB /* MFMenulingAppDelegate.m in Sources */,
 				D48DB9B10D70D9D4008A62BB /* menulingMain.m in Sources */,
 				D41867EB0D729B81004975AF /* MFQuickMountController.m in Sources */,
+				D4C6334D0D7644B300734165 /* MGFadingWindow.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

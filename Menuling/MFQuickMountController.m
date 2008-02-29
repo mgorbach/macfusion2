@@ -11,6 +11,7 @@
 #import "MFClientFS.h"
 #import "MFConstants.h"
 #import "MFClientRecent.h"
+#import "MFError.h"
 
 @implementation MFQuickMountController
 - (id)initWithWindowNibName:(NSString*)name
@@ -26,7 +27,36 @@
 - (void)awakeFromNib
 {
 	[[self window] center];
+//	[[[self window] contentView] setWantsLayer: YES];
+	[qmTabView selectTabViewItemAtIndex: 0];
 }
+
+- (void)handleMountAttemptForFS:(MFClientFS*)myFS
+						  error:(NSError*)error
+{
+	fs = myFS;
+	if(!fs)
+	{
+		[self presentError:error 
+			modalForWindow:[self window] delegate:nil 
+		didPresentSelector:nil 
+			   contextInfo:nil];
+	}
+	else
+	{
+		// Wait for mount here
+		[[NSNotificationCenter defaultCenter]
+		 addObserver:self
+		 selector:@selector(handleFSNotification:)
+		 name:nil
+		 object:fs];
+//		[qmTabView selectTabViewItemAtIndex: 1];
+		[qmTabView setNeedsDisplay:YES];
+		[qmProgress startAnimation:self];
+	}
+}
+
+
 
 - (IBAction)quickMount:(id)sender
 {
@@ -47,33 +77,18 @@
 	else
 	{
 		NSError* error;
-		fs = [[MFClient sharedClient] quickMountFilesystemWithURL:url 
+		MFClientFS* tempFS = [[MFClient sharedClient] quickMountFilesystemWithURL:url 
 															error:&error];
-		if(!fs)
-		{
-			[self presentError:error 
-				modalForWindow:[self window] delegate:nil 
-			didPresentSelector:nil 
-				   contextInfo:nil];
-		}
-		else
-		{
-			// Wait for mount here
-			[[NSNotificationCenter defaultCenter]
-			 addObserver:self
-			 selector:@selector(handleFSNotification:)
-			 name:nil
-			 object:fs];
-			
-
-		}
+		[self handleMountAttemptForFS:tempFS error:error];
 	}
 }
 
 - (IBAction)recentClicked:(id)sender
 {
 	MFClientRecent* recent = (MFClientRecent*)sender;
-	return;
+	NSError* error;
+	MFClientFS* tempFS = [client mountRecent: recent error:&error];
+	[self handleMountAttemptForFS: tempFS error:error];
 }
 
 - (void)handleFSNotification:(NSNotification*)note
@@ -81,6 +96,8 @@
 	if ([[note name] isEqualToString: kMFClientFSMountedNotification])
 	{
 		[qmTextField setStringValue: @""];
+		[qmTabView selectTabViewItemAtIndex:0];
+		[qmProgress stopAnimation:self];
 		[[self window] close];
 	}
 
@@ -90,8 +107,8 @@
 		{
 			[self presentError:[fs error]
 				modalForWindow:[self window]
-					  delegate:nil
-			didPresentSelector:nil
+					  delegate:self
+			didPresentSelector:@selector(alertDidEnd:returnCode:contextInfo:)
 				   contextInfo:nil];
 		}
 		
@@ -101,11 +118,32 @@
 									 otherButton:@""
 					   informativeTextWithFormat:@"Please try again"];
 		[alert setAlertStyle: NSCriticalAlertStyle];
-		[alert beginSheetModalForWindow: [self window]
-						  modalDelegate:nil 
-						 didEndSelector:nil
-							contextInfo:nil];
+		[alert beginSheetModalForWindow:[self window]
+						  modalDelegate:self 
+						 didEndSelector:@selector(alertDidEnd:returnCode:contextInfo:)
+							contextInfo:self];
+		[qmProgress stopAnimation:self];
 	}
+}
+
+- (NSError*)willPresentError:(NSError*)error
+{
+	if ([error code] == kMFErrorCodeMountFaliure ||
+		[error code] == kMFErrorCodeNoPluginFound)
+	{
+		NSString* description = [NSString stringWithFormat:
+								 @"Could not mount this URL: %@",
+								 [error localizedDescription]];
+		return [MFError errorWithErrorCode:kMFErrorCodeMountFaliure
+							   description:description];
+	}
+	
+	return error;
+}
+
+- (void) alertDidEnd:(NSAlert *)alert returnCode:(int)returnCode contextInfo:(void *)contextInfo
+{
+	[qmTabView selectTabViewItemAtIndex: 0];
 }
 
 

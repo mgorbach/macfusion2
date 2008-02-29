@@ -188,7 +188,7 @@ static MFFilesystemController* sharedController = nil;
 											plugin: plugin
 											 error: error ];
 	[self storeFilesystem: fs];
-	[fs mount];
+	[fs performSelector:@selector(mount) withObject:nil afterDelay:0];
 	return fs;
 }
 
@@ -412,15 +412,14 @@ static void diskUnMounted(DADiskRef disk, void* mySelf)
 	if ([mountedPaths containsObject: path])
 	{
 		[mountedPaths removeObject: path];
-		for(MFServerFS* fs in filesystems)
-		{
-			if ([fs.mountPath isEqualToString: path])
-			{
-				[fs handleUnmountNotification];
-				if (![fs isPersistent])
-					[self removeFilesystem: fs];
-			}
-		}
+		NSArray* matchingFilesystems = [filesystems filteredArrayUsingPredicate: 
+										[NSPredicate predicateWithFormat:@"self.mountPath == %@", path]];
+		[matchingFilesystems makeObjectsPerformSelector:@selector(handleUnmountNotification)];
+		
+		NSArray* matchingTemporaryFilesystems = [matchingFilesystems filteredArrayUsingPredicate:
+												 [NSPredicate predicateWithFormat:@"self.isPersistent != YES"]];
+		for(MFServerFS* fs in matchingTemporaryFilesystems)
+			[self removeFilesystem: fs];
 	}
 }
 

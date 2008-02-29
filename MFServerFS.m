@@ -112,7 +112,8 @@
 								   mutableCopy];
 	if (!params) 
 	{
-		NSLog(@"ERROR DETECTED %@", params);
+		*error = [MFError errorWithErrorCode:kMFErrorCodeMountFaliure
+								 description:@"Plugin failed to parse URL"];
 		return nil;
 	}
 	[params setValue: [NSNumber numberWithBool: NO] 
@@ -309,14 +310,10 @@
 {
 	NSFileManager* fm = [NSFileManager defaultManager];
 	NSString* mountPath = [self mountPath];
-	BOOL pathExists, isDir;
+	BOOL pathExists, isDir, returnValue;
+	NSString* errorDescription;
 	
-	if (!mountPath)
-	{
-		MFLogS(self, @"Failed to mount. Mount path is nil");
-		self.status = kMFStatusFSFailed;
-		return NO; 
-	}
+	NSAssert(mountPath, @"Attempted to filesystem with nil mountPath.");
 		
 	pathExists = [fm fileExistsAtPath:mountPath isDirectory:&isDir];
 	if (pathExists && isDir == YES) // directory already exists
@@ -325,33 +322,46 @@
 		BOOL writeable = [fm isWritableFileAtPath:mountPath];
 		if (!empty)
 		{
-			MFLogS(self, @"Mount path directory in use: %@", mountPath);
-			return NO;
+			errorDescription = @"Mount path directory in use.";
+			returnValue = NO;
 		}
 		else if (!writeable)
 		{
-			MFLogS(self, @"Mount path directory not writeable: %@", mountPath);
-			return NO;
+			errorDescription = @"Mount path directory not writeable.";
+			returnValue = NO;
 		}
 		else
 		{
-			// Mount point exists and is useable. We're all good.
-			return YES;
+			returnValue = YES;
 		}
 	}
 	else if (pathExists && !isDir)
 	{
-		MFLogS(self, @"Mount point path is a file, not a directory: %@", mountPath);
-		return NO;
+		errorDescription = @"Mount path is a file, not a directory.";
+		returnValue = NO;
 	}
 	else if (!pathExists)
 	{
-		MFLogS(self, @"Creating directory %@", mountPath);
-		[fm createDirectoryAtPath:mountPath attributes:nil];
-		return YES;
+		if ([fm createDirectoryAtPath:mountPath attributes:nil])
+			returnValue = YES;
+		else
+		{
+			errorDescription = @"Mount path could not be created.";
+			returnValue = NO;
+		}
 	}
 	
-	return NO;
+	if (returnValue == NO)
+	{
+		NSError* error = [MFError errorWithErrorCode:kMFErrorCodeMountFaliure
+										 description:errorDescription];
+		[statusInfo setObject: error forKey: kMFSTErrorKey ];
+		return NO;
+	}
+	else
+	{
+		return YES;
+	}
 }
 
 - (void)removeMountPoint
@@ -442,10 +452,12 @@
 									 error: error];
 	if (!ok) // Delegate didn't validate
 	{
+		// MFLogS(self, @"Delegate didn't validate %@", impliedParams);
 		return NO;
 	}
 	else
 	{
+		// MFLogS(self, @"Delegate did validate %@", impliedParams);
 		// Continue validation for general macfusion keys
 		if (![impliedParams objectForKey: kMFFSVolumeNameParameter])
 		{
@@ -606,11 +618,14 @@
 {
 	if (newStatus)
 	{
+		// Hack this a bit so that we can set an error on faliure
+		// Do this only if an error hasn't already been set
 		[statusInfo setObject: newStatus forKey:kMFSTStatusKey ];
-		if( [newStatus isEqualToString: kMFStatusFSFailed] )
+		if( [newStatus isEqualToString: kMFStatusFSFailed] && 
+			![statusInfo objectForKey: kMFSTErrorKey] )
 		{
-			// Hack this a bit so that we can set an error on faliure
 			NSError* error = nil;
+			// Ask the delegate for the error
 			if ([delegate respondsToSelector:@selector(errorForParameters:output:)] &&
 				(error = [delegate errorForParameters:[self parametersWithImpliedValues] 
 									  output:[statusInfo objectForKey: kMFSTOutputKey]]) && error)
@@ -618,6 +633,7 @@
 			}
 			else
 			{
+				// Use a generic error
 				error = [self errorForFaliure];
 			}
 			

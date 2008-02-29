@@ -100,7 +100,7 @@ static MFCommunicationServer* sharedServer = nil;
 	// We need to observe filesystems itself, and add/remove observations on filesystems as they appear and dissapear
 	NSDistributedNotificationCenter* dnc = [NSDistributedNotificationCenter defaultCenter];
 	
-	// MFLogS(self, @"Observes: keypath %@ object %@, change %@", keyPath, object, change);
+	MFLogS(self, @"Observes: keypath %@ object %@, change %@", keyPath, object, change);
 	
 	if ([keyPath isEqualToString:@"status"] && [object isKindOfClass: [MFFilesystem class]])
 	{

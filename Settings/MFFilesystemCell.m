@@ -72,10 +72,26 @@
 	
 	float verticalPadding = 5.0;
 	float horizontalPadding = 10.0;
+	NSSize buttonSize = NSMakeSize(65, 20);
+	NSSize totalButtonSize = NSMakeSize(2*buttonSize.width + horizontalPadding, buttonSize.height);
 	
 	NSRect iconBox = NSMakeRect( insetRect.origin.x,  insetRect.origin.y + insetRect.size.height*.5 - iconSize.height*.5,
 								iconSize.width,
 								iconSize.height );
+	
+	NSRect buttonBox = NSMakeRect(insetRect.origin.x + insetRect.size.width - totalButtonSize.width,
+								   insetRect.origin.y + insetRect.size.height * 0.5 - totalButtonSize.height * .5,
+								   totalButtonSize.width,
+								   totalButtonSize.height);
+	NSRect editButtonBox = NSMakeRect(buttonBox.origin.x, buttonBox.origin.y, buttonSize.width, buttonSize.height);
+	NSRect mountButtonBox = NSMakeRect(editButtonBox.origin.x + buttonSize.width + horizontalPadding,
+										buttonBox.origin.y, buttonSize.width, buttonSize.height);
+	
+	NSBezierPath* mountButtonPath = [NSBezierPath bezierPathWithRoundedRect:mountButtonBox
+																	xRadius:10 yRadius:10];
+	NSBezierPath* editButtonPath = [NSBezierPath bezierPathWithRoundedRect:editButtonBox
+																   xRadius:10
+																   yRadius:10];
 	
 	float combinedHeight = mainTextSize.height + secondaryTextSize.height + verticalPadding;
 	NSRect textBox = NSMakeRect( iconBox.origin.x + iconBox.size.width + horizontalPadding,
@@ -90,6 +106,44 @@
 										 textBox.origin.y + textBox.size.height*.5,
 										 textBox.size.width,
 										 secondaryTextSize.height);
+	
+	
+	NSMutableDictionary* buttonTextAttributes = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+										  [NSColor blackColor], NSForegroundColorAttributeName,
+										  [NSFont systemFontOfSize:13], NSFontAttributeName,
+										  nil];
+	
+	// Edit button
+	if (![fs isMounted])
+	{
+		NSString* editText = @"Edit";
+		NSSize editSize = [editText sizeWithAttributes:buttonTextAttributes];
+		NSRect editTextRect = NSMakeRect(editButtonBox.origin.x + editButtonBox.size.width*0.5 - editSize.width*0.5,
+										 editButtonBox.origin.y + editButtonBox.size.height*0.5 - editSize.height*0.5,
+										 editSize.width,
+										 editSize.height);
+		[[NSColor lightGrayColor] set];
+		[editButtonPath fill];
+		[editText drawInRect: editTextRect withAttributes:buttonTextAttributes];
+	}
+	
+	// Mount Button
+	if (![fs isWaiting])
+	{
+		NSString* mountText = [fs isMounted] ? @"Unmount" : @"Mount";
+		NSFont* font = [fs isMounted] ? [NSFont systemFontOfSize:12] : [NSFont systemFontOfSize:13];
+		[buttonTextAttributes setObject: font forKey:NSFontAttributeName];
+		NSSize mountSize = [mountText sizeWithAttributes:buttonTextAttributes];
+		NSRect mountTextRect = NSMakeRect(mountButtonBox.origin.x + mountButtonBox.size.width*0.5 - mountSize.width*0.5,
+										 mountButtonBox.origin.y + mountButtonBox.size.height*0.5 - mountSize.height*0.5,
+										 mountSize.width,
+										 mountSize.height);
+		[NSGraphicsContext saveGraphicsState];
+		[[NSColor lightGrayColor] set];
+		[mountButtonPath fill];
+		[NSGraphicsContext restoreGraphicsState];
+		[mountText drawInRect: mountTextRect withAttributes:buttonTextAttributes];
+	}
 	
 	if ([self isHighlighted])
 	{
