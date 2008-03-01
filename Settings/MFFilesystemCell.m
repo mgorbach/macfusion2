@@ -13,6 +13,10 @@
 #import "MGNSImage.h"
 
 #define IMAGE_SIZE 48
+#define HORIZONTAL_PADDING 10.0f
+#define VERTICAL_PADDING 5.0f
+#define BUTTON_SIZE NSMakeSize(65, 20)
+
 
 @implementation MFFilesystemCell
 
@@ -31,6 +35,53 @@
 	return nil;
 }
 
+# pragma mark Geometry
+
+- (NSRect)insetRectWithFrame:(NSRect)frame
+{
+	NSRect insetRect = NSInsetRect(frame, 10, 0);
+	return insetRect;
+}
+
+- (NSRect)buttonBoxWithFrame:(NSRect)frame
+{
+	NSRect insetRect = [self insetRectWithFrame: frame];
+	NSSize totalButtonSize = NSMakeSize(2*BUTTON_SIZE.width + HORIZONTAL_PADDING, BUTTON_SIZE.height);
+	NSRect buttonBox = NSMakeRect(insetRect.origin.x + insetRect.size.width - totalButtonSize.width,
+								  insetRect.origin.y + insetRect.size.height * 0.5 - totalButtonSize.height * .5,
+								  totalButtonSize.width,
+								  totalButtonSize.height);
+	return buttonBox;
+}
+
+
+- (NSRect)editButtonBoxWithFrame:(NSRect)frame
+{
+	NSRect buttonBox = [self buttonBoxWithFrame: frame];
+	NSRect editButtonBox = NSMakeRect(buttonBox.origin.x, buttonBox.origin.y, BUTTON_SIZE.width, BUTTON_SIZE.height);
+	return editButtonBox;
+}
+
+- (NSRect)mountButtonBoxWithFrame:(NSRect)frame
+{
+	NSRect buttonBox = [self buttonBoxWithFrame: frame];
+	NSRect editButtonBox = [self editButtonBoxWithFrame: frame];
+	NSRect mountButtonBox = NSMakeRect(editButtonBox.origin.x + BUTTON_SIZE.width + HORIZONTAL_PADDING,
+									   buttonBox.origin.y, BUTTON_SIZE.width, BUTTON_SIZE.height);
+	return mountButtonBox;
+}
+
+- (NSRect)iconBoxWithFrame:(NSRect)frame
+{
+	NSRect insetRect = [self insetRectWithFrame: frame];
+	NSSize iconSize = NSMakeSize(IMAGE_SIZE, IMAGE_SIZE);
+	NSRect iconBox = NSMakeRect( insetRect.origin.x,  insetRect.origin.y + insetRect.size.height*.5 - iconSize.height*.5,
+								iconSize.width,
+								iconSize.height );
+	return iconBox;
+}
+
+# pragma mark Icons and images
 - (NSImage*)iconToDraw
 {
 	MFClientFS* fs = [self representedObject];
@@ -43,13 +94,13 @@
 																	intenisty: [NSNumber numberWithFloat: 0.4] ];
 
 	return [coloredImage nsImageRepresentation];
-//	return [icon imageScaledToSize: NSMakeSize(IMAGE_SIZE, IMAGE_SIZE)];
 }
 
+# pragma mark Drawing
 - (void)drawInteriorWithFrame:(NSRect)cellFrame inView:(NSView*)controlView
 {	
 	MFClientFS* fs = [self representedObject];
-	NSRect insetRect = NSInsetRect(cellFrame, 10, 0);
+
 	NSSize iconSize = NSMakeSize(IMAGE_SIZE, IMAGE_SIZE);
 	NSMutableParagraphStyle* style = [NSMutableParagraphStyle new];
 	[style setLineBreakMode: NSLineBreakByTruncatingTail];
@@ -69,23 +120,14 @@
 	
 	NSString* secondaryText = fs.descriptionString;
 	NSSize secondaryTextSize = [secondaryText sizeWithAttributes: secondaryTextAttributes];
+
 	
-	float verticalPadding = 5.0;
-	float horizontalPadding = 10.0;
-	NSSize buttonSize = NSMakeSize(65, 20);
-	NSSize totalButtonSize = NSMakeSize(2*buttonSize.width + horizontalPadding, buttonSize.height);
+
 	
-	NSRect iconBox = NSMakeRect( insetRect.origin.x,  insetRect.origin.y + insetRect.size.height*.5 - iconSize.height*.5,
-								iconSize.width,
-								iconSize.height );
-	
-	NSRect buttonBox = NSMakeRect(insetRect.origin.x + insetRect.size.width - totalButtonSize.width,
-								   insetRect.origin.y + insetRect.size.height * 0.5 - totalButtonSize.height * .5,
-								   totalButtonSize.width,
-								   totalButtonSize.height);
-	NSRect editButtonBox = NSMakeRect(buttonBox.origin.x, buttonBox.origin.y, buttonSize.width, buttonSize.height);
-	NSRect mountButtonBox = NSMakeRect(editButtonBox.origin.x + buttonSize.width + horizontalPadding,
-										buttonBox.origin.y, buttonSize.width, buttonSize.height);
+
+	NSRect iconBox = [self iconBoxWithFrame:cellFrame];
+	NSRect editButtonBox = [self editButtonBoxWithFrame:cellFrame];
+	NSRect mountButtonBox = [self mountButtonBoxWithFrame:cellFrame];
 	
 	NSBezierPath* mountButtonPath = [NSBezierPath bezierPathWithRoundedRect:mountButtonBox
 																	xRadius:10 yRadius:10];
@@ -93,11 +135,13 @@
 																   xRadius:10
 																   yRadius:10];
 	
-	float combinedHeight = mainTextSize.height + secondaryTextSize.height + verticalPadding;
-	NSRect textBox = NSMakeRect( iconBox.origin.x + iconBox.size.width + horizontalPadding,
+	float combinedHeight = mainTextSize.height + secondaryTextSize.height + VERTICAL_PADDING;
+	NSRect insetRect = [self insetRectWithFrame: cellFrame];
+	NSRect textBox = NSMakeRect( iconBox.origin.x + iconBox.size.width + HORIZONTAL_PADDING,
 								insetRect.origin.y + insetRect.size.height * .5 - combinedHeight*.5,
-								insetRect.size.width - iconSize.width - horizontalPadding,
+								insetRect.size.width - iconSize.width - HORIZONTAL_PADDING - editButtonBox.size.width - mountButtonBox.size.width - 2*HORIZONTAL_PADDING,
 								combinedHeight );
+
 	NSRect mainTextBox = NSMakeRect( textBox.origin.x,
 								 textBox.origin.y + textBox.size.height*.5 - mainTextSize.height,
 								 textBox.size.width ,
@@ -108,8 +152,10 @@
 										 secondaryTextSize.height);
 	
 	
+	NSColor* textColor = [self isHighlighted] ? [NSColor whiteColor] : [NSColor whiteColor];
+	NSColor* bgColor = [self isHighlighted] ? [NSColor grayColor] : [NSColor grayColor];
 	NSMutableDictionary* buttonTextAttributes = [NSMutableDictionary dictionaryWithObjectsAndKeys:
-										  [NSColor blackColor], NSForegroundColorAttributeName,
+										  textColor, NSForegroundColorAttributeName,
 										  [NSFont systemFontOfSize:13], NSFontAttributeName,
 										  nil];
 	
@@ -122,7 +168,7 @@
 										 editButtonBox.origin.y + editButtonBox.size.height*0.5 - editSize.height*0.5,
 										 editSize.width,
 										 editSize.height);
-		[[NSColor lightGrayColor] set];
+		[bgColor set];
 		[editButtonPath fill];
 		[editText drawInRect: editTextRect withAttributes:buttonTextAttributes];
 	}
@@ -139,7 +185,8 @@
 										 mountSize.width,
 										 mountSize.height);
 		[NSGraphicsContext saveGraphicsState];
-		[[NSColor lightGrayColor] set];
+//		NSColor* color = [self isHighlighted] ? [NSColor grayColor] : [NSColor lightGrayColor];
+		[bgColor set];
 		[mountButtonPath fill];
 		[NSGraphicsContext restoreGraphicsState];
 		[mountText drawInRect: mountTextRect withAttributes:buttonTextAttributes];
@@ -160,6 +207,13 @@
 	
 	[mainText drawInRect:mainTextBox withAttributes:mainTextAttributes];
 	[secondaryText drawInRect:secondaryTextBox withAttributes:secondaryTextAttributes];
+}
+
+# pragma mark Hit Testing Stuff
+- (NSInteger)hitTestForEvent:(NSEvent*)e inRect:(NSRect)r ofView:(NSView*)view
+{
+	NSLog(@"Called !");
+	return NSCellHitContentArea;
 }
 
 @end

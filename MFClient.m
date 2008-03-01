@@ -310,5 +310,37 @@ static MFClient* sharedClient = nil;
 	return [pluginsDictionary objectForKey:id];
 }
 
+# pragma mark UI stuff
+- (void)moveUUIDS:(NSArray*)uuids
+			toRow:(NSUInteger)row
+{
+	NSMutableArray* filesystemsToInsert = [NSMutableArray array];
+	NSMutableIndexSet* indexesToDelete = [NSMutableIndexSet indexSet];
+	for(NSString* uuid in uuids)
+	{
+		MFClientFS* fs = [self filesystemWithUUID: uuid];
+		if (fs)
+		{
+			[filesystemsToInsert addObject: fs];
+			[indexesToDelete addIndex: [filesystems indexOfObject:fs]];
+		}
+	}
+	
+	NSIndexSet* indexes = [NSIndexSet indexSetWithIndexesInRange: 
+						  NSMakeRange(row, [filesystemsToInsert count])];
+	BOOL lastRow = (row == [filesystems count]);
+	[[self mutableArrayValueForKey:@"filesystems"] removeObjectsAtIndexes:indexesToDelete];
+	if (lastRow)
+	{
+		[[self mutableArrayValueForKey:@"filesystems"] addObjectsFromArray: filesystemsToInsert];
+	}
+	else
+	{
+		[[self mutableArrayValueForKey:@"filesystems"] insertObjects:filesystemsToInsert
+														   atIndexes:indexes];
+	}
+	
+}
+
 @synthesize delegate, filesystems, plugins, recents;
 @end

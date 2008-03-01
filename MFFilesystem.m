@@ -11,6 +11,8 @@
 #import "MFPlugin.h"
 #import "MFConstants.h"
 
+#define FS_DIR_PATH @"~/Library/Application Support/Macfusion/Filesystems"
+
 @interface MFFilesystem(PrivateAPI)
 
 @end
@@ -122,7 +124,10 @@
 	}
 	if ([paramName isEqualToString: kMFFSFilePathParameter])
 	{
-		return self.uuid;
+		NSString* expandedDirPath = [FS_DIR_PATH stringByExpandingTildeInPath];
+		NSString* fileName = [NSString stringWithFormat: @"%@.macfusion", self.uuid];
+		NSString* fullPath = [expandedDirPath stringByAppendingPathComponent: fileName];
+		return fullPath;
 	}
 	
 	return nil;

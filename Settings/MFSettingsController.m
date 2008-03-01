@@ -1,4 +1,4 @@
-//
+	//
 //  MFSettingsController.m
 //  MacFusion2
 //
@@ -10,8 +10,12 @@
 #import "MFClient.h"
 #import "MFClientFS.h"
 #import "MFFilesystemCell.h"
+#import "MFConstants.h"
+#import "MFError.h"
 
+@interface MFSettingsController(PrivateAPI)
 
+@end
 @implementation MFSettingsController
 - (id) init
 {
@@ -19,10 +23,10 @@
 	if (self != nil) 
 	{
 		client = [MFClient sharedClient];
+		[NSApp setDelegate: self];
 		[client setDelegate: self];
 		if ([client setup])
 		{
-			
 		}
 		else
 		{
@@ -34,9 +38,49 @@
 			[alert setAlertStyle: NSCriticalAlertStyle];
 			[alert runModal];
 			[NSApp terminate:self];
+
 		}
+		
 	}
 	return self;
+}
+
+# pragma mark Handling Notifications
+- (void)handleFailureNotification:(NSNotification*)note
+{
+	MFClientFS* fs = [note object];
+	if ([[filesystemArrayController arrangedObjects] 
+		 containsObject: fs])
+	{
+		[NSApp presentError: [fs error]
+						 modalForWindow:[NSApp keyWindow]
+							   delegate:nil
+					 didPresentSelector:nil
+							contextInfo:nil];
+		[[NSNotificationCenter defaultCenter]
+		 removeObserver:self name:kMFClientFSMountedNotification object:fs];
+		[[NSNotificationCenter defaultCenter]
+		 removeObserver:self name:kMFClientFSFailedNotification object:fs];
+	}
+	
+}
+
+- (void)handleMountNotification:(NSNotification*)note
+{
+	MFClientFS* fs = [note object];
+	if ([[filesystemArrayController arrangedObjects] 
+		 containsObject: fs])
+	{
+		[NSApp presentError:[fs error]
+						 modalForWindow:[NSApp keyWindow]
+							   delegate:nil
+					 didPresentSelector:nil
+							contextInfo:nil];
+		[[NSNotificationCenter defaultCenter]
+		 removeObserver:self name:kMFClientFSMountedNotification object:fs];
+		[[NSNotificationCenter defaultCenter]
+		 removeObserver:self name:kMFClientFSFailedNotification object:fs];
+	}
 }
 
 - (void)awakeFromNib
@@ -59,6 +103,16 @@
 	[c setDataCell: [[MFFilesystemCell alloc] init]];
 	[filesystemTableView setMenu: tableViewMenu];
 	[[filesystemTableView window] center];
+	
+	// D&D
+	[filesystemTableView registerForDraggedTypes: [NSArray arrayWithObject: kMFFilesystemDragType ]];
+	[filesystemTableView setDataSource: self];
+	[filesystemTableView setDelegate: self];
+}
+
+- (void)applicationWillFinishLaunching:(NSNotification*)note
+{
+	
 }
 
 # pragma mark Table Delegate Methods
@@ -89,7 +143,7 @@
 			}
 			else
 			{
-				NSLog(@"Failed to load interface for filesystem %@", fs);
+				MFLogS(self, @"Failed to load interface for filesystem %@", fs);
 			}
 
 		}
@@ -109,6 +163,61 @@
 {
 	[cell setRepresentedObject: [[client filesystems] objectAtIndex: row]];
 }
+
+# pragma mark Tableview D&D
+- (BOOL)tableView:(NSTableView *)tableView
+writeRowsWithIndexes:(NSIndexSet *)rowIndexes 
+	 toPasteboard:(NSPasteboard*)pboard
+{
+	NSLog(@"Writing to pasteboard ...");
+	NSMutableArray* uuids = [NSMutableArray array];
+	NSUInteger count = [rowIndexes count];
+	
+	int i;
+	NSUInteger index = [rowIndexes firstIndex];
+	for(i = 0; i < count; i++)
+	{
+		NSString* uuid = [[[filesystemArrayController arrangedObjects] objectAtIndex: index] uuid];
+		[uuids addObject: uuid];
+		NSInteger index = [rowIndexes indexGreaterThanIndex:index];
+	}
+	
+	if ([uuids count] > 0)
+	{
+		[pboard declareTypes:[NSArray arrayWithObject:kMFFilesystemDragType] owner:self];
+		[pboard setPropertyList:uuids forType:kMFFilesystemDragType];
+		return YES;
+	}
+	else
+	{
+		return NO;
+	}
+}
+
+- (NSInteger)convertRowToAccountForTemporaryFilesystems:(NSInteger)row
+{
+	return row;
+}
+
+- (NSDragOperation)tableView:(NSTableView*)tableView 
+				validateDrop:(id <NSDraggingInfo>)info 
+				 proposedRow:(int)row 
+	   proposedDropOperation:(NSTableViewDropOperation)op
+{
+	[tableView setDropRow:row dropOperation:NSTableViewDropAbove];
+	return NSDragOperationEvery;
+}
+
+- (BOOL)tableView:(NSTableView *)tableView acceptDrop:(id <NSDraggingInfo>)info
+			  row:(int)row dropOperation:(NSTableViewDropOperation)operation
+{
+	NSPasteboard* pb = [info draggingPasteboard];
+	NSArray* uuidsBeingMoved = [pb propertyListForType:kMFFilesystemDragType];
+	row = [self convertRowToAccountForTemporaryFilesystems: row];
+	[client moveUUIDS:uuidsBeingMoved toRow:row];
+	return YES;
+}
+
 
 # pragma mark Actions
 - (void)popupButtonClicked:(id)sender
@@ -220,9 +329,17 @@
 		{
 			[fs unmount];
 		}
-		else if ([fs isUnmounted])
+		else if ([fs isUnmounted] || [fs isFailedToMount])
 		{
 			[fs mount];
+			[[NSNotificationCenter defaultCenter] addObserver:self
+													 selector:@selector(handleFailureNotification:) 
+														 name:kMFClientFSFailedNotification
+													   object:fs];
+			[[NSNotificationCenter defaultCenter] addObserver:self
+													 selector:@selector(handleMountNotification:) 
+														 name:kMFClientFSFailedNotification
+													   object:fs];
 		}
 	}
 }
@@ -235,7 +352,7 @@
 	NSError* error = [fs endEditingAndCommitChanges: YES];
 	if (error)
 	{
-		[[filesystemTableView window] presentError: error
+		[NSApp presentError: error
 							modalForWindow: [sender window]
 								  delegate: self
 								didPresentSelector: @selector(didPresentErrorWithRecovery: contextInfo:)
@@ -247,9 +364,17 @@
 	}
 }
 
-- (void)didPresentErrorWithRecovery:(BOOL)recovered contextInfo:(id)context
+- (NSError *)application:(NSApplication *)application willPresentError:(NSError *)error
 {
-	NSLog(@"PRESENTED OK!");
+	if ([error code] == kMFErrorCodeMountFaliure)
+	{
+		NSString* newDescription = [NSString stringWithFormat: @"Could not mount filesystem: %@", [error localizedDescription]];
+		return [MFError errorWithErrorCode:kMFErrorCodeMountFaliure description:newDescription];
+	}
+	else
+	{
+		return error;
+	}
 }
 
 - (void)filesystemEditCancelClicked:(id)sender

@@ -9,6 +9,7 @@
 #import "MFClientFS.h"
 #import "MFConstants.h"
 #import "MFClientPlugin.h"
+#import "MFServerFSProtocol.h"
 
 @interface MFClientFS (PrivateAPI)
 - (void)fillInitialData;
@@ -46,6 +47,7 @@
 	if (self != nil)
 	{
 		remoteFilesystem = remoteFS;
+		[remoteFS setProtocolForProxy:@protocol(MFServerFSProtocol)];
 		plugin = p;
 		delegate = [plugin delegate];
 		[self fillInitialData];
@@ -87,11 +89,6 @@
 				   afterDelay:0];
 }
 
-- (void)toggleMount:(id)sender
-{
-	[remoteFilesystem mount];
-}
-
 #pragma mark Notifications To Clients
 - (void)sendNotification:(NSString*)name
 
@@ -105,7 +102,7 @@
 - (void)sendNotificationForStatusChangeFrom:(NSString*)previousStatus
 										 to:(NSString*)newStatus
 {
-	MFLogS(self, @"Notifying for status %@ -> %@", previousStatus, newStatus);
+	// MFLogS(self, @"Notifying for status %@ -> %@", previousStatus, newStatus);
 	if ([previousStatus isEqualToString: newStatus])
 	{
 		// Send No Notification

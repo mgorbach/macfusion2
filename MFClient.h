@@ -48,4 +48,8 @@
 @property (readonly) NSArray* plugins;
 @property(readonly) NSArray* recents;
 
+// UI Stuff
+- (void)moveUUIDS:(NSArray*)uuid 
+			toRow:(NSUInteger)row;
+
 @end

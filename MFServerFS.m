@@ -11,6 +11,8 @@
 #import "MFPluginController.h"
 #import "MFError.h"
 
+#define FS_DIR_PATH @"~/Library/Application Support/Macfusion/Filesystems"
+
 @interface MFServerFS (PrivateAPI)
 - (MFServerFS*)initWithPlugin:(MFServerPlugin*)p;
 - (MFServerFS*)initWithParameters:(NSDictionary*)params 
@@ -553,6 +555,7 @@
 	
 	if ([keyPath isEqualToString: kMFParameterDict])
 	{
+		MFLogS(self, @"WRITING OUT SELF");
 		[self writeOutData];
 	}
 	
@@ -577,14 +580,15 @@
 {
 	if  ([self isPersistent])
 	{
-		NSString* dirPath = [@"~/Library/Application Support/Macfusion/Filesystems"
+		NSString* expandedDirPath = [@"~/Library/Application Support/Macfusion/Filesystems"
 							 stringByExpandingTildeInPath];
+
 		
 		BOOL isDir;
-		if (![[NSFileManager defaultManager] fileExistsAtPath:dirPath isDirectory:&isDir] || !isDir) 
+		if (![[NSFileManager defaultManager] fileExistsAtPath:expandedDirPath isDirectory:&isDir] || !isDir) 
 		{
 			NSError* error = nil;
-			BOOL ok = [[NSFileManager defaultManager] createDirectoryAtPath:dirPath
+			BOOL ok = [[NSFileManager defaultManager] createDirectoryAtPath:expandedDirPath
 												withIntermediateDirectories:YES
 																 attributes:nil error:&error];
 			if (!ok)
@@ -595,9 +599,20 @@
 			
 		}
 		
-		NSString* path = [self valueForParameterNamed: kMFFSFilePathParameter ];
-		[parameters writeToFile: [dirPath stringByAppendingFormat: @"/%@.macfusion", path]
-					 atomically: YES];
+		NSString* fullPath = [self valueForParameterNamed: kMFFSFilePathParameter ];
+		if ([[NSFileManager defaultManager] fileExistsAtPath: fullPath])
+		{
+			BOOL deleteOK = [[NSFileManager defaultManager] removeFileAtPath:fullPath handler:nil];
+			if (!deleteOK)
+				MFLogS(self, @"Failed to delete old file during save");
+		}
+		
+		BOOL writeOK = [parameters writeToFile: fullPath
+									atomically: NO];
+		if (!writeOK)
+		{
+			MFLogS(self, @"Failed to write out dictionary to file %@", fullPath);
+		}
 	}
 }
 

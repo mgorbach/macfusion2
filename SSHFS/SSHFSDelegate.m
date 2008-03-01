@@ -97,13 +97,14 @@
 - (NSString*)descriptionForParameters:(NSDictionary*)parameters
 {
 	NSString* description = nil;
-	if ( isNilOrNull( [parameters objectForKey: kSSHFSHostParameter] ) )
+	if ( ![parameters objectForKey: kSSHFSHostParameter] )
 	{
 		description = @"No host specified";
 	}
 	else
 	{
-		if( isNotNilOrNull( [parameters objectForKey: kSSHFSUserParameter] ) )
+		if( [parameters objectForKey: kSSHFSUserParameter] && 
+			![[parameters objectForKey: kSSHFSUserParameter] isEqualTo: NSUserName()])
 		{
 			description = [NSString stringWithFormat:@"%@@%@",
 						   [parameters objectForKey: kSSHFSUserParameter],
@@ -190,11 +191,9 @@
 	if (![parameters objectForKey: kSSHFSHostParameter])
 	{
 		*error = [MFError parameterMissingErrorWithParameterName: kSSHFSHostParameter ];
-		MFLogS(self, @"Delegate returning error for %@", parameters);
 		return NO;
 	}
 	
-	MFLogS(self, @"Delegate returning yes for %@", parameters);
 	return YES;
 }
 

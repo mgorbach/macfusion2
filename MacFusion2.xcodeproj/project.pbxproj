@@ -305,8 +305,8 @@
 		D4CEE0F20D3045590064042E /* MFClientFS.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MFClientFS.m; sourceTree = "<group>"; };
 		D4D6A0D70D025B4A00BC2E2D /* MFConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFConstants.h; sourceTree = "<group>"; };
 		D4D6A2220D03686000BC2E2D /* fuse.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = fuse.plist; sourceTree = "<group>"; };
-		D4DB42040D3E863100C99914 /* MacfusionSettings.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MacfusionSettings.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		D4DB42060D3E863100C99914 /* MacfusionSettings-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "MacfusionSettings-Info.plist"; path = "../MacfusionSettings-Info.plist"; sourceTree = "<group>"; };
+		D4DB42040D3E863100C99914 /* Macfusion.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Macfusion.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D4DB42060D3E863100C99914 /* MacfusionMain-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "MacfusionMain-Info.plist"; path = "../MacfusionMain-Info.plist"; sourceTree = "<group>"; };
 		D4DB42CC0D3EAC7000C99914 /* MFSettingsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFSettingsController.h; sourceTree = "<group>"; };
 		D4DB42CD0D3EAC7000C99914 /* MFSettingsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MFSettingsController.m; sourceTree = "<group>"; };
 		D4DB42E90D3EAE4C00C99914 /* settingsMain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = settingsMain.m; sourceTree = "<group>"; };
@@ -522,7 +522,7 @@
 				D441521F0CE2933C001EEF36 /* sshfs.mfplugin */,
 				D4FC0C980CF128480029B133 /* MFCore.framework */,
 				D439D4370D05D58D0025574A /* macfusionAgent */,
-				D4DB42040D3E863100C99914 /* MacfusionSettings.app */,
+				D4DB42040D3E863100C99914 /* Macfusion.app */,
 				D48DB97F0D70D7A4008A62BB /* MacfusionMenuling.app */,
 			);
 			name = Products;
@@ -594,7 +594,7 @@
 		D4DB42DA0D3EAD0100C99914 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				D4DB42060D3E863100C99914 /* MacfusionSettings-Info.plist */,
+				D4DB42060D3E863100C99914 /* MacfusionMain-Info.plist */,
 				D4DB43740D3EB6A100C99914 /* main.xib */,
 			);
 			name = Resources;
@@ -764,9 +764,9 @@
 			productReference = D4B14E730CE198AC003195A3 /* mfctl */;
 			productType = "com.apple.product-type.tool";
 		};
-		D4DB42030D3E863100C99914 /* MacfusionSettings */ = {
+		D4DB42030D3E863100C99914 /* MacfusionMain */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = D4DB42090D3E863200C99914 /* Build configuration list for PBXNativeTarget "MacfusionSettings" */;
+			buildConfigurationList = D4DB42090D3E863200C99914 /* Build configuration list for PBXNativeTarget "MacfusionMain" */;
 			buildPhases = (
 				D4DB42000D3E863100C99914 /* Resources */,
 				D4DB42010D3E863100C99914 /* Sources */,
@@ -778,9 +778,9 @@
 			dependencies = (
 				D41867D90D72983C004975AF /* PBXTargetDependency */,
 			);
-			name = MacfusionSettings;
+			name = MacfusionMain;
 			productName = MacfusionSettings;
-			productReference = D4DB42040D3E863100C99914 /* MacfusionSettings.app */;
+			productReference = D4DB42040D3E863100C99914 /* Macfusion.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -801,7 +801,7 @@
 				D4B14BB50CE03CC3003195A3 /* sshfs */,
 				D4B14C5F0CE044C0003195A3 /* Plugin Install */,
 				D4FC0DA30CF23CFE0029B133 /* All */,
-				D4DB42030D3E863100C99914 /* MacfusionSettings */,
+				D4DB42030D3E863100C99914 /* MacfusionMain */,
 				D48DB97E0D70D7A4008A62BB /* MacfusionMenuling */,
 			);
 		};
@@ -967,7 +967,7 @@
 		};
 		D4DB42110D3E867800C99914 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = D4DB42030D3E863100C99914 /* MacfusionSettings */;
+			target = D4DB42030D3E863100C99914 /* MacfusionMain */;
 			targetProxy = D4DB42100D3E867800C99914 /* PBXContainerItemProxy */;
 		};
 		D4E51FED0CE03AD3009B1A30 /* PBXTargetDependency */ = {
@@ -1179,7 +1179,7 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
-				INFOPLIST_FILE = "MacfusionSettings-Info.plist";
+				INFOPLIST_FILE = "MacfusionMain-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -1205,7 +1205,7 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
-				INFOPLIST_FILE = "MacfusionSettings-Info.plist";
+				INFOPLIST_FILE = "MacfusionMain-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -1214,7 +1214,7 @@
 					AppKit,
 				);
 				PREBINDING = NO;
-				PRODUCT_NAME = MacfusionSettings;
+				PRODUCT_NAME = Macfusion;
 				WRAPPER_EXTENSION = app;
 				ZERO_LINK = YES;
 			};
@@ -1430,7 +1430,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		D4DB42090D3E863200C99914 /* Build configuration list for PBXNativeTarget "MacfusionSettings" */ = {
+		D4DB42090D3E863200C99914 /* Build configuration list for PBXNativeTarget "MacfusionMain" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D4DB42070D3E863200C99914 /* Release */,

@@ -97,4 +97,7 @@ enum macfusionErrorCodes {
 // Exceptions
 #define kMFBadAPIUsageException @"Bad API Usage In Macfusion"
 
+// D&D
+#define kMFFilesystemDragType @"org.mgorbach.macfusion.drag.mffilesystem"
+
 

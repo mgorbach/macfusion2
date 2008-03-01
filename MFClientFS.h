@@ -25,8 +25,6 @@
 - (id)initWithRemoteFS:(id)remoteFS 
 		  clientPlugin:(MFClientPlugin*)p;
 
-- (void)toggleMount:(id)sender;
-
 // Notification handling
 - (void)handleStatusInfoChangedNotification:(NSNotification*)note;
 - (void)handleParametersChangedNotification:(NSNotification*)note;
