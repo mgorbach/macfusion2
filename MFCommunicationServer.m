@@ -95,12 +95,9 @@ static MFCommunicationServer* sharedServer = nil;
 						 change:(NSDictionary *)change
 						context:(void *)context
 {
-
-	// TODO: This observation method will not be called on objects added to filesystems after registerNotifications is called
-	// We need to observe filesystems itself, and add/remove observations on filesystems as they appear and dissapear
 	NSDistributedNotificationCenter* dnc = [NSDistributedNotificationCenter defaultCenter];
 	
-	MFLogS(self, @"Observes: keypath %@ object %@, change %@", keyPath, object, change);
+	// MFLogS(self, @"Observes: keypath %@ object %@, change %@", keyPath, object, change);
 	
 	if ([keyPath isEqualToString:@"status"] && [object isKindOfClass: [MFFilesystem class]])
 	{
@@ -111,7 +108,8 @@ static MFCommunicationServer* sharedServer = nil;
 									  nil];
 		[dnc postNotificationName:kMFStatusChangedNotification
 						   object:kMFDNCObject
-						 userInfo:userInfoDict];
+						 userInfo:userInfoDict
+			  deliverImmediately:YES];
 	}
 	
 	if ([keyPath isEqualToString:@"filesystems"] && object == [MFFilesystemController sharedController])

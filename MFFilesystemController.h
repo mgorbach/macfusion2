@@ -17,6 +17,8 @@
 	
 	DASessionRef appearSession;
 	DASessionRef disappearSession;
+	
+	BOOL firstTimeMounting;
 }
 
 + (MFFilesystemController*)sharedController;

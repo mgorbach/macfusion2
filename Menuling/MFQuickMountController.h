@@ -7,9 +7,13 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import "MFClientFSDelegateProtocol.h";
+
 @class MFClientFS, MFClient;
 
-@interface MFQuickMountController : NSWindowController {
+@interface MFQuickMountController : NSWindowController <MFClientFSDelegateProtocol> 
+{
+	
 	NSTextField* qmTextField;
 	NSTabView* qmTabView;
 	NSProgressIndicator* qmProgress;

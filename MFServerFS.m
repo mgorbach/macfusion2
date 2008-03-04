@@ -10,6 +10,7 @@
 #import "MFConstants.h"
 #import "MFPluginController.h"
 #import "MFError.h"
+#include <sys/xattr.h>
 
 #define FS_DIR_PATH @"~/Library/Application Support/Macfusion/Filesystems"
 
@@ -25,6 +26,8 @@
 - (NSString*)getNewUUID;
 - (BOOL)validateParameters:(NSDictionary*)params
 				 WithError:(NSError**)error;
+- (NSError*)genericError;
+- (void)setError:(NSError*)error;
 @end
 
 @implementation MFServerFS
@@ -182,6 +185,10 @@
 		   forKeyPath:kMFParameterDict
 			  options:NSKeyValueObservingOptionOld || NSKeyValueObservingOptionNew
 			  context:nil];
+	[self addObserver:self
+		   forKeyPath:kMFSTStatusKey
+			  options:NSKeyValueObservingOptionOld || NSKeyValueObservingOptionNew
+			  context:nil];
 }
 
 - (NSMutableDictionary*)initializedStatusInfo
@@ -308,6 +315,19 @@
 
 
 # pragma mark Mounting mechanics
+
+- (void)tagMountPoint
+{
+	NSString* value = self.uuid;
+	int response;
+	
+	response = setxattr([self.mountPath cStringUsingEncoding: NSUTF8StringEncoding],
+							[@"org.mgorbach.macfusion.xattr.uuid" cStringUsingEncoding:NSUTF8StringEncoding],
+							[value cStringUsingEncoding: NSUTF8StringEncoding], 
+							[value lengthOfBytesUsingEncoding: NSUTF8StringEncoding] *sizeof(char), 0, 0);
+	// MFLogS(self, @"Mount point tag responds %d", response);
+}
+
 - (BOOL)setupMountPoint
 {
 	NSFileManager* fm = [NSFileManager defaultManager];
@@ -362,6 +382,7 @@
 	}
 	else
 	{
+		[self tagMountPoint];
 		return YES;
 	}
 }
@@ -371,6 +392,10 @@
 	NSFileManager* fm = [NSFileManager defaultManager];
 	NSString* mountPath = [self mountPath];
 	BOOL pathExists, isDir;
+	
+	removexattr([mountPath cStringUsingEncoding: NSUTF8StringEncoding],
+				[@"org.mgorbach.macfusion.xattr.uuid" cStringUsingEncoding: NSUTF8StringEncoding],
+				0);
 	
 	pathExists = [fm fileExistsAtPath:mountPath isDirectory:&isDir];
 	if (pathExists && isDir && ([[fm directoryContentsAtPath:mountPath] count] == 0))
@@ -402,6 +427,7 @@
 		
 		[task launch];
 		MFLogS(self, @"Task launched OK");
+		[self tagMountPoint];
 	}
 	else
 	{
@@ -491,6 +517,7 @@
 {
 	MFLogS(self, @"Mount notification received");
 	self.status = kMFStatusFSMounted;
+	[self tagMountPoint];
 }
 
 - (void)handleTaskDidTerminate:(NSNotification*)note
@@ -506,6 +533,13 @@
 	else if (self.status == kMFStatusFSWaiting)
 	{
 		// We terminated while trying to mount
+		NSDictionary* dictionary = [NSDictionary dictionaryWithObjectsAndKeys: 
+									self.uuid, kMFErrorFilesystemKey,
+									@"Mount process has terminated unexpectedly.", NSLocalizedDescriptionKey,
+									nil];
+		[self setError: [MFError errorWithDomain: kMFErrorDomain
+											code: kMFErrorCodeMountFaliure
+										userInfo: dictionary]];
 		self.status = kMFStatusFSFailed;
 	}
 }
@@ -546,25 +580,19 @@
                         change:(NSDictionary *)change
                        context:(void *)context
 {
-	if ([keyPath isEqualToString: KMFStatusDict ] &&
+	//MFLogS(self, @"Observes notification keypath %@ object %@, change %@",
+	//	   keyPath, object, change);
+	if ([keyPath isEqualToString: kMFSTStatusKey ] &&
 		object == self && 
-		[change objectForKey:NSKeyValueChangeNewKey] == kMFStatusFSUnmounted)
+		[[change objectForKey:NSKeyValueChangeNewKey] isEqualToString: kMFStatusFSUnmounted])
 	{
 		[self removeMountPoint];
 	}
 	
 	if ([keyPath isEqualToString: kMFParameterDict])
 	{
-		MFLogS(self, @"WRITING OUT SELF");
 		[self writeOutData];
 	}
-	
-	/*
-	 [super observeValueForKeyPath:keyPath
-	 ofObject:object
-	 change:change
-	 context:context];
-	 */
 }
 
 
@@ -572,7 +600,17 @@
 {
 	if (![self isUnmounted] && ![self isMounted])
 		if (![self isFailedToMount])
+		{
+			NSDictionary* dictionary = [NSDictionary dictionaryWithObjectsAndKeys: 
+										self.uuid, kMFErrorFilesystemKey,
+										@"Mount has timed out.", NSLocalizedDescriptionKey,
+										nil];
+			[self setError: [MFError errorWithDomain: kMFErrorDomain
+												code: kMFErrorCodeMountFaliure
+											userInfo: dictionary]];
 			self.status = kMFStatusFSFailed;
+		}
+			
 }
 
 # pragma mark Write out
@@ -616,7 +654,7 @@
 	}
 }
 
-- (NSError*)errorForFaliure
+- (NSError*)genericError
 {
 	NSDictionary* dictionary = [NSDictionary dictionaryWithObjectsAndKeys: 
 								self.uuid, kMFErrorFilesystemKey,
@@ -636,8 +674,13 @@
 		// Hack this a bit so that we can set an error on faliure
 		// Do this only if an error hasn't already been set
 		[statusInfo setObject: newStatus forKey:kMFSTStatusKey ];
-		if( [newStatus isEqualToString: kMFStatusFSFailed] && 
-			![statusInfo objectForKey: kMFSTErrorKey] )
+		
+		/*
+		if ([newStatus isEqualToString: kMFStatusFSMounted] )
+			[self tagMountPoint];
+		 */
+			
+		if( [newStatus isEqualToString: kMFStatusFSFailed] )
 		{
 			NSError* error = nil;
 			// Ask the delegate for the error
@@ -645,18 +688,22 @@
 				(error = [delegate errorForParameters:[self parametersWithImpliedValues] 
 									  output:[statusInfo objectForKey: kMFSTOutputKey]]) && error)
 			{
+				[self setError: error];
 			}
-			else
+			else if (![self error])
 			{
 				// Use a generic error
-				error = [self errorForFaliure];
+				[self setError: [self genericError]];
 			}
-			
-			[statusInfo setObject: error forKey:kMFSTErrorKey ];
 		}
 	}
 }
 
+- (void)setError:(NSError*)error
+{
+	if (error)
+		[statusInfo setObject: error forKey: kMFSTErrorKey ];
+}
 
 @synthesize plugin;
 @end

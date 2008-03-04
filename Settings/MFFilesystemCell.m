@@ -153,7 +153,7 @@
 	
 	
 	NSColor* textColor = [self isHighlighted] ? [NSColor whiteColor] : [NSColor whiteColor];
-	NSColor* bgColor = [self isHighlighted] ? [NSColor grayColor] : [NSColor grayColor];
+	NSColor* bgColor = [self isHighlighted] ? [NSColor darkGrayColor] : [NSColor grayColor];
 	NSMutableDictionary* buttonTextAttributes = [NSMutableDictionary dictionaryWithObjectsAndKeys:
 										  textColor, NSForegroundColorAttributeName,
 										  [NSFont systemFontOfSize:13], NSFontAttributeName,
@@ -212,7 +212,6 @@
 # pragma mark Hit Testing Stuff
 - (NSInteger)hitTestForEvent:(NSEvent*)e inRect:(NSRect)r ofView:(NSView*)view
 {
-	NSLog(@"Called !");
 	return NSCellHitContentArea;
 }
 

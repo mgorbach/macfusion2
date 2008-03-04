@@ -13,7 +13,8 @@
 
 @interface MFClient : NSObject {
 	NSMutableDictionary* filesystemsDictionary;
-	NSMutableArray* filesystems;
+	NSMutableArray* persistentFilesystems;
+	NSMutableArray* temporaryFilesystems;
 	NSMutableDictionary* pluginsDictionary;
 	NSMutableArray* plugins;
 	NSMutableArray* recents;
@@ -42,6 +43,7 @@
 
 // Only filesystems that are not temporary
 @property(readonly) NSArray* persistentFilesystems;
+@property(readonly) NSArray* temporaryFilesystems;
 @property(readonly) NSArray* mountedFilesystems;
 
 // All plugins

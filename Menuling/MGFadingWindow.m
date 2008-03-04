@@ -19,33 +19,34 @@
 	return self;
 }
 
-- (void)setVisible:(BOOL)visible
-{
-	closing = NO;
-	[self setAlphaValue: 0];
-	[super display];
-	//	CABasicAnimation* anim = [self animationForKey:@"alphaValue"];
-	//	[anim setDelegate:self];
-	//	[self setAnimations: [NSDictionary dictionaryWithObject:anim forKey:@"alphaValue"]];
-	[[self animator] setAlphaValue:1];
-}
-
-
-- (void)close
-{
-	closing = YES;
-	CABasicAnimation* anim = [self animationForKey:@"alphaValue"];
-	[anim setDelegate:self];
-	[self setAnimations: [NSDictionary dictionaryWithObject:anim forKey:@"alphaValue"]];
-	[[self animator] setAlphaValue:0];
-}
-
 - (void)animationDidStop:(CAAnimation*)animation finished:(BOOL)finished
 {
 	if (closing)
 	{
-		[self setAlphaValue: 1];
-		[super close];
+		[super orderWindow: NSWindowOut relativeTo:0];
+	}
+}
+
+- (void)orderWindow:(NSWindowOrderingMode)orderingMode relativeTo:(NSInteger)otherWindowNumber
+{
+	if (orderingMode == NSWindowAbove && !([self isVisible]))
+	{
+		closing = NO;
+		[self setAlphaValue: 0];
+		[super orderWindow:orderingMode relativeTo:otherWindowNumber];
+		[[self animator] setAlphaValue: 1];
+	}
+	else if (orderingMode == NSWindowOut)
+	{	
+		closing = YES;
+		CABasicAnimation* anim = [self animationForKey:@"alphaValue"];
+		[anim setDelegate:self];
+		[self setAnimations: [NSDictionary dictionaryWithObject:anim forKey:@"alphaValue"]];
+		[[self animator] setAlphaValue:0];
+	}
+	else
+	{
+		[super orderWindow:orderingMode relativeTo:otherWindowNumber];
 	}
 }
 

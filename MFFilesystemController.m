@@ -80,6 +80,8 @@ static MFFilesystemController* sharedController = nil;
 		recents = [NSMutableArray array];
 		[self loadRecentFilesystems];
 		[self setUpVolumeMonitoring];
+		MFLogS(self, @"Init complete!");
+
 	}
 	return self;
 }
@@ -140,6 +142,16 @@ static MFFilesystemController* sharedController = nil;
 		if (fs)
 		{
 			[self storeFilesystem: fs ];
+			NSString* path = fs.mountPath;
+			for(NSString* mountedPath in mountedPaths)
+			{
+				if ([path isEqualToString: mountedPath] &&
+					[[self getUUIDXattrAtPath: mountedPath] isEqualToString: fs.uuid])
+				{
+					MFLogS(self, @"Premounth hit");
+					[fs handleMountNotification];
+				}
+			}
 		}
 		else
 		{
@@ -311,7 +323,10 @@ static void diskUnMounted(DADiskRef disk, void* mySelf)
 	DASessionScheduleWithRunLoop(disappearSession, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
 	
 	DARegisterDiskAppearedCallback(appearSession, kDADiskDescriptionMatchVolumeMountable, diskMounted, self);
-	DARegisterDiskDisappearedCallback(disappearSession, kDADiskDescriptionMatchVolumeMountable, diskUnMounted, self);	
+	DARegisterDiskDisappearedCallback(disappearSession, kDADiskDescriptionMatchVolumeMountable, diskUnMounted, self);
+	
+	// Make the evenets go through
+	CFRunLoopRunInMode( kCFRunLoopDefaultMode, 1, YES );
 }
 
 - (void)updateStatusForFilesystem:(MFServerFS*)fs
@@ -386,15 +401,30 @@ static void diskUnMounted(DADiskRef disk, void* mySelf)
 	return (NSDictionary*)filesystemsDictionary;
 }
 
+- (NSString*)getUUIDXattrAtPath:(NSString*)path
+{
+	NSString* resultString = nil;
+	char* dataBuffer = malloc(100 * sizeof(char));
+	int result = getxattr([path cStringUsingEncoding: NSUTF8StringEncoding],
+						  "org.mgorbach.macfusion.xattr.uuid", dataBuffer, 100*sizeof(char),
+						  0, 0);
+	if (result > 0)
+		resultString = [NSString stringWithCString:dataBuffer length:result]; 
+	free(dataBuffer);
+	return resultString;
+}
+
 - (void)addMountedPath:(NSString*)path
 {
+//	MFLogS(self, @"Adding mounted path %@", path);
 	NSAssert(path, @"Mounted Path nil in MFFilesystemControlled addMountedPath");
 	if (![mountedPaths containsObject: path])
 	{
 		[mountedPaths addObject: path];
 		for(MFServerFS* fs in filesystems)
 		{
-			if ([fs.mountPath isEqualToString: path])
+			if ([fs.mountPath isEqualToString: path] &&
+				([fs isWaiting] ))
 			{
 				[fs handleMountNotification];
 			}

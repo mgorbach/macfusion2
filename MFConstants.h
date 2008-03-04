@@ -86,13 +86,15 @@ enum macfusionErrorCodes {
 	kMFErrorCodeMissingParameter,
 	kMFErrorCodeInvalidParameterValue,
 	kMFErrorCodeNoPluginFound,
-	kMFErrorCodeMountFaliure
+	kMFErrorCodeMountFaliure,
+	kMFErrorCodeCustomizedFaliure
 };
 
 #define kMFErrorParameterKey @"parameter"
 #define kMFErrorFilesystemKey @"filesystem"
 #define KMFErrorPluginKey @"plugin"
 #define kMFErrorValueKey @"value"
+
 
 // Exceptions
 #define kMFBadAPIUsageException @"Bad API Usage In Macfusion"

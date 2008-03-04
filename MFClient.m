@@ -12,12 +12,16 @@
 #import "MFConstants.h"
 #import "MFClientRecent.h"
 
+#define ORDERING_FILE_PATH @"~/Library/Application Support/Macfusion/Ordering.plist"
+
 @interface MFClient(PrivateAPI)
 - (void)storeFilesystem:(MFClientFS*)fs;
 - (void)storePlugin:(MFClientPlugin*)plugin;
 - (void)removeFilesystem:(MFClientFS*)fs;
+- (void)loadOrdering;
 
-@property(readwrite, retain) NSMutableArray* filesystems;
+@property(readwrite, retain) NSMutableArray* persistentFilesystems;
+@property(readwrite, retain) NSMutableArray* temporaryFilesystems;
 @property(readwrite, retain) NSMutableArray* plugins;
 @property(readwrite, retain) NSMutableArray* recents;
 @end
@@ -39,9 +43,9 @@ static MFClient* sharedClient = nil;
 
 + (NSSet*)keyPathsForValuesAffectingValueForKey:(NSString*)key
 {
-	if ([key isEqualToString:@"persistentFilesystems"]
+	if ([key isEqualToString:@"filesystems"]
 		|| [key isEqualToString:@"mountedFilesystems"])
-		return [NSSet setWithObject:@"filesystems"];
+		return [NSSet setWithObjects:@"persistentFilesystems", @"temporaryFilesystems", nil];
 	else
 		return [super keyPathsForValuesAffectingValueForKey: key];
 }
@@ -78,6 +82,12 @@ static MFClient* sharedClient = nil;
 			selector:@selector(handleRecentsUpdatedNotification:)
 				name:kMFRecentsUpdatedNotification 
 			  object:kMFDNCObject];
+	
+	NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
+	[nc addObserver:self
+		   selector:@selector(handleApplicationTerminatingNotification:)
+			   name:NSApplicationWillTerminateNotification
+			 object:nil];
 }
 
 - (id) init
@@ -85,7 +95,8 @@ static MFClient* sharedClient = nil;
 	self = [super init];
 	if (self != nil) {
 		[self registerForGeneralNotifications];
-		filesystems = [NSMutableArray array];
+		persistentFilesystems = [NSMutableArray array];
+		temporaryFilesystems = [NSMutableArray array];
 		plugins = [NSMutableArray array];
 		recents = [NSMutableArray array];
 	}
@@ -122,6 +133,7 @@ static MFClient* sharedClient = nil;
 	for (NSDictionary* recent in recentsFromServer)
 		[[self mutableArrayValueForKey:@"recents"] addObject:
 		 [[MFClientRecent alloc] initWithParameterDictionary: recent]];
+	[self loadOrdering];
 }
 
 - (BOOL)establishCommunication
@@ -251,10 +263,12 @@ static MFClient* sharedClient = nil;
 
 #pragma mark Accessors and Setters
 
-- (NSArray*)persistentFilesystems
+- (NSArray*)filesystems
 {
-	return [self.filesystems filteredArrayUsingPredicate:
-			[NSPredicate predicateWithFormat:@"self.isPersistent == YES"]];
+	NSMutableArray* filesystems = [NSMutableArray array];
+	[filesystems addObjectsFromArray: temporaryFilesystems];
+	[filesystems addObjectsFromArray: persistentFilesystems];
+	return [filesystems copy];
 }
 
 - (NSArray*)mountedFilesystems
@@ -279,10 +293,13 @@ static MFClient* sharedClient = nil;
 	NSAssert(fs && fs.uuid, @"FS or fs.uuid is nil when storing fs in MFClient");
 	[filesystemsDictionary setObject: fs
 							  forKey: fs.uuid];
-	if ([filesystems indexOfObject: fs] == NSNotFound)
+	if ([fs isPersistent] && [persistentFilesystems indexOfObject: fs] == NSNotFound)
 	{
-		[[self mutableArrayValueForKey:@"filesystems"]
-		 addObject: fs];
+		[[self mutableArrayValueForKey:@"persistentFilesystems"] addObject: fs];
+	}
+	else if ( (![fs isPersistent]) && [temporaryFilesystems indexOfObject: fs] == NSNotFound)
+	{
+		[[self mutableArrayValueForKey:@"temporaryFilesystems"] addObject: fs];
 	}
 }
 
@@ -290,10 +307,14 @@ static MFClient* sharedClient = nil;
 {
 	NSAssert(fs, @"Asked to remove nil fs in MFClient");
 	[filesystemsDictionary removeObjectForKey: fs.uuid];
-	if ([filesystems indexOfObject:fs] != NSNotFound)
+	if ([fs isPersistent] && [persistentFilesystems indexOfObject: fs] != NSNotFound)
 	{
-		[[self mutableArrayValueForKey:@"filesystems"]
+		[[self mutableArrayValueForKey:@"persistentFilesystems"]
 		 removeObject: fs];
+	}
+	else if (![fs isPersistent] && [temporaryFilesystems indexOfObject: fs] != NSNotFound)
+	{
+		[[self mutableArrayValueForKey:@"temporaryFilesystems"] removeObject: fs];
 	}
 }
 
@@ -319,28 +340,74 @@ static MFClient* sharedClient = nil;
 	for(NSString* uuid in uuids)
 	{
 		MFClientFS* fs = [self filesystemWithUUID: uuid];
-		if (fs)
+		if (fs && [fs isPersistent])
 		{
 			[filesystemsToInsert addObject: fs];
-			[indexesToDelete addIndex: [filesystems indexOfObject:fs]];
+			[indexesToDelete addIndex: [persistentFilesystems indexOfObject:fs]];
 		}
 	}
 	
-	NSIndexSet* indexes = [NSIndexSet indexSetWithIndexesInRange: 
+	NSIndexSet* indexesToAdd = [NSIndexSet indexSetWithIndexesInRange: 
 						  NSMakeRange(row, [filesystemsToInsert count])];
-	BOOL lastRow = (row == [filesystems count]);
-	[[self mutableArrayValueForKey:@"filesystems"] removeObjectsAtIndexes:indexesToDelete];
+	BOOL lastRow = (row == [persistentFilesystems count]);
+	
 	if (lastRow)
 	{
-		[[self mutableArrayValueForKey:@"filesystems"] addObjectsFromArray: filesystemsToInsert];
+		[[self mutableArrayValueForKey:@"persistentFilesystems"] addObjectsFromArray: filesystemsToInsert];
+		[[self mutableArrayValueForKey:@"persistentFilesystems"] removeObjectsAtIndexes:indexesToDelete];
+	}
+	else if ([indexesToAdd firstIndex] < [indexesToDelete firstIndex])
+	{
+		[[self mutableArrayValueForKey:@"persistentFilesystems"] removeObjectsAtIndexes:indexesToDelete];
+		[[self mutableArrayValueForKey:@"persistentFilesystems"] insertObjects:filesystemsToInsert
+																		 atIndexes:indexesToAdd];
 	}
 	else
 	{
-		[[self mutableArrayValueForKey:@"filesystems"] insertObjects:filesystemsToInsert
-														   atIndexes:indexes];
+		[[self mutableArrayValueForKey:@"persistentFilesystems"] insertObjects:filesystemsToInsert
+																		 atIndexes:indexesToAdd];
+		[[self mutableArrayValueForKey:@"persistentFilesystems"] removeObjectsAtIndexes:indexesToDelete];
 	}
-	
+
+	// Set the ordering correctly now
+	for(MFClientFS* fs in persistentFilesystems)
+	{
+		[fs setDisplayOrder: [persistentFilesystems indexOfObject: fs]];
+	}
 }
 
-@synthesize delegate, filesystems, plugins, recents;
+- (void)writeOrdering
+{
+	NSArray* uuidOrdering = [self.persistentFilesystems valueForKey: @"uuid"];
+	NSString* fullPath = [ORDERING_FILE_PATH stringByExpandingTildeInPath];
+	NSString* dirPath = [fullPath stringByDeletingLastPathComponent];
+	[[NSFileManager defaultManager] createDirectoryAtPath: dirPath
+							  withIntermediateDirectories:YES
+											   attributes:nil
+													error:NO];
+	[uuidOrdering writeToFile: fullPath atomically:YES];
+}
+
+- (void)loadOrdering
+{
+	NSString* fullPath = [ORDERING_FILE_PATH stringByExpandingTildeInPath];
+	NSArray* uuidOrdering = [NSArray arrayWithContentsOfFile: fullPath];
+	if (uuidOrdering)
+	{
+		for(NSString* uuid in uuidOrdering)
+			if ([self filesystemWithUUID: uuid])
+				[[self filesystemWithUUID: uuid] setDisplayOrder: 
+				 [uuidOrdering indexOfObject: uuid]];
+	}
+	
+	[persistentFilesystems sortUsingDescriptors: 
+	 [NSArray arrayWithObject: [[NSSortDescriptor alloc] initWithKey:@"displayOrder" ascending:YES]]];
+}
+
+- (void)handleApplicationTerminatingNotification:(NSNotification*)note
+{
+	[self writeOrdering];
+}
+
+@synthesize delegate, persistentFilesystems, temporaryFilesystems, plugins, recents;
 @end

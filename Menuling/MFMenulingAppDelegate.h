@@ -7,9 +7,11 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import "MFClientFSDelegateProtocol.h"
+
 @class MFClient, MFQuickMountController;
 
-@interface MFMenulingAppDelegate : NSObject {
+@interface MFMenulingAppDelegate : NSObject <MFClientFSDelegateProtocol> {
 	NSStatusItem* statusItem;
 	MFClient* client;
 	MFQuickMountController* qmController;

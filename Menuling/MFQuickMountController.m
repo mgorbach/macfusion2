@@ -27,7 +27,6 @@
 - (void)awakeFromNib
 {
 	[[self window] center];
-//	[[[self window] contentView] setWantsLayer: YES];
 	[qmTabView selectTabViewItemAtIndex: 0];
 }
 
@@ -45,12 +44,7 @@
 	else
 	{
 		// Wait for mount here
-		[[NSNotificationCenter defaultCenter]
-		 addObserver:self
-		 selector:@selector(handleFSNotification:)
-		 name:nil
-		 object:fs];
-//		[qmTabView selectTabViewItemAtIndex: 1];
+		[fs setClientFSDelegate: self];
 		[qmTabView setNeedsDisplay:YES];
 		[qmProgress startAnimation:self];
 	}
@@ -91,17 +85,17 @@
 	[self handleMountAttemptForFS: tempFS error:error];
 }
 
-- (void)handleFSNotification:(NSNotification*)note
+- (void)filesystemDidChangeStatus:(MFClientFS*)filesystem
 {
-	if ([[note name] isEqualToString: kMFClientFSMountedNotification])
+	if ([fs isMounted])
 	{
 		[qmTextField setStringValue: @""];
 		[qmTabView selectTabViewItemAtIndex:0];
 		[qmProgress stopAnimation:self];
 		[[self window] close];
 	}
-
-	if ([[note name] isEqualToString: kMFClientFSFailedNotification])
+		
+	if ([fs isFailedToMount])
 	{
 		if ([fs error])
 		{
@@ -116,7 +110,7 @@
 								   defaultButton:@"OK"
 								 alternateButton:@""
 									 otherButton:@""
-					   informativeTextWithFormat:@"Please try again"];
+					   informativeTextWithFormat:@"No error was given"];
 		[alert setAlertStyle: NSCriticalAlertStyle];
 		[alert beginSheetModalForWindow:[self window]
 						  modalDelegate:self 
@@ -134,7 +128,7 @@
 		NSString* description = [NSString stringWithFormat:
 								 @"Could not mount this URL: %@",
 								 [error localizedDescription]];
-		return [MFError errorWithErrorCode:kMFErrorCodeMountFaliure
+		return [MFError errorWithErrorCode:kMFErrorCodeCustomizedFaliure
 							   description:description];
 	}
 	

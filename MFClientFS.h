@@ -9,6 +9,7 @@
 #import <Cocoa/Cocoa.h>
 #import "MFFilesystem.h"
 #import "MFServerFSProtocol.h"
+#import "MFClientFSDelegateProtocol.h"
 
 @class MFClientPlugin;
 
@@ -17,6 +18,8 @@
 	MFClientPlugin* plugin;
 	NSDictionary* backupParameters;
 	BOOL isEditing;
+	NSInteger displayOrder;
+	id<MFClientFSDelegateProtocol> clientFSDelegate;
 }
 
 + (MFClientFS*)clientFSWithRemoteFS:(id)remoteFS 
@@ -34,4 +37,6 @@
 - (void)beginEditing;
 - (NSDictionary*)displayDictionary;
 
+@property(readwrite, assign) NSInteger displayOrder;
+@property(readwrite, retain) id<MFClientFSDelegateProtocol> clientFSDelegate; 
 @end

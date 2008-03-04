@@ -52,6 +52,7 @@
 		delegate = [plugin delegate];
 		[self fillInitialData];
 		[self registerNotifications];
+		displayOrder = 9999;
 	}
 	
 	return self;
@@ -97,12 +98,14 @@
 	[nc postNotificationName:name
 					  object:self
 					userInfo:nil];
+	if (clientFSDelegate && [clientFSDelegate respondsToSelector:@selector(filesystemDidChangeStatus:)])
+		[clientFSDelegate filesystemDidChangeStatus:self];
 }
 
 - (void)sendNotificationForStatusChangeFrom:(NSString*)previousStatus
 										 to:(NSString*)newStatus
 {
-	// MFLogS(self, @"Notifying for status %@ -> %@", previousStatus, newStatus);
+	MFLogS(self, @"Notifying for status %@ -> %@", previousStatus, newStatus);
 	if ([previousStatus isEqualToString: newStatus])
 	{
 		// Send No Notification
@@ -128,9 +131,11 @@
 //	MFLogS(self, @"Handling notification %@", note);
 	NSString* previousStatus = self.status;
 	[self copyStatusInfo];
-	NSString* newStatus = self.status;
+	// Hack this to synchronize the notifications and do
+	[statusInfo setObject: [[note userInfo] objectForKey: kMFSTStatusKey]
+				   forKey: kMFSTStatusKey];
 	[self sendNotificationForStatusChangeFrom:previousStatus
-										   to:newStatus];
+										   to:[[note userInfo] objectForKey:kMFSTStatusKey]];
 }
 
 - (void)handleParametersChangedNotification:(NSNotification*)note
@@ -215,4 +220,5 @@
 	[super willChangeValueForKey:key];
 }
 
+@synthesize displayOrder, clientFSDelegate;
 @end

@@ -11,6 +11,8 @@
 #import "MFClientFS.h"
 #import "MGNSImage.h"
 #import "MFQuickMountController.h"
+#import "MFConstants.h"
+#import "MFError.h"
 
 #define MENU_ICON_SIZE 24
 
@@ -144,14 +146,80 @@
 		[[NSWorkspace sharedWorkspace]
 		 selectFile:nil inFileViewerRootedAtPath:fs.mountPath];
 	}
-	else if ([fs isUnmounted])
+	else if ([fs isUnmounted] || [fs isFailedToMount])
 	{
+		[fs setClientFSDelegate: self];
 		[fs mount];
+	}
+}
+
+/*
+- (void)fsMounted:(NSNotification*)note
+{
+	MFClientFS* fs = [note object];
+	if (! [fs isPersistent] )
+		return;
+
+}
+
+- (void)fsFailedToMount:(NSNotification*)note
+{
+	MFClientFS* fs = [note object];
+	if (! [fs isPersistent] )
+		return;
+	
+	NSError* error = [[note object] error];
+	[NSApp presentError: error];
+	
+	[[NSNotificationCenter defaultCenter]
+	 removeObserver:self
+	 name:kMFClientFSMountedNotification
+	 object:fs];
+	[[NSNotificationCenter defaultCenter]
+	 removeObserver:self
+	 name:kMFClientFSFailedNotification
+	 object:fs];
+}
+ */
+
+- (void)filesystemDidChangeStatus:(MFClientFS*)fs
+{
+	if ([fs isMounted])
+	{
+		
+	}
+	else if ([fs isFailedToMount])
+	{
+		if ([fs error])
+		{
+			[NSApp presentError: [fs error]];
+		}
+		else
+		{
+			NSLog(@"No error");
+		}
 	}
 }
 
 - (void)applicationWillTerminate:(NSNotification*)note
 {
+}
+
+- (NSError*)application:(NSApplication*)app willPresentError:(NSError*)error
+{
+	[NSApp activateIgnoringOtherApps:YES];
+	if ([error code] == kMFErrorCodeCustomizedFaliure)
+		return error;
+	
+	NSString* newDescription = [NSString stringWithFormat: @"Could not mount filesystem: %@",
+								[error localizedDescription]];
+	NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+							  newDescription, NSLocalizedDescriptionKey,
+							  nil];
+	MFError* newError = [MFError errorWithDomain:kMFErrorDomain
+										 code:kMFErrorCodeMountFaliure
+										userInfo:userInfo];
+	return newError;
 }
 
 - (void)quit:(id)sender

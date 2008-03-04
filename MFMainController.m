@@ -12,6 +12,7 @@
 #import "MFFilesystemController.h"
 #import "MFFilesystem.h"
 #import "MFCommunicationServer.h"
+#include <sys/xattr.h>
 
 @implementation MFMainController
 static MFMainController* sharedController = nil;
@@ -48,6 +49,7 @@ static MFMainController* sharedController = nil;
 - (void)startRunloop
 {
 	NSRunLoop* runloop = [NSRunLoop currentRunLoop];
+
 	[runloop run];
 }
 

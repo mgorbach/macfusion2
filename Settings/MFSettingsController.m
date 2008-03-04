@@ -161,7 +161,7 @@
 	forTableColumn: (NSTableColumn *) tableColumn 
 			   row: (int) row
 {
-	[cell setRepresentedObject: [[client filesystems] objectAtIndex: row]];
+	[cell setRepresentedObject: [client.persistentFilesystems objectAtIndex: row]];
 }
 
 # pragma mark Tableview D&D
@@ -169,7 +169,6 @@
 writeRowsWithIndexes:(NSIndexSet *)rowIndexes 
 	 toPasteboard:(NSPasteboard*)pboard
 {
-	NSLog(@"Writing to pasteboard ...");
 	NSMutableArray* uuids = [NSMutableArray array];
 	NSUInteger count = [rowIndexes count];
 	
@@ -179,7 +178,7 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
 	{
 		NSString* uuid = [[[filesystemArrayController arrangedObjects] objectAtIndex: index] uuid];
 		[uuids addObject: uuid];
-		NSInteger index = [rowIndexes indexGreaterThanIndex:index];
+		index = [rowIndexes indexGreaterThanIndex:index];
 	}
 	
 	if ([uuids count] > 0)
@@ -192,11 +191,8 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
 	{
 		return NO;
 	}
-}
+	
 
-- (NSInteger)convertRowToAccountForTemporaryFilesystems:(NSInteger)row
-{
-	return row;
 }
 
 - (NSDragOperation)tableView:(NSTableView*)tableView 
@@ -213,7 +209,6 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
 {
 	NSPasteboard* pb = [info draggingPasteboard];
 	NSArray* uuidsBeingMoved = [pb propertyListForType:kMFFilesystemDragType];
-	row = [self convertRowToAccountForTemporaryFilesystems: row];
 	[client moveUUIDS:uuidsBeingMoved toRow:row];
 	return YES;
 }

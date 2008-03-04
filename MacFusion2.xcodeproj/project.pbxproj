@@ -84,6 +84,7 @@
 		D4C6334D0D7644B300734165 /* MGFadingWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = D4C6334C0D7644B300734165 /* MGFadingWindow.m */; };
 		D4CEE0F30D3045590064042E /* MFClientFS.h in Headers */ = {isa = PBXBuildFile; fileRef = D4CEE0F10D3045580064042E /* MFClientFS.h */; };
 		D4CEE0F40D3045590064042E /* MFClientFS.m in Sources */ = {isa = PBXBuildFile; fileRef = D4CEE0F20D3045590064042E /* MFClientFS.m */; };
+		D4D0E9FF0D7C887A00797279 /* MFClientFSDelegateProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = D4D0E9FE0D7C887A00797279 /* MFClientFSDelegateProtocol.h */; };
 		D4D6A0D80D025B4A00BC2E2D /* MFConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = D4D6A0D70D025B4A00BC2E2D /* MFConstants.h */; };
 		D4D6A1250D03548C00BC2E2D /* MFCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D4FC0C980CF128480029B133 /* MFCore.framework */; };
 		D4D6A2230D03686000BC2E2D /* fuse.plist in Resources */ = {isa = PBXBuildFile; fileRef = D4D6A2220D03686000BC2E2D /* fuse.plist */; };
@@ -256,7 +257,6 @@
 		D42E14540CDFCF9000C81814 /* MFFilesystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFFilesystem.h; sourceTree = "<group>"; };
 		D42E14550CDFCF9000C81814 /* MFFilesystem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MFFilesystem.m; sourceTree = "<group>"; };
 		D42E15560CE03A8200C81814 /* MFCore-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "MFCore-Info.plist"; sourceTree = "<group>"; };
-		D4386BBF0D0B461A0078C19F /* PreferencePanes.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PreferencePanes.framework; path = /System/Library/Frameworks/PreferencePanes.framework; sourceTree = "<absolute>"; };
 		D4386C0A0D0B46EE0078C19F /* macfusion.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = macfusion.tiff; path = Images/macfusion.tiff; sourceTree = "<group>"; };
 		D4386C0B0D0B47240078C19F /* macfusionIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = macfusionIcon.icns; path = Images/macfusionIcon.icns; sourceTree = "<group>"; };
 		D439D4370D05D58D0025574A /* macfusionAgent */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = macfusionAgent; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -303,6 +303,7 @@
 		D4C6334C0D7644B300734165 /* MGFadingWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MGFadingWindow.m; sourceTree = "<group>"; };
 		D4CEE0F10D3045580064042E /* MFClientFS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFClientFS.h; sourceTree = "<group>"; };
 		D4CEE0F20D3045590064042E /* MFClientFS.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MFClientFS.m; sourceTree = "<group>"; };
+		D4D0E9FE0D7C887A00797279 /* MFClientFSDelegateProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFClientFSDelegateProtocol.h; sourceTree = "<group>"; };
 		D4D6A0D70D025B4A00BC2E2D /* MFConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFConstants.h; sourceTree = "<group>"; };
 		D4D6A2220D03686000BC2E2D /* fuse.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = fuse.plist; sourceTree = "<group>"; };
 		D4DB42040D3E863100C99914 /* Macfusion.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Macfusion.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -410,7 +411,6 @@
 				D4656C9E0D6FDBF900DE2208 /* QuartzCore.framework */,
 				D4905BD60D380B6B00E21C1E /* DiskArbitration.framework */,
 				D49059740D35681F00E21C1E /* AppKit.framework */,
-				D4386BBF0D0B461A0078C19F /* PreferencePanes.framework */,
 				08FB779EFE84155DC02AAC07 /* Foundation.framework */,
 			);
 			name = "External Frameworks and Libraries";
@@ -486,6 +486,7 @@
 				D439D5940D09E4390025574A /* MFServerProtocol.h */,
 				D4F499F00D52609400CDA4A9 /* MFFSDelegateProtocol.h */,
 				D403BC8D0D64C3D00049201D /* MFServerFSProtocol.h */,
+				D4D0E9FE0D7C887A00797279 /* MFClientFSDelegateProtocol.h */,
 			);
 			name = Protocols;
 			sourceTree = "<group>";
@@ -667,6 +668,7 @@
 				D403BD6E0D650D630049201D /* MFError.h in Headers */,
 				D4E983470D7223D70058AF73 /* MGNSImage.h in Headers */,
 				D420386F0D73A76B009EE78F /* MFClientRecent.h in Headers */,
+				D4D0E9FF0D7C887A00797279 /* MFClientFSDelegateProtocol.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
