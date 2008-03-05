@@ -24,6 +24,7 @@
 - (void)removeFilesystem:(MFServerFS*)fs;
 - (void)loadRecentFilesystems;
 - (void)recordRecentFilesystem:(MFServerFS*)fs;
+- (NSString*)getUUIDXattrAtPath:(NSString*)path;
 
 @property(readwrite, retain) NSMutableArray* filesystems;
 @property(readwrite, retain) NSMutableArray* recents;

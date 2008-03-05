@@ -14,9 +14,11 @@
 @interface MFQuickMountController : NSWindowController <MFClientFSDelegateProtocol> 
 {
 	
-	NSTextField* qmTextField;
-	NSTabView* qmTabView;
-	NSProgressIndicator* qmProgress;
+	IBOutlet NSTextField* qmTextField;
+	IBOutlet NSTabView* qmTabView;
+	IBOutlet NSProgressIndicator* qmProgress;
+	IBOutlet NSTableView* recentsTableView;
+	IBOutlet NSArrayController* recentsArrayController;
 	MFClientFS* fs;
 	MFClient* client;
 }

@@ -40,6 +40,8 @@
 /* Begin PBXBuildFile section */
 		8DD76F9A0486AA7600D96B5E /* macfusionAgent.m in Sources */ = {isa = PBXBuildFile; fileRef = 08FB7796FE84155DC02AAC07 /* macfusionAgent.m */; settings = {ATTRIBUTES = (); }; };
 		8DD76F9C0486AA7600D96B5E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08FB779EFE84155DC02AAC07 /* Foundation.framework */; };
+		D40235AE0D7E0176000B9B64 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D40235AD0D7E0176000B9B64 /* Carbon.framework */; };
+		D402372E0D7E029E000B9B64 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D40235AD0D7E0176000B9B64 /* Carbon.framework */; };
 		D403BC8F0D64C3D00049201D /* MFServerFSProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = D403BC8D0D64C3D00049201D /* MFServerFSProtocol.h */; };
 		D403BCD20D64EA030049201D /* MFServerFS.m in Sources */ = {isa = PBXBuildFile; fileRef = D4905C6C0D394A5D00E21C1E /* MFServerFS.m */; };
 		D403BD6E0D650D630049201D /* MFError.h in Headers */ = {isa = PBXBuildFile; fileRef = D403BD6C0D650D630049201D /* MFError.h */; };
@@ -240,6 +242,7 @@
 /* Begin PBXFileReference section */
 		08FB7796FE84155DC02AAC07 /* macfusionAgent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = macfusionAgent.m; sourceTree = "<group>"; };
 		08FB779EFE84155DC02AAC07 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
+		D40235AD0D7E0176000B9B64 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
 		D403BC8D0D64C3D00049201D /* MFServerFSProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFServerFSProtocol.h; sourceTree = "<group>"; };
 		D403BD6C0D650D630049201D /* MFError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFError.h; sourceTree = "<group>"; };
 		D403BD6D0D650D630049201D /* MFError.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MFError.m; sourceTree = "<group>"; };
@@ -341,6 +344,7 @@
 			files = (
 				D4E9834F0D7229970058AF73 /* QuartzCore.framework in Frameworks */,
 				D49059750D35681F00E21C1E /* AppKit.framework in Frameworks */,
+				D40235AE0D7E0176000B9B64 /* Carbon.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -348,6 +352,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D402372E0D7E029E000B9B64 /* Carbon.framework in Frameworks */,
 				D48DBA520D70DF31008A62BB /* MFCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -408,6 +413,7 @@
 		08FB779DFE84155DC02AAC07 /* External Frameworks and Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				D40235AD0D7E0176000B9B64 /* Carbon.framework */,
 				D4656C9E0D6FDBF900DE2208 /* QuartzCore.framework */,
 				D4905BD60D380B6B00E21C1E /* DiskArbitration.framework */,
 				D49059740D35681F00E21C1E /* AppKit.framework */,

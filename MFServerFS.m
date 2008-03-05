@@ -515,14 +515,14 @@
 # pragma mark Notification handlers
 - (void)handleMountNotification
 {
-	MFLogS(self, @"Mount notification received");
+	// MFLogS(self, @"Mount notification received");
 	self.status = kMFStatusFSMounted;
 	[self tagMountPoint];
 }
 
 - (void)handleTaskDidTerminate:(NSNotification*)note
 {
-	MFLogS(self, @"Task terminated");
+	// MFLogS(self, @"Task terminated");
 	if (self.status == kMFStatusFSMounted)
 	{
 		// We are terminating after a mount has been successful
@@ -582,9 +582,17 @@
 {
 	//MFLogS(self, @"Observes notification keypath %@ object %@, change %@",
 	//	   keyPath, object, change);
+	
 	if ([keyPath isEqualToString: kMFSTStatusKey ] &&
 		object == self && 
 		[[change objectForKey:NSKeyValueChangeNewKey] isEqualToString: kMFStatusFSUnmounted])
+	{
+		[self removeMountPoint];
+	}
+	
+	if ([keyPath isEqualToString: kMFSTStatusKey ] &&
+		object == self && 
+		[[change objectForKey:NSKeyValueChangeNewKey] isEqualToString: kMFStatusFSFailed])
 	{
 		[self removeMountPoint];
 	}

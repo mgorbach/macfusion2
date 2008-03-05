@@ -54,6 +54,13 @@
 
 - (IBAction)quickMount:(id)sender
 {
+	if ([[self window] firstResponder] == recentsTableView &&
+		[recentsTableView selectedRow] != NSNotFound)
+	{
+		[self recentClicked: [[recentsArrayController selectedObjects] objectAtIndex: 0]];
+		return;
+	}
+	
 	NSURL* url = [NSURL URLWithString: [qmTextField stringValue] ];
 	if (!url || ![url scheme] || ![url host])
 	{

@@ -13,8 +13,13 @@
 #import "MFQuickMountController.h"
 #import "MFConstants.h"
 #import "MFError.h"
+#import <Carbon/Carbon.h>
 
 #define MENU_ICON_SIZE 24
+
+@interface MFMenulingAppDelegate(PrivateAPI)
+- (void)registerHotkey;
+@end
 
 @implementation MFMenulingAppDelegate
 - (id)init
@@ -23,6 +28,7 @@
 	{
 		[NSApp setDelegate: self];
 		client = [MFClient sharedClient];
+		[self registerHotkey];
 		if (![client setup])
 		{
 			NSAlert* alert = [NSAlert alertWithMessageText:@"Could not connect to macfusion agent."
@@ -38,6 +44,27 @@
 	return self;
 }
 
+OSStatus MyHotKeyHandler(EventHandlerCallRef nextHandler,EventRef theEvent,
+						 void *userData)
+{
+	[(MFMenulingAppDelegate*)userData connectToServer: nil];
+	return noErr;
+}
+
+- (void)registerHotkey
+{
+	EventHotKeyRef myHotkeyRef;
+	EventHotKeyID myHotkeyId;
+	EventTypeSpec eventType;
+	eventType.eventClass=kEventClassKeyboard;
+	eventType.eventKind=kEventHotKeyPressed;
+	myHotkeyId.signature='htk1';
+	myHotkeyId.id=1;
+	RegisterEventHotKey(40, cmdKey+optionKey+controlKey, myHotkeyId, GetApplicationEventTarget(), 0, &myHotkeyRef);
+	
+	InstallApplicationEventHandler(&MyHotKeyHandler,1,&eventType,self,NULL);
+}
+
 - (void)awakeFromNib
 {
 	[NSApp setDelegate: self];
@@ -48,6 +75,7 @@
 	NSMenu* menu = [[NSMenu alloc] initWithTitle:@"Macfusion2"];
 	[menu setDelegate: self];
 	[statusItem setMenu: menu];
+
 }
 
 - (void)connectToServer:(id)sender
@@ -57,9 +85,22 @@
 		qmController = [[MFQuickMountController alloc] initWithWindowNibName:@"QuickMount"];
 	}
 	
-	[qmController showWindow:self];
-	[NSApp activateIgnoringOtherApps: YES];
-	[[qmController window] makeKeyWindow];
+	if ([[qmController window] isVisible]
+		&& [NSApp keyWindow] != [qmController window])
+	{
+		[NSApp activateIgnoringOtherApps: YES];
+		[[qmController window] makeKeyAndOrderFront: self];
+	}
+	else if (![[qmController window] isVisible])
+	{	
+		[NSApp activateIgnoringOtherApps: YES];
+		[qmController showWindow:self];
+	}
+	else if ([NSApp keyWindow] == [qmController window])
+	{
+		[[qmController window] close];
+		[NSApp deactivate];
+	}
 }
 
 

@@ -22,7 +22,10 @@
 #pragma mark Plugin Info
 - (NSString*)executablePath
 {
-	return @"/usr/local/bin/sshfs";
+	return [[NSBundle bundleForClass: [self class]]
+			pathForResource:@"sshfs-static"
+			ofType:nil
+			inDirectory:nil];
 }
 
 #pragma mark Mounting
@@ -44,6 +47,7 @@
 	[arguments addObject: @"-ofollow_symlinks"];
 	[arguments addObject: [NSString stringWithFormat: @"-ovolname=%@", 
 						   [parameters objectForKey: kMFFSVolumeNameParameter]]];
+	[arguments addObject: @"-ologlevel=debug"];
 	[arguments addObject: @"-f"];
 	return [arguments copy];
 }
@@ -200,11 +204,19 @@
 - (NSError*)errorForParameters:(NSDictionary*)parameters 
 						output:(NSString*)output
 {
+	if ([output rangeOfString: @"Permission denied"].location != NSNotFound)
+	{
+		return [MFError errorWithErrorCode:kMFErrorCodeMountFaliure
+							   description:@"Authentication has failed."];
+	}
+	
 	if ([output rangeOfString: @"remote host has disconnected"].location != NSNotFound)
 	{
 		return [MFError errorWithErrorCode:kMFErrorCodeMountFaliure
 							   description:@"Remote host has disconnected."];
 	}
+	
+
 	return nil;
 }
 

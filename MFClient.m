@@ -167,7 +167,7 @@ static MFClient* sharedClient = nil;
 #pragma mark Notification handling
 - (void)handleStatusChangedNotification:(NSNotification*)note
 {
-	MFLogS(self, @"Status change notification received %@", note);
+	// MFLogS(self, @"Status change notification received %@", note);
 	NSDictionary* info = [note userInfo];
 	NSString* uuid = [info objectForKey: KMFFSUUIDParameter];
 	MFClientFS* fs = [self filesystemWithUUID: uuid];

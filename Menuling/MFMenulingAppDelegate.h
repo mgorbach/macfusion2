@@ -17,4 +17,6 @@
 	MFQuickMountController* qmController;
 }
 
+- (IBAction)connectToServer:(id)sender;
+
 @end
