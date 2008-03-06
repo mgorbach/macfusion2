@@ -12,6 +12,7 @@
 #import "MFFilesystemCell.h"
 #import "MFConstants.h"
 #import "MFError.h"
+#import "MGTransitioningTabView.h"
 
 @interface MFSettingsController(PrivateAPI)
 
@@ -116,46 +117,6 @@
 }
 
 # pragma mark Table Delegate Methods
--(void)tableViewSelectionDidChange:(NSNotification*)note
-{
-	NSTableView* notifyingTableView = [note object];
-	filesystemConfigurationViewController = nil;
-	[configurationViewBox setContentView: nil];
-	
-	if (notifyingTableView == filesystemTableView)
-	{
-		if ([filesystemArrayController selectionIndex] != NSNotFound)
-		{
-			MFClientFS* fs = [[filesystemArrayController selectedObjects]
-							  objectAtIndex: 0];
-			MFClientPlugin* plugin = [client pluginWithID: [fs pluginID]];
-			NSString* nibName = [plugin nibName];
-			NSBundle* bundle = [NSBundle bundleWithPath: [plugin bundlePath]];
-			if (nibName && bundle)
-			{
-				filesystemConfigurationViewController =
-				[[NSViewController alloc] initWithNibName: nibName
-												   bundle: bundle ];
-				
-				[filesystemConfigurationViewController setRepresentedObject: fs];
-				[configurationViewBox setContentView: 
-				 [filesystemConfigurationViewController view]];
-			}
-			else
-			{
-				MFLogS(self, @"Failed to load interface for filesystem %@", fs);
-			}
-
-		}
-		else
-		{
-			// No selection
-			filesystemConfigurationViewController = nil;
-			[configurationViewBox setContentView: nil];
-		}
-	}
-}
-
 - (void) tableView: (NSTableView *) tableView 
    willDisplayCell: (NSCell*) cell 
 	forTableColumn: (NSTableColumn *) tableColumn 
@@ -229,52 +190,120 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
 	}
 }
 
-- (NSView*)filesystemEditingView
+- (NSView*)editingViewForFS:(MFClientFS*)fs
 {
-	NSInteger buttonWidth = 80;
-	NSInteger buttonHeight = 25;
-	NSInteger buttonRightPadding = 5;
-	NSInteger buttonBottomPadding = 5;
-	NSInteger buttonXDistance = 0;
-	NSInteger buttonAreaHeight = 2*buttonBottomPadding + buttonHeight ;
+	filesystemConfigurationViewControllers = [[fs delegate] configurationViewControllers];
+	NSTabView* tabView = [MGTransitioningTabView new];
+	[tabView setFont: [NSFont systemFontOfSize: 
+					   [NSFont systemFontSizeForControlSize: NSSmallControlSize]]];
+	[tabView setControlSize: NSSmallControlSize];
 	
-	NSView* loadedView = [filesystemConfigurationViewController view];	
-	NSView* outerView = [[NSView alloc] init];
+	float view_width = 300;
+	float tabview_x = 20;
+	float tabview_y = 38;
 	
-	
-	[outerView setFrameSize: NSMakeSize([loadedView frame].size.width, 
-									   [loadedView frame].size.height +  buttonAreaHeight)];
-	
-	[outerView addSubview: loadedView];
-	[loadedView setFrame: NSMakeRect(0, buttonAreaHeight, [loadedView frame].size.width, 
-									   [loadedView frame].size.height)];
-	
-	NSRect okButtonFrame = NSMakeRect([outerView frame].size.width-buttonRightPadding-buttonWidth,
-									  buttonBottomPadding,
-									  buttonWidth, buttonHeight);
-	NSButton* okButton = [[NSButton alloc] initWithFrame: okButtonFrame];
-	[okButton setBezelStyle: NSRoundedBezelStyle];
-	[okButton setTitle:@"OK"];
-	[okButton setTarget: self];
-	[okButton setAction:@selector(filesystemEditOKClicked:)];
-	[okButton setKeyEquivalent:@"\r"];
+	if (filesystemConfigurationViewControllers && [filesystemConfigurationViewControllers count] > 0)
+	{
+		[[filesystemConfigurationViewControllers allValues] makeObjectsPerformSelector:@selector(setRepresentedObject:)
+																			withObject:fs];
 
-	
-	NSRect cancelButtonFrame = NSMakeRect(okButtonFrame.origin.x - buttonXDistance- buttonWidth,
-										  buttonBottomPadding,
-										  buttonWidth, buttonHeight);
-	NSButton* cancelButton = [[NSButton alloc] initWithFrame: cancelButtonFrame];
-	[cancelButton setBezelStyle: NSRoundedBezelStyle];
-	[cancelButton setTitle:@"Cancel"];
-	[cancelButton setTarget: self];
-	[cancelButton setAction:@selector(filesystemEditCancelClicked:)];
-	[cancelButton setKeyEquivalent:@"\e"];
-	
-	[outerView addSubview:cancelButton];
-	[outerView addSubview: okButton];
+		NSView* mainView = [[filesystemConfigurationViewControllers objectForKey: kMFUIMainViewKey] view];
+		NSView* advancedView = [[filesystemConfigurationViewControllers objectForKey: kMFUIAdvancedViewKey] view];
+		MFLogS(self, @"Main %@ Advanced %@", NSStringFromRect([mainView frame]), NSStringFromRect([advancedView frame]));
+		NSSize viewSize = [mainView frame].size;
+//		NSSize viewSize = NSMakeSize( 400,  300);
+		
+		if (mainView)
+		{
+			NSTabViewItem* mainViewItem = [NSTabViewItem new];
+			[mainViewItem setLabel: @"Main"];
+			[mainViewItem setView: mainView];
+			[tabView addTabViewItem: mainViewItem];
+//			[tabView selectTabViewItem: mainViewItem];
+//			[mainView setFrame: NSMakeRect(0, 0, 300, 150)];
+		}
+		else
+		{
+			MFLogS(self, @"No main view found");
+		}
+		
 
+		if (advancedView)
+		{
+			NSTabViewItem* advancedViewItem = [NSTabViewItem new];
+			[advancedViewItem setLabel: @"Advanced"];
+			[advancedViewItem setView: advancedView];
+			[tabView addTabViewItem: advancedViewItem];
+//			[tabView selectTabViewItem: advancedViewItem];
+			[advancedView setFrame: NSMakeRect(0, 0, 300, 150)];
+		}
+		
 
-	return outerView;
+		for(NSTabViewItem* item in [tabView tabViewItems])
+			[[item view] setFrame:
+			 [mainView frame]];
+		
+		[mainView setFrame: NSMakeRect(300, 100, 300, 150)];
+		MFLogS(self, @"Main %@ Advanced %@", NSStringFromRect([mainView frame]),
+			   NSStringFromRect([advancedView frame]));
+		[tabView setFrame: NSMakeRect( 0, 0, tabview_x+view_width, tabview_y+150 )];
+		MFLogS(self, @"Content area %@", NSStringFromRect([tabView contentRect]));
+		MFLogS(self, @"Main %@ Advanced %@", NSStringFromRect([mainView frame]),
+			   NSStringFromRect([advancedView frame]));
+
+		return tabView;
+	}
+	else
+	{
+		MFLogS(self, @"No view loaded");
+		return nil;
+	}
+}
+
+- (NSView*)wrapViewInOKCancel:(NSView*)innerView;
+{
+	 NSInteger buttonWidth = 80;
+	 NSInteger buttonHeight = 25;
+	 NSInteger buttonRightPadding = 5;
+	 NSInteger buttonBottomPadding = 5;
+	 NSInteger buttonXDistance = 0;
+	 NSInteger buttonAreaHeight = 2*buttonBottomPadding + buttonHeight ;
+	 
+	 NSView* outerView = [[NSView alloc] init];
+	 
+	 [outerView setFrameSize: NSMakeSize([innerView frame].size.width, 
+	 [innerView frame].size.height +  buttonAreaHeight)];
+	 
+	 [outerView addSubview: innerView];
+	 [innerView setFrame: NSMakeRect(0, buttonAreaHeight, [innerView frame].size.width, 
+	 [innerView frame].size.height)];
+	 
+	 NSRect okButtonFrame = NSMakeRect([outerView frame].size.width-buttonRightPadding-buttonWidth,
+	 buttonBottomPadding,
+	 buttonWidth, buttonHeight);
+	 NSButton* okButton = [[NSButton alloc] initWithFrame: okButtonFrame];
+	 [okButton setBezelStyle: NSRoundedBezelStyle];
+	 [okButton setTitle:@"OK"];
+	 [okButton setTarget: self];
+	 [okButton setAction:@selector(filesystemEditOKClicked:)];
+	 [okButton setKeyEquivalent:@"\r"];
+	 
+	 
+	 NSRect cancelButtonFrame = NSMakeRect(okButtonFrame.origin.x - buttonXDistance- buttonWidth,
+	 buttonBottomPadding,
+	 buttonWidth, buttonHeight);
+	 NSButton* cancelButton = [[NSButton alloc] initWithFrame: cancelButtonFrame];
+	 [cancelButton setBezelStyle: NSRoundedBezelStyle];
+	 [cancelButton setTitle:@"Cancel"];
+	 [cancelButton setTarget: self];
+	 [cancelButton setAction:@selector(filesystemEditCancelClicked:)];
+	 [cancelButton setKeyEquivalent:@"\e"];
+	 
+	 [outerView addSubview:cancelButton];
+	 [outerView addSubview: okButton];
+	 
+	 
+	 return outerView;
 }
 
 - (void)editSelectedFilesystem:(id)sender
@@ -285,33 +314,26 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
 		NSWindow* mySheetWindow = [[NSWindow alloc] init];
 		
 		MFClientFS* fs = [[filesystemArrayController selectedObjects] objectAtIndex: 0];
-		MFClientPlugin* plugin = [client pluginWithID: [fs pluginID]];
-		NSString* nibName = [plugin nibName];
-		NSBundle* bundle = [NSBundle bundleWithPath: [plugin bundlePath]];
-		if (nibName && bundle)
-		{
-			filesystemConfigurationViewController =
-			[[NSViewController alloc] initWithNibName: nibName
-											   bundle: bundle ];
-			
-			[filesystemConfigurationViewController setRepresentedObject: 
-			 fs];
-
 		
-			NSView* editView = [self filesystemEditingView];
+		NSView* editView = [self wrapViewInOKCancel: [self editingViewForFS: fs]];
+		if (editView)
+		{
 			[mySheetWindow setFrame: [editView frame] display:YES];
 			[mySheetWindow setContentSize: [editView frame].size];
 			[mySheetWindow setContentView: editView];
 			[fs beginEditing];
-
+			
 			[NSApp beginSheet: mySheetWindow
 			   modalForWindow: parent
 				modalDelegate: self 
 			   didEndSelector: @selector(sheetDidEnd:)
 				  contextInfo: fs];
-
-			
 		}
+		else
+		{
+			MFLogS(self, @"Editing view is nil");
+		}
+
 	}
 }
 
@@ -383,7 +405,7 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
 - (void)sheetDidEnd:(NSWindow*)sheet
 {
 	[sheet orderOut:self];
-	filesystemConfigurationViewController = nil;
+	filesystemConfigurationViewControllers = nil;
 }
 
 - (void)windowWillClose:(NSWindow*)window

@@ -51,20 +51,20 @@ extern NSString* kMFFilesystemStatusKey;
 #define kMFDistributedObjectName @"org.mgorbach.macfusion.do"
 
 // Keys for Notifications
-#define kMFFilesystemNameKey @"Name"
-#define kMFFilesystemStatusKey @"Status"
+#define kMFFilesystemNameKey @"name"
+#define kMFFilesystemStatusKey @"status"
 #define kMFRecentKey @"recent"
 
 // Parameters Common to All FUSE Filesystems
-#define kMFFSNameParameter @"Name"
-#define kMFFSTypeParameter @"Type"
-#define kMFFSVolumeNameParameter @"Volume Name"
-#define kMFFSVolumeIconPathParameter @"Icon Path"
-#define kMFFSMountPathParameter @"Mount Path"
-#define KMFFSUUIDParameter @"UUID"
-#define kMFFSFilePathParameter @"File Path"
-#define kMFFSPersistentParameter @"Is Persistent"
-#define kMFFSDescriptionParameter @"Description"
+#define kMFFSNameParameter @"name"
+#define kMFFSTypeParameter @"type"
+#define kMFFSVolumeNameParameter @"volumeName"
+#define kMFFSVolumeIconPathParameter @"iconPath"
+#define kMFFSMountPathParameter @"mountPath"
+#define KMFFSUUIDParameter @"uuid"
+#define kMFFSFilePathParameter @"filePath"
+#define kMFFSPersistentParameter @"isPersistent"
+#define kMFFSDescriptionParameter @"description"
 
 // Status keys
 #define KMFStatusDict @"statusInfo"
@@ -102,4 +102,7 @@ enum macfusionErrorCodes {
 // D&D
 #define kMFFilesystemDragType @"org.mgorbach.macfusion.drag.mffilesystem"
 
+// UI Keys
+extern NSString* kMFUIMainViewKey;
+extern NSString* kMFUIAdvancedViewKey;
 

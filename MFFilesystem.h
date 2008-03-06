@@ -35,6 +35,8 @@
 - (NSMutableDictionary*)fillParametersWithImpliedValues:(NSDictionary*)params;
 - (NSError*)error;
 
+- (id <MFFSDelegateProtocol>)delegate;
+
 @property(readwrite, assign) NSString* status;
 @property(readonly, assign) NSString* uuid;
 @property(readonly) NSString* mountPath;

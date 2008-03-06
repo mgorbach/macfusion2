@@ -12,10 +12,10 @@
 #import "MFError.h"
 
 // SSHFS Parameter Names
-#define kSSHFSHostParameter @"Host"
-#define kSSHFSPortParameter @"Port"
-#define kSSHFSDirectoryParameter @"Directory"
-#define kSSHFSUserParameter @"User"
+#define kSSHFSHostParameter @"host"
+#define kSSHFSPortParameter @"port"
+#define kSSHFSDirectoryParameter @"directory"
+#define kSSHFSUserParameter @"user"
 
 @implementation SSHFSDelegate
 
@@ -210,6 +210,12 @@
 							   description:@"Authentication has failed."];
 	}
 	
+	if ([output rangeOfString:@"Error resolving hostname"].location != NSNotFound)
+	{
+		return [MFError errorWithErrorCode:kMFErrorCodeMountFaliure
+							   description:@"Remote host could not be found."];
+	}
+	
 	if ([output rangeOfString: @"remote host has disconnected"].location != NSNotFound)
 	{
 		return [MFError errorWithErrorCode:kMFErrorCodeMountFaliure
@@ -218,6 +224,35 @@
 	
 
 	return nil;
+}
+
+# pragma mark UI
+- (NSViewController*)primaryViewController
+{
+	NSViewController* primaryViewController = [[NSViewController alloc]
+											   initWithNibName:@"sshfsConfiguration"
+											   bundle: [NSBundle bundleForClass: [self class]]];
+	return primaryViewController;
+	
+}
+
+- (NSViewController*)advancedviewController
+{
+	NSViewController* advancedviewController = [[NSViewController alloc]
+											   initWithNibName:@"sshfsAdvanced"
+											   bundle: [NSBundle bundleForClass: [self class]]];
+	return advancedviewController;
+}
+
+- (NSDictionary*)configurationViewControllers
+{
+	NSView* emptyView = [NSView new];
+	NSViewController* secondViewController = [NSViewController new];
+	[secondViewController setView: emptyView];
+	return [NSDictionary dictionaryWithObjectsAndKeys:
+			[self primaryViewController], kMFUIMainViewKey,
+			[self advancedviewController], kMFUIAdvancedViewKey,
+			nil];
 }
 
 @end

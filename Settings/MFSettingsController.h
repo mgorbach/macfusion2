@@ -18,8 +18,7 @@
 	IBOutlet NSCollectionView* filesystemCollectionView;
 	IBOutlet NSButton* mountButton;
 	
-	
-	NSViewController* filesystemConfigurationViewController;
+	NSDictionary* filesystemConfigurationViewControllers;
 	MFClient* client;
 }
 

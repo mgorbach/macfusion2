@@ -192,7 +192,8 @@
 		[mountText drawInRect: mountTextRect withAttributes:buttonTextAttributes];
 	}
 	
-	if ([self isHighlighted])
+	if ([self isHighlighted] && [[controlView window] firstResponder] == controlView &&
+		[[controlView window] isKeyWindow])
 	{
 		[mainTextAttributes setValue: [NSColor whiteColor]
 							  forKey: NSForegroundColorAttributeName];

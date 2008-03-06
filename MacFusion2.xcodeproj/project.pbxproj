@@ -48,6 +48,9 @@
 		D403BD6F0D650D630049201D /* MFError.m in Sources */ = {isa = PBXBuildFile; fileRef = D403BD6D0D650D630049201D /* MFError.m */; };
 		D412AFC40D596E890091C12B /* MGUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = D412AFC20D596E890091C12B /* MGUtilities.m */; };
 		D412AFC60D596F4B0091C12B /* MGUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = D412AFC50D596F4B0091C12B /* MGUtilities.h */; };
+		D413146F0D7F225E00F55B9B /* MGTransitioningTabView.h in Headers */ = {isa = PBXBuildFile; fileRef = D413146D0D7F225E00F55B9B /* MGTransitioningTabView.h */; };
+		D41314700D7F225E00F55B9B /* MGTransitioningTabView.m in Sources */ = {isa = PBXBuildFile; fileRef = D413146E0D7F225E00F55B9B /* MGTransitioningTabView.m */; };
+		D41316320D7F740400F55B9B /* sshfsAdvanced.xib in Resources */ = {isa = PBXBuildFile; fileRef = D41316310D7F740400F55B9B /* sshfsAdvanced.xib */; };
 		D41867E70D729A31004975AF /* QuickMount.xib in Resources */ = {isa = PBXBuildFile; fileRef = D41867E60D729A31004975AF /* QuickMount.xib */; };
 		D41867EB0D729B81004975AF /* MFQuickMountController.m in Sources */ = {isa = PBXBuildFile; fileRef = D41867EA0D729B81004975AF /* MFQuickMountController.m */; };
 		D418688E0D729F0B004975AF /* macfusionIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = D4386C0B0D0B47240078C19F /* macfusionIcon.icns */; };
@@ -248,6 +251,9 @@
 		D403BD6D0D650D630049201D /* MFError.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MFError.m; sourceTree = "<group>"; };
 		D412AFC20D596E890091C12B /* MGUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MGUtilities.m; sourceTree = "<group>"; };
 		D412AFC50D596F4B0091C12B /* MGUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MGUtilities.h; sourceTree = "<group>"; };
+		D413146D0D7F225E00F55B9B /* MGTransitioningTabView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MGTransitioningTabView.h; sourceTree = "<group>"; };
+		D413146E0D7F225E00F55B9B /* MGTransitioningTabView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MGTransitioningTabView.m; sourceTree = "<group>"; };
+		D41316310D7F740400F55B9B /* sshfsAdvanced.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = sshfsAdvanced.xib; sourceTree = "<group>"; };
 		D41867E60D729A31004975AF /* QuickMount.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = QuickMount.xib; sourceTree = "<group>"; };
 		D41867E90D729B81004975AF /* MFQuickMountController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFQuickMountController.h; sourceTree = "<group>"; };
 		D41867EA0D729B81004975AF /* MFQuickMountController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MFQuickMountController.m; sourceTree = "<group>"; };
@@ -442,6 +448,15 @@
 			name = Utility;
 			sourceTree = "<group>";
 		};
+		D413146B0D7F224900F55B9B /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				D413146D0D7F225E00F55B9B /* MGTransitioningTabView.h */,
+				D413146E0D7F225E00F55B9B /* MGTransitioningTabView.m */,
+			);
+			name = Shared;
+			sourceTree = "<group>";
+		};
 		D41867E50D729A0F004975AF /* Resources */ = {
 			isa = PBXGroup;
 			children = (
@@ -571,6 +586,7 @@
 				D4B14BAA0CE03C84003195A3 /* sshnodelay.so */,
 				D4B14BAB0CE03C84003195A3 /* sshfs.plist */,
 				D4B14BAC0CE03C84003195A3 /* sshfs-static */,
+				D41316310D7F740400F55B9B /* sshfsAdvanced.xib */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -628,6 +644,7 @@
 		D4E5200E0CE03B9D009B1A30 /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				D413146B0D7F224900F55B9B /* Shared */,
 				D48DB9720D70D70C008A62BB /* Menuling */,
 				D4DB41FF0D3E860400C99914 /* Settings */,
 				D4B14D660CE19514003195A3 /* Console */,
@@ -675,6 +692,7 @@
 				D4E983470D7223D70058AF73 /* MGNSImage.h in Headers */,
 				D420386F0D73A76B009EE78F /* MFClientRecent.h in Headers */,
 				D4D0E9FF0D7C887A00797279 /* MFClientFSDelegateProtocol.h in Headers */,
+				D413146F0D7F225E00F55B9B /* MGTransitioningTabView.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -845,6 +863,7 @@
 				D439D6D60D0A0FDE0025574A /* sshfsConfiguration.xib in Resources */,
 				D4656C8D0D6FD6DC00DE2208 /* sshfs_icon.icns in Resources */,
 				D4656C8E0D6FD6DC00DE2208 /* sshfs.png in Resources */,
+				D41316320D7F740400F55B9B /* sshfsAdvanced.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -889,6 +908,7 @@
 				D403BD6F0D650D630049201D /* MFError.m in Sources */,
 				D4E983450D7223CE0058AF73 /* MGNSImage.m in Sources */,
 				D42038700D73A76B009EE78F /* MFClientRecent.m in Sources */,
+				D41314700D7F225E00F55B9B /* MGTransitioningTabView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

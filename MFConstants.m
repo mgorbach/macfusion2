@@ -28,3 +28,6 @@ NSString* kMFFilesystemStatusKey = @"status";
 NSString* kMFFilesystemUUIDKey = @"status";
 
 */
+
+NSString* kMFUIMainViewKey=@"main2";
+NSString* kMFUIAdvancedViewKey=@"advanced";

@@ -9,15 +9,18 @@
 
 @protocol MFFSDelegateProtocol <NSObject>
 
-
+// Task arguments
 - (NSArray*)taskArgumentsForParameters:(NSDictionary*)parameters;
 
+// Parameters
 - (NSArray*)parameterList;
 - (NSDictionary*)defaultParameterDictionary;
 
 - (id)impliedValueParameterNamed:(NSString*)name 
 				 otherParameters:(NSDictionary*)parameters;
+- (NSString*)descriptionForParameters:(NSDictionary*)parameters;
 
+// Validation
 - (BOOL)validateValue:(id)value 
 	 forParameterName:(NSString*)paramName 
 				error:(NSError**)error;
@@ -25,10 +28,13 @@
 - (BOOL)validateParameters:(NSDictionary*)parameters
 					 error:(NSError**)error;
 
-- (NSString*)descriptionForParameters:(NSDictionary*)parameters;
 
+// Plugin Wide Stuff
 - (NSString*)executablePath;
 - (NSArray*)urlSchemesHandled;
+
+// UI
+- (NSDictionary*)configurationViewControllers;
  
 @optional
 - (NSDictionary*)taskEnvironmentForParameters:(NSDictionary*)parameters;

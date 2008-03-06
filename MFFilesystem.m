@@ -224,4 +224,9 @@
 	return [statusInfo objectForKey: kMFSTErrorKey ];
 }
 
+- (id <MFFSDelegateProtocol>)delegate
+{
+	return delegate;
+}
+
 @end
