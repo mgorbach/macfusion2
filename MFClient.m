@@ -11,6 +11,8 @@
 #import "MFClientPlugin.h"
 #import "MFConstants.h"
 #import "MFClientRecent.h"
+#import <Security/Security.h>
+#import "MFCore.h"
 
 #define ORDERING_FILE_PATH @"~/Library/Application Support/Macfusion/Ordering.plist"
 
@@ -19,6 +21,9 @@
 - (void)storePlugin:(MFClientPlugin*)plugin;
 - (void)removeFilesystem:(MFClientFS*)fs;
 - (void)loadOrdering;
+- (void)setupKeychainMonitoring;
+- (void)writeOrdering;
+// Security monitoring
 
 @property(readwrite, retain) NSMutableArray* persistentFilesystems;
 @property(readwrite, retain) NSMutableArray* temporaryFilesystems;
@@ -99,6 +104,9 @@ static MFClient* sharedClient = nil;
 		temporaryFilesystems = [NSMutableArray array];
 		plugins = [NSMutableArray array];
 		recents = [NSMutableArray array];
+		[self setupKeychainMonitoring];
+		setStateForAgentLoginItem(YES);
+		triedBootstrap = NO;
 	}
 	return self;
 }
@@ -159,6 +167,50 @@ static MFClient* sharedClient = nil;
 	{
 		[self fillInitialStatus];
 		return YES;
+	}
+	else
+	{
+		// Try to start the server process
+		NSAlert* serverStartAlert = [NSAlert new];
+		[serverStartAlert setMessageText: @"The macfusion agent process is not started"];
+		[serverStartAlert setInformativeText: @"Would you like to start the agent?\nOtherwise, Macfusion will Quit."];
+		[serverStartAlert setShowsSuppressionButton: YES];
+		[serverStartAlert addButtonWithTitle:@"Start"];
+		[serverStartAlert addButtonWithTitle:@"Quit"];
+		[[serverStartAlert suppressionButton] setTitle: @"Start agent automatically on login"];
+		NSInteger returnValue = [serverStartAlert runModal];
+		// MFLogS(self, @"Return %d supression state %d", returnValue, [[serverStartAlert suppressionButton] state]);
+		
+		if ([[serverStartAlert suppressionButton] state])
+			setStateForAgentLoginItem(YES);
+			
+		if (returnValue == NSAlertSecondButtonReturn)
+		{
+			[NSApp terminate: self];
+		}
+		else if (returnValue == NSAlertFirstButtonReturn)
+		{
+			NSString* agentPath = [[NSBundle bundleWithPath: mainUIBundlePath()] pathForResource:@"macfusionAgent" ofType:nil];
+			[NSTask launchedTaskWithLaunchPath: agentPath arguments:[NSArray array]];
+			[[NSRunLoop currentRunLoop] runUntilDate:[[NSDate date] addTimeInterval: 1.5]];
+			
+			if ([self establishCommunication])
+			{
+				[self fillInitialStatus];
+				return YES;
+			}
+			else
+			{
+				NSAlert* faliureAlert = [NSAlert alertWithMessageText:@"Could not start or connect to the macfusion agent"
+														defaultButton:@"OK"
+													  alternateButton:@""
+														  otherButton:@""
+											informativeTextWithFormat:@"Macfusion will Quit."];
+				[faliureAlert setAlertStyle: NSCriticalAlertStyle];
+				[faliureAlert runModal];
+				[NSApp terminate: self];
+			}
+		}
 	}
 	
 	return NO;
@@ -235,6 +287,12 @@ static MFClient* sharedClient = nil;
 	}
 }
 
+- (void)deleteFilesystem:(MFClientFS*)fs
+{
+	NSString* uuid = [fs uuid];
+	[server deleteFilesystemWithUUID: uuid];
+}
+
 #pragma mark Recents
 - (void)handleRecentsUpdatedNotification:(NSNotification*)note
 {
@@ -259,6 +317,32 @@ static MFClient* sharedClient = nil;
 	}
 	
 	return nil;
+}
+
+#pragma mark Security
+OSStatus myKeychainCallback (
+							 SecKeychainEvent keychainEvent,
+							 SecKeychainCallbackInfo *info,
+							 void *context
+)
+{
+	MFClient* self = (MFClient*)context;
+	// MFLogS(self, @"Keychain callback received event is %d", keychainEvent);
+	SecKeychainItemRef itemRef = info -> item;
+	NSString* uuid = (NSString*)uuidForKeychainItemRef(itemRef);
+	MFClientFS* fs = [self filesystemWithUUID:uuid];
+	if (fs)
+	{
+		// MFLogS(self, @"Updating secrets for fs %@ due to keychain change", fs);
+		[fs updateSecrets];
+	}
+	return 0;
+}
+
+- (void)setupKeychainMonitoring
+{
+	SecKeychainEventMask eventMask = kSecUpdateEventMask | kSecAddEventMask;
+	SecKeychainAddCallback(myKeychainCallback , eventMask, self);
 }
 
 #pragma mark Accessors and Setters
@@ -374,6 +458,8 @@ static MFClient* sharedClient = nil;
 	{
 		[fs setDisplayOrder: [persistentFilesystems indexOfObject: fs]];
 	}
+	
+	[self writeOrdering];
 }
 
 - (void)writeOrdering
@@ -406,7 +492,7 @@ static MFClient* sharedClient = nil;
 
 - (void)handleApplicationTerminatingNotification:(NSNotification*)note
 {
-	[self writeOrdering];
+	// [self writeOrdering];
 }
 
 @synthesize delegate, persistentFilesystems, temporaryFilesystems, plugins, recents;

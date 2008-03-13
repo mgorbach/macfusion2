@@ -10,6 +10,7 @@
 #import "MFConstants.h"
 #import "MFPluginController.h"
 #import "MFError.h"
+#import "MFLoggingController.h"
 #include <sys/xattr.h>
 
 #define FS_DIR_PATH @"~/Library/Application Support/Macfusion/Filesystems"
@@ -28,6 +29,7 @@
 				 WithError:(NSError**)error;
 - (NSError*)genericError;
 - (void)setError:(NSError*)error;
+- (NSTimer*)newTimeoutTimer;
 @end
 
 @implementation MFServerFS
@@ -152,6 +154,7 @@
 		delegate = [p delegate];
 		parameters = [self fullParametersWithDictionary: params];
 		statusInfo = [self initializedStatusInfo];
+		pauseTimeout = NO;
 		if ( ![parameters objectForKey: KMFFSUUIDParameter] )
 		{
 			[parameters setObject: [self getNewUUID]
@@ -412,19 +415,15 @@
 	}
 	
 	MFLogS(self, @"Mounting");
+	self.pauseTimeout = NO;
 	self.status = kMFStatusFSWaiting;
 	if ([self setupMountPoint] == YES)
 	{
 		task = [self taskForLaunch];
 		[[[task standardOutput] fileHandleForReading]
 		 waitForDataInBackgroundAndNotify];
-		
-		[NSTimer scheduledTimerWithTimeInterval:5.0 
-										 target:self
-									   selector:@selector(handleMountTimeout:)
-									   userInfo:nil 
-										repeats:NO];
-		
+		[timer invalidate];
+		timer = [self newTimeoutTimer];
 		[task launch];
 		MFLogS(self, @"Task launched OK");
 		[self tagMountPoint];
@@ -448,7 +447,7 @@
 	[t waitUntilExit];
 	if ([t terminationStatus] != 0)
 	{
-		MFLogS(self, @"Unmount failed. Unmount terminates with %d",
+		MFLogS(self, @"Unmount failed. Unmount terminated with %d",
 		[t terminationStatus]);
 	}
 }
@@ -603,12 +602,30 @@
 	}
 }
 
-
-- (void)handleMountTimeout:(NSTimer*)timer
+- (NSTimer*)newTimeoutTimer
 {
+	return [NSTimer scheduledTimerWithTimeInterval:5.0
+								   target:self
+								 selector:@selector(handleMountTimeout:)
+								 userInfo:nil
+								  repeats:NO];
+}
+
+- (void)handleMountTimeout:(NSTimer*)theTimer
+{
+	if (self.pauseTimeout)
+	{
+		// MFLogS(self, @"Timeout paused");
+		timer = [self newTimeoutTimer];
+		return;
+	}
+		
 	if (![self isUnmounted] && ![self isMounted])
 		if (![self isFailedToMount])
 		{
+			// MFLogS(self, @"Mount time out detected. Killing task %@ pid %d",
+			//	   task, [task processIdentifier]);
+			kill([task processIdentifier], SIGKILL);
 			NSDictionary* dictionary = [NSDictionary dictionaryWithObjectsAndKeys: 
 										self.uuid, kMFErrorFilesystemKey,
 										@"Mount has timed out.", NSLocalizedDescriptionKey,
@@ -711,6 +728,18 @@
 {
 	if (error)
 		[statusInfo setObject: error forKey: kMFSTErrorKey ];
+}
+
+- (BOOL)pauseTimeout
+{
+	return pauseTimeout;
+}
+
+- (void)setPauseTimeout:(BOOL)p;
+{
+	pauseTimeout = p;
+	[timer invalidate];
+	timer = [self newTimeoutTimer];
 }
 
 @synthesize plugin;

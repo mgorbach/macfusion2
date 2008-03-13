@@ -15,10 +15,21 @@
 #define IMAGE_SIZE 48
 #define HORIZONTAL_PADDING 10.0f
 #define VERTICAL_PADDING 5.0f
-#define BUTTON_SIZE NSMakeSize(65, 20)
+#define BUTTON_SIZE NSMakeSize(70, 20)
 
 
 @implementation MFFilesystemCell
+
+- (id)init
+{
+	if (self = [super init])
+	{
+		self.editPushed = NO;
+		self.mountPushed = NO;
+	}
+	
+	return self;
+}
 
 - (NSColor*)tintColor
 {
@@ -87,13 +98,26 @@
 	MFClientFS* fs = [self representedObject];
 	
 	NSImage* icon = [[NSImage alloc] initWithContentsOfFile: 
-					 fs.iconPath];
+					 fs.imagePath];
 	CIImage* ciImageIcon = [icon ciImageRepresentation];
 	CIImage* scaledImage = [ciImageIcon ciImageByScalingToSize: NSMakeSize(IMAGE_SIZE, IMAGE_SIZE) ];
 	CIImage* coloredImage = [scaledImage ciImageByColoringMonochromeWithColor: [self tintColor]
 																	intenisty: [NSNumber numberWithFloat: 0.4] ];
 
 	return [coloredImage nsImageRepresentation];
+}
+
+# pragma mark Enabling
+- (BOOL)mountButtonEnabled
+{
+	MFClientFS* fs = [self representedObject];
+	return ([fs isUnmounted] || [fs isFailedToMount] || [fs isMounted]);
+}
+
+- (BOOL)editButtonEnabled
+{
+	MFClientFS* fs = [self representedObject];
+	return ([fs isUnmounted] || [fs isFailedToMount]);
 }
 
 # pragma mark Drawing
@@ -121,20 +145,10 @@
 	NSString* secondaryText = fs.descriptionString;
 	NSSize secondaryTextSize = [secondaryText sizeWithAttributes: secondaryTextAttributes];
 
-	
-
-	
-
 	NSRect iconBox = [self iconBoxWithFrame:cellFrame];
 	NSRect editButtonBox = [self editButtonBoxWithFrame:cellFrame];
 	NSRect mountButtonBox = [self mountButtonBoxWithFrame:cellFrame];
-	
-	NSBezierPath* mountButtonPath = [NSBezierPath bezierPathWithRoundedRect:mountButtonBox
-																	xRadius:10 yRadius:10];
-	NSBezierPath* editButtonPath = [NSBezierPath bezierPathWithRoundedRect:editButtonBox
-																   xRadius:10
-																   yRadius:10];
-	
+		
 	float combinedHeight = mainTextSize.height + secondaryTextSize.height + VERTICAL_PADDING;
 	NSRect insetRect = [self insetRectWithFrame: cellFrame];
 	NSRect textBox = NSMakeRect( iconBox.origin.x + iconBox.size.width + HORIZONTAL_PADDING,
@@ -152,56 +166,54 @@
 										 secondaryTextSize.height);
 	
 	
-	NSColor* textColor = [self isHighlighted] ? [NSColor whiteColor] : [NSColor whiteColor];
-	NSColor* bgColor = [self isHighlighted] ? [NSColor darkGrayColor] : [NSColor grayColor];
-	NSMutableDictionary* buttonTextAttributes = [NSMutableDictionary dictionaryWithObjectsAndKeys:
-										  textColor, NSForegroundColorAttributeName,
-										  [NSFont systemFontOfSize:13], NSFontAttributeName,
-										  nil];
+	BOOL current = ([[controlView window] firstResponder] == controlView && 
+					[[controlView window] isKeyWindow]);
 	
-	// Edit button
-	if (![fs isMounted])
+	if (![controlView inLiveResize])
 	{
+		// Edit button
+		
 		NSString* editText = @"Edit";
-		NSSize editSize = [editText sizeWithAttributes:buttonTextAttributes];
-		NSRect editTextRect = NSMakeRect(editButtonBox.origin.x + editButtonBox.size.width*0.5 - editSize.width*0.5,
-										 editButtonBox.origin.y + editButtonBox.size.height*0.5 - editSize.height*0.5,
-										 editSize.width,
-										 editSize.height);
-		[bgColor set];
-		[editButtonPath fill];
-		[editText drawInRect: editTextRect withAttributes:buttonTextAttributes];
-	}
-	
-	// Mount Button
-	if (![fs isWaiting])
-	{
+		NSButtonCell* button = [[NSButtonCell alloc] initTextCell: editText];
+		[button setBezelStyle: NSRoundRectBezelStyle];
+		[button setGradientType: NSGradientConcaveWeak];
+		if (editPushed)
+			[button highlight:YES withFrame: editButtonBox inView:controlView];
+		if (! [self editButtonEnabled] )
+			[button setEnabled: NO];
+		[button drawBezelWithFrame: editButtonBox inView: controlView];
+		[button drawInteriorWithFrame: editButtonBox inView: controlView];
+		
+		// Mount Button
 		NSString* mountText = [fs isMounted] ? @"Unmount" : @"Mount";
-		NSFont* font = [fs isMounted] ? [NSFont systemFontOfSize:12] : [NSFont systemFontOfSize:13];
-		[buttonTextAttributes setObject: font forKey:NSFontAttributeName];
-		NSSize mountSize = [mountText sizeWithAttributes:buttonTextAttributes];
-		NSRect mountTextRect = NSMakeRect(mountButtonBox.origin.x + mountButtonBox.size.width*0.5 - mountSize.width*0.5,
-										 mountButtonBox.origin.y + mountButtonBox.size.height*0.5 - mountSize.height*0.5,
-										 mountSize.width,
-										 mountSize.height);
-		[NSGraphicsContext saveGraphicsState];
-//		NSColor* color = [self isHighlighted] ? [NSColor grayColor] : [NSColor lightGrayColor];
-		[bgColor set];
-		[mountButtonPath fill];
-		[NSGraphicsContext restoreGraphicsState];
-		[mountText drawInRect: mountTextRect withAttributes:buttonTextAttributes];
+		button = [[NSButtonCell alloc] initTextCell: mountText];
+		[button setBezelStyle: NSRoundRectBezelStyle];
+		[button setGradientType: NSGradientConcaveWeak];
+		[button setState: NSOnState];
+		if (mountPushed)
+			[button highlight:YES withFrame: mountButtonBox inView:controlView];
+		if (! [self mountButtonEnabled] )
+			[button setEnabled: NO];
+		[button drawBezelWithFrame: mountButtonBox inView: controlView];
+		[button drawInteriorWithFrame: mountButtonBox inView: controlView];
 	}
+
 	
-	if ([self isHighlighted] && [[controlView window] firstResponder] == controlView &&
-		[[controlView window] isKeyWindow])
+
+	if ([self isHighlighted] && current)
 	{
 		[mainTextAttributes setValue: [NSColor whiteColor]
 							  forKey: NSForegroundColorAttributeName];
 		[secondaryTextAttributes setValue: [NSColor whiteColor]
 								   forKey: NSForegroundColorAttributeName];
 	}
-	
-	[[NSGraphicsContext currentContext] setImageInterpolation: NSImageInterpolationHigh];
+	if ([self isHighlighted] && !current)
+	{
+		[mainTextAttributes setValue: [NSColor whiteColor]
+							  forKey: NSForegroundColorAttributeName];
+		[secondaryTextAttributes setValue: [NSColor whiteColor]
+								   forKey: NSForegroundColorAttributeName];
+	}
 
 	NSImage* outputIcon = [controlView isFlipped] ? [[self iconToDraw] flippedImage] : [self iconToDraw];
 	[outputIcon drawAtPoint:iconBox.origin fromRect:NSMakeRect(0, 0, IMAGE_SIZE, IMAGE_SIZE) operation:NSCompositeSourceOver fraction:1.0];
@@ -210,10 +222,36 @@
 	[secondaryText drawInRect:secondaryTextBox withAttributes:secondaryTextAttributes];
 }
 
-# pragma mark Hit Testing Stuff
-- (NSInteger)hitTestForEvent:(NSEvent*)e inRect:(NSRect)r ofView:(NSView*)view
+# pragma mark Tracking
+- (void) addTrackingAreasForView: (NSView *) controlView inRect: (NSRect) cellFrame withUserInfo: (NSDictionary *) userInfo
+				   mouseLocation: (NSPoint) mouseLocation
+{
+	NSTrackingAreaOptions options = NSTrackingEnabledDuringMouseDrag | NSTrackingMouseEnteredAndExited | NSTrackingActiveAlways;
+	NSRect mountButtonBox = [self mountButtonBoxWithFrame: cellFrame];
+	NSRect editButtonBox = [self editButtonBoxWithFrame: cellFrame];
+	NSMutableDictionary* mountTrackingDict = [NSMutableDictionary dictionaryWithObject:@"Mount" forKey:@"Type"];
+	NSMutableDictionary* editTrackingDict = [NSMutableDictionary dictionaryWithObject:@"Edit" forKey:@"Type"];
+	[mountTrackingDict addEntriesFromDictionary: userInfo];
+	[editTrackingDict addEntriesFromDictionary: userInfo];
+		
+	NSTrackingArea* mountTrackingArea = [[NSTrackingArea alloc] initWithRect:mountButtonBox
+																	 options:options 
+																	   owner:controlView 
+																	userInfo:mountTrackingDict];
+	[controlView addTrackingArea: mountTrackingArea];
+	NSTrackingArea* editTrackingArea = [[NSTrackingArea alloc] initWithRect:editButtonBox
+																	 options:options 
+																	   owner:controlView 
+																	userInfo:editTrackingDict];
+	[controlView addTrackingArea: editTrackingArea];
+}
+
+
+- (NSUInteger)hitTestForEvent:(NSEvent *)event inRect:(NSRect)cellFrame ofView:(NSView *)controlView
 {
 	return NSCellHitContentArea;
 }
+ 
 
+@synthesize editPushed, mountPushed;
 @end

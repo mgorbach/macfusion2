@@ -45,8 +45,6 @@
 	{
 		// Wait for mount here
 		[fs setClientFSDelegate: self];
-		[qmTabView setNeedsDisplay:YES];
-		[qmProgress startAnimation:self];
 	}
 }
 
@@ -86,7 +84,13 @@
 
 - (IBAction)recentClicked:(id)sender
 {
-	MFClientRecent* recent = (MFClientRecent*)sender;
+	if ([sender count] == 0)
+		return;
+	
+	MFClientRecent* recent = (MFClientRecent*)[sender objectAtIndex:0];
+	if (![recent isKindOfClass: [MFClientRecent class]])
+		return;
+	
 	NSError* error;
 	MFClientFS* tempFS = [client mountRecent: recent error:&error];
 	[self handleMountAttemptForFS: tempFS error:error];

@@ -1,5 +1,5 @@
 /*
- *  MFServerProtocol.h
+ *  MFFSDelegate.h
  *  MacFusion2
  *
  *  Created by Michael Gorbach on 1/31/08.
@@ -42,4 +42,8 @@
 									 error:(NSError**)error;
 - (NSError*)errorForParameters:(NSDictionary*)parameters 
 						output:(NSString*)output;
+
+// Security
+- (NSArray*)secretsList;
+- (NSArray*)secretsClientsList;
 @end

@@ -123,6 +123,7 @@ static MFLoggingController* sharedController = nil;
 - (void)init
 {
 	// Nothing here yet
+	stdOut = YES;
 }
 
 - (NSString*)descriptionForObject:(id)object
@@ -154,7 +155,7 @@ static MFLoggingController* sharedController = nil;
 - (void)logMessageToFile:(NSString*)message ofType:(int)type sender:(id)sender
 {
 	NSString* description = [self descriptionForObject: sender];
-	NSString* writeString = [NSString stringWithFormat: @"%@: %@",
+	NSString* writeString = [NSString stringWithFormat: @"%@: %@\n",
 							 description, message];
 	
 	NSFileHandle* handle = [self handleForLogfile];
@@ -165,15 +166,24 @@ static MFLoggingController* sharedController = nil;
 
 - (void)logMessage:(NSString*)message ofType:(int)type sender:(id)sender
 {
+	message = [message stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]];
 	[self logMessageToFile:message ofType:type sender:sender];
-	if (!sender)
-		printf("%s\n", [message cStringUsingEncoding:NSUTF8StringEncoding]);
-	else
-		printf("%s: %s\n", [[sender description] cStringUsingEncoding:NSUTF8StringEncoding],
-			   [message cStringUsingEncoding: NSUTF8StringEncoding]);
+	if (stdOut)
+	{
+		if (!sender)
+			printf("%s\n", [message cStringUsingEncoding:NSUTF8StringEncoding]);
+		else
+			printf("%s: %s\n", [[sender description] cStringUsingEncoding:NSUTF8StringEncoding],
+				   [message cStringUsingEncoding: NSUTF8StringEncoding]);
+	}
+
 	return;
 }
 
+- (void)setPrintToStandardOut:(BOOL)b
+{
+	stdOut = b;
+}
 
 - (void)finalize
 {

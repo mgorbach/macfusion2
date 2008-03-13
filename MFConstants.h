@@ -65,6 +65,7 @@ extern NSString* kMFFilesystemStatusKey;
 #define kMFFSFilePathParameter @"filePath"
 #define kMFFSPersistentParameter @"isPersistent"
 #define kMFFSDescriptionParameter @"description"
+#define kMFFSVolumeImagePathParameter @"imagePath"
 
 // Status keys
 #define KMFStatusDict @"statusInfo"
@@ -105,4 +106,5 @@ enum macfusionErrorCodes {
 // UI Keys
 extern NSString* kMFUIMainViewKey;
 extern NSString* kMFUIAdvancedViewKey;
+extern NSString* kMFUIMacfusionAdvancedViewKey;
 

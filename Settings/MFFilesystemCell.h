@@ -7,9 +7,18 @@
 //
 
 #import <Cocoa/Cocoa.h>
+
 @class MFClientFS;
 
-@interface MFFilesystemCell : NSCell {
+@interface MFFilesystemCell : NSActionCell {
+	BOOL editPushed, mountPushed;
 }
 
+- (void) addTrackingAreasForView: (NSView *) controlView inRect: (NSRect) cellFrame withUserInfo: (NSDictionary *) userInfo
+				   mouseLocation: (NSPoint) mouseLocation;
+- (BOOL)editButtonEnabled;
+- (BOOL)mountButtonEnabled;
+
+@property(readwrite) BOOL editPushed;
+@property(readwrite) BOOL mountPushed;
 @end

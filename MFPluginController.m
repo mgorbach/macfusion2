@@ -67,6 +67,11 @@ static MFPluginController* sharedController = nil;
 		}
 	}
 	
+	NSString* mainBundlePath = [[NSWorkspace sharedWorkspace] absolutePathForAppBundleWithIdentifier:@"org.mgorbach.macfusion2"];
+	NSBundle* mainBundle = [NSBundle bundleWithPath: mainBundlePath];
+	NSString* pluginsPath = [mainBundle builtInPlugInsPath];
+	if (pluginsPath)
+		[pluginSearchPaths addObject: pluginsPath];
 	for(NSString* path in pluginSearchPaths)
 	{
 		for(NSString* pluginPath in [fm directoryContentsAtPath:path])

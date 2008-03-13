@@ -49,5 +49,18 @@
 		[super orderWindow:orderingMode relativeTo:otherWindowNumber];
 	}
 }
+/*
+- (void)keyDown:(NSEvent*)event
+{
+	if ([event keyCode] == 53)
+	{
+		[self close];
+	}
+	else
+	{
+		[super keyDown:event];
+	}
+}
+ */
 
 @end

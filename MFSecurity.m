@@ -1,0 +1,536 @@
+//
+//  MFSecurity.m
+//  MacFusion2
+//
+//  Created by Michael Gorbach on 3/10/08.
+//  Copyright 2008 Michael Gorbach. All rights reserved.
+//
+
+#import "MFSecurity.h"
+#import "MFFSDelegateProtocol.h"
+#import "MFConstants.h"
+#import "MFServerProtocol.h"
+#import "MFLoggingController.h"
+#import "MFServerFSProtocol.h"
+#import "MFFilesystemController.h"
+#import "MFClientFS.h"
+#import "MFClientPlugin.h"
+#import "MFNetworkFS.h"
+#import "MFCore.h"
+
+#define self @"MFSECURITY"
+
+# pragma mark Keychain interaction
+NSString* serviceNameForFS( MFFilesystem* fs )
+{
+	return [NSString stringWithFormat: @"Macfusion: %@", fs.name];
+}
+
+NSDictionary* getGenericSecretsForFilesystemAndReturnItem( MFFilesystem* fs, SecKeychainItemRef* itemRef  )
+{
+	UInt32 passwordLength = 0;
+	void* passwordData;
+	NSString* serviceName = serviceNameForFS(fs);
+	OSStatus error = SecKeychainFindGenericPassword(NULL,
+													[serviceName lengthOfBytesUsingEncoding: NSUTF8StringEncoding],
+													[serviceName UTF8String],
+													[fs.uuid lengthOfBytesUsingEncoding: NSUTF8StringEncoding],
+													[fs.uuid UTF8String], 
+													&passwordLength, 
+													&passwordData, 
+													itemRef);
+	if (error == noErr)
+	{
+		// MFLogS( self, @"Found generic keychain entry" );
+		NSString* serializationErrorString;
+		NSData* secretsData = [NSData dataWithBytes:passwordData length:passwordLength];
+		// MFLogS( self, @"NSData from keycahin %@", secretsData);
+		NSDictionary* loadedDataDict = [NSPropertyListSerialization propertyListFromData:secretsData 
+																		mutabilityOption:NSPropertyListMutableContainers
+																				  format:NULL
+																		errorDescription:nil];
+		if ([loadedDataDict isKindOfClass: [NSDictionary class]])
+		{
+			// MFLogS( self, @"Succesfully loaded secrets dictionary from keychain %@", loadedDataDict );
+			SecKeychainItemFreeContent(NULL, passwordData);
+			return loadedDataDict;
+		}
+		else
+		{
+			MFLogS( self, @"Failed to parse data in generic entry. data: %@ errorString: %@", 
+				   loadedDataDict, serializationErrorString );
+			return nil;
+		}
+	}
+	else 
+	{
+		// MFLogS( self, @"Generic keychain entry not found for fs %@ error %d", fs, error );
+		return nil;
+	}
+}
+
+NSDictionary* getNetworkSecretsForFilesystemAndReturnItem( MFFilesystem* fs, SecKeychainItemRef* itemRef  )
+{
+	UInt32 passwordLength = 0;
+	void* passwordData;
+	NSString* userName = [[fs parameters] objectForKey: kNetFSUserParameter];
+	int port = [[[fs parameters] objectForKey: kNetFSPortParameter] intValue];
+	NSString* hostName = [[fs parameters] objectForKey: kNetFSHostParameter];
+	SecProtocolType protocol = [[[fs parameters] objectForKey: kNetFSProtocolParameter] intValue];
+	
+	if (userName && hostName && port && protocol)
+	{
+		OSStatus error = SecKeychainFindInternetPassword(NULL,
+														 [hostName lengthOfBytesUsingEncoding: NSUTF8StringEncoding],
+														  [hostName UTF8String],
+														  0,
+														  NULL,
+														  [userName lengthOfBytesUsingEncoding: NSUTF8StringEncoding],
+														  [userName UTF8String],
+														  0,
+														  NULL,
+														  port,
+														  protocol,
+														  (SecAuthenticationType)NULL,
+														  &passwordLength,
+														  &passwordData,
+														 itemRef);
+		if (error == noErr)
+		{
+			// MFLogS(self, @"Successfully found internet password for fs %@", fs);
+			NSString* password = [NSString stringWithCString:passwordData length:passwordLength];
+			SecKeychainItemFreeContent( NULL,  passwordData );
+			return [NSDictionary dictionaryWithObject: password forKey: kNetFSPasswordParameter];
+		}
+		else
+		{
+			// MFLogS(self, @"Error searching for internet password fs %@ error %d", fs, error);
+		}
+	}
+	else
+	{
+		// MFLogS(self, @"No network info to search for fs %@", fs);
+	}
+	
+	return nil;
+}
+
+NSDictionary* getGenericSecretsForFilesystem( MFFilesystem* fs )
+{
+	return getGenericSecretsForFilesystemAndReturnItem( fs, NULL );
+}
+
+NSDictionary* getNetworkSecretsForFilesystem( MFFilesystem* fs )
+{
+	return getNetworkSecretsForFilesystemAndReturnItem( fs, NULL );
+}
+
+NSDictionary* getSecretsDictionaryForFilesystem( MFFilesystem* fs )
+{
+	NSDictionary* genericSecretsDict = getGenericSecretsForFilesystem( fs );
+	NSDictionary* networkSecretsDict = getNetworkSecretsForFilesystem( fs );
+	NSMutableDictionary* secretsDictionary = [NSMutableDictionary dictionary];
+	NSArray* secretsList = [[fs delegate] secretsList];
+	for (NSString* secretKey in secretsList)
+	{
+		id genericSecret = [genericSecretsDict objectForKey: secretKey];
+		id networkSecret = [networkSecretsDict objectForKey: secretKey];
+		if (genericSecret)
+			[secretsDictionary setObject: genericSecret forKey: secretKey ];
+		else if (networkSecret)
+			[secretsDictionary setObject: networkSecret forKey: secretKey ];
+	}
+	
+	if ([secretsDictionary count] > 0)
+	{
+		return [secretsDictionary copy];
+	}
+	else
+	{
+		// MFLogS(self, @"Nothing useful in secrets dictionary. Returning nil");
+		return nil;
+	}
+}
+
+SecAccessRef keychainAccessRefForFilesystem( MFFilesystem* fs )
+{
+	SecAccessRef accessRef;
+	OSStatus error;
+	
+	NSArray* trustedApplicationPaths = secretClientsForFileystem( fs );
+	NSMutableArray* trustRefs = [NSMutableArray array];
+	for(NSString* path in trustedApplicationPaths)
+	{
+		SecTrustedApplicationRef trustedAppRef;
+		error = SecTrustedApplicationCreateFromPath([path cStringUsingEncoding: NSUTF8StringEncoding], &trustedAppRef);
+		if (error != noErr)
+		{
+			MFLogS(self, @"Could not create trusted ref for path %@ fs %@ error %d", path, fs, error);
+		}
+		else
+		{
+			[trustRefs addObject: (id)trustedAppRef];
+		}
+	}
+	
+	error = SecAccessCreate( (CFStringRef)serviceNameForFS( fs ), (CFArrayRef)[trustRefs copy], &accessRef);
+	if (error != noErr)
+	{
+		MFLogS(self, @"Failed to create access ref for fs %@ error %d", fs, error);
+		return NULL;
+	}
+	else
+	{
+		return accessRef;
+	}
+}
+
+void setNetworkSecretsForFilesystem (NSDictionary* secretsDictionary, MFFilesystem* fs )
+{
+	NSString* userName = [[fs parameters] objectForKey: kNetFSUserParameter];
+	int port = [[[fs parameters] objectForKey: kNetFSPortParameter] intValue];
+	NSString* hostName = [[fs parameters] objectForKey: kNetFSHostParameter];
+	NSString* password = [secretsDictionary objectForKey: kNetFSPasswordParameter];
+	SecProtocolType protocol = [[[fs parameters] objectForKey: kNetFSProtocolParameter] intValue];
+	
+	if (userName && hostName && port && password)
+	{
+		SecKeychainItemRef itemRef = NULL;
+		if ( getNetworkSecretsForFilesystemAndReturnItem(fs, &itemRef) )
+		{
+			// Modify (Check delete?)
+			OSStatus error = SecKeychainItemModifyContent(itemRef,
+														  NULL,
+														  [password lengthOfBytesUsingEncoding: NSUTF8StringEncoding],
+														  [password UTF8String]);
+			if (error == noErr)
+			{
+				// MFLogS(self, @"Successfully modified network secrets for fs %@", fs );
+			}
+			else
+				MFLogS(self, @"Failed to modify network secrets for fs %@. Error %d", fs, error);
+			
+		}
+		else
+		{
+			// Create
+			SecKeychainAttribute attrs[] = {
+				{ kSecLabelItemAttr, [hostName lengthOfBytesUsingEncoding: NSUTF8StringEncoding], (char *)[hostName UTF8String] },
+				{ kSecAccountItemAttr, [userName lengthOfBytesUsingEncoding: NSUTF8StringEncoding], (char *)[userName UTF8String] },
+				{ kSecServerItemAttr, [hostName lengthOfBytesUsingEncoding: NSUTF8StringEncoding], (char *)[hostName UTF8String] },
+				{ kSecPortItemAttr, sizeof(int), (int *)&port },
+				{ kSecProtocolItemAttr, sizeof(SecProtocolType), (SecProtocolType *)&protocol }
+			};
+			
+			SecKeychainAttributeList attributes = {
+				sizeof(attrs)/sizeof(attrs[0]), attrs
+			};
+			
+			SecAccessRef accessRef = keychainAccessRefForFilesystem( fs );
+			SecItemClass itemClass = kSecInternetPasswordItemClass;
+			OSStatus error = SecKeychainItemCreateFromContent(itemClass, 
+															  &attributes, 
+															  [password lengthOfBytesUsingEncoding:NSUTF8StringEncoding],
+															  [password UTF8String],
+															  NULL,
+															  accessRef,
+															  &itemRef);
+			if (error == noErr)
+			{
+				// MFLogS(self, @"Successfully stored network secrets for fs %@", fs);
+			}
+			else
+			{
+				MFLogS(self, @"Failed to store network secerets for fs %@. Error %d", fs, error);
+			}
+		}
+			
+	}
+	else
+	{
+		// MFLogS(self, @"No network info to write for fs %@", fs);
+	}
+		
+	return;
+}
+
+void setGenericSecretsForFilesystem (NSDictionary* secretsDictionary, MFFilesystem* fs )
+{
+	NSString* serializationErrorString;
+	
+	if (![fs isPersistent])
+	{
+		// MFLogS(self, @"Not setting generic secrets for temporary fs %@", fs);
+		return;
+	}
+	
+	NSData* secretsData = [NSPropertyListSerialization dataFromPropertyList:secretsDictionary 
+																	 format:NSPropertyListBinaryFormat_v1_0
+														   errorDescription:&serializationErrorString];
+	if (secretsData)
+	{
+		// MFLogS(self, @"Generic secrets serialized OK");
+	}
+	else
+	{
+		MFLogS(self, @"Could not serialize generic secrets dictionary");
+		return;
+	}
+	
+	SecKeychainItemRef itemRef = NULL;
+	if ( getGenericSecretsForFilesystemAndReturnItem(fs, &itemRef) || itemRef )
+	{
+		if ([secretsDictionary count] == 0)
+		{
+			// Delete
+			OSErr result = SecKeychainItemDelete( itemRef );
+			if (result == noErr)
+			{
+				// MFLogS(self, @"Generic keychain item deleted OK");
+			}
+			else
+			{
+				MFLogS(self, @"Generic keychain item deleted failed: %d", result);
+			}
+			
+			return;
+		}
+		
+		// Modify
+		OSErr result = SecKeychainItemModifyContent( itemRef,
+													NULL,
+													[secretsData length],
+													[secretsData bytes] );
+		if (result == noErr)
+		{
+			MFLogS(self, @"Generic keychain data updated succesfully");
+			return;
+		}
+		else
+		{
+			MFLogS(self, @"Failed to update generatic keychain data. Result %d", result);
+		}
+	}
+	else
+	{
+		// Create
+		NSString* serviceName = serviceNameForFS(fs);
+		SecItemClass itemClass = kSecGenericPasswordItemClass;
+		SecAccessRef accessRef = keychainAccessRefForFilesystem( fs );
+		if (accessRef == NULL)
+		{
+			MFLogS(self, @"Null access ref. Returning");
+			return;
+		}
+		
+		SecKeychainAttribute attrs[] = {
+			{ kSecLabelItemAttr, [serviceName lengthOfBytesUsingEncoding: NSUTF8StringEncoding], (char*)[serviceName UTF8String] },
+			{ kSecAccountItemAttr, [fs.uuid lengthOfBytesUsingEncoding: NSUTF8StringEncoding], (char*)[fs.uuid UTF8String] },
+			{ kSecServiceItemAttr, [serviceName lengthOfBytesUsingEncoding: NSUTF8StringEncoding], (char*)[serviceName UTF8String] }
+		};
+		
+		SecKeychainAttributeList attributes = {
+			sizeof(attrs)/sizeof(attrs[0]), attrs
+		};
+		
+		OSErr result = SecKeychainItemCreateFromContent(itemClass,
+														&attributes,
+														[secretsData length],
+														 [secretsData bytes],
+														NULL,
+														accessRef,
+														&itemRef);
+		
+		CFRelease(accessRef);
+		if (result == noErr)
+		{
+			// MFLogS(self, @"Generic keychain data created succesfully");
+			return;
+		}
+		else
+		{
+			MFLogS(self, @"Failed to create generic keychain data. Result %d", result);
+			return;
+		}
+	}
+}
+
+void setSecretsDictionaryForFilesystem( NSDictionary* secretsDictionary, MFFilesystem* fs )
+{
+	// MFLogS(self, @"Setting secrets dict %@ for fs %@", secretsDictionary, fs);
+	if (! secretsDictionary )
+	{
+		MFLogS(self, @"Secrets dictionary nil. Northing to store to keychain");
+		return;
+	}
+	
+	setGenericSecretsForFilesystem( secretsDictionary, fs);
+	setNetworkSecretsForFilesystem( secretsDictionary, fs);
+}
+
+# pragma mark Token authentication
+MFClientFS* getFilesystemForToken( NSString* token )
+{
+	// MFLogS(self, @"Getting fs for token %@", token);
+	id <MFServerProtocol> server = 
+	(id<MFServerProtocol>)[NSConnection rootProxyForConnectionWithRegisteredName:kMFDistributedObjectName
+																			  host:nil];
+	if (server)
+	{
+		id <MFServerFSProtocol> remoteFS = (id <MFServerFSProtocol>)[server filesystemForToken: token];
+		// MFLogS(self, @"Received remote FS %@ isProxy %d", remoteFS, [remoteFS isProxy]);
+		if (remoteFS)
+		{
+			MFClientPlugin* clientPlugin = [[MFClientPlugin alloc] initWithRemotePlugin: [remoteFS plugin]];
+			MFClientFS* fs = [MFClientFS clientFSWithRemoteFS: remoteFS clientPlugin: clientPlugin];
+			return fs;
+		}
+		else
+		{
+			// MFLogS(self, @"Remote filesystem not found for the token");
+			return nil;
+		}
+	}
+	else
+	{
+		MFLogS(self, @"Can not connect to server to authenticate token %@", token);
+		return nil;
+	}
+}
+
+
+
+
+NSString* tokenForFilesystemWithUUID (NSString* uuid)
+{
+	 id <MFServerProtocol> server = 
+	 (id<MFServerProtocol>)[NSConnection rootProxyForConnectionWithRegisteredName:kMFDistributedObjectName
+																			 host:nil];
+	NSString* token =  [server tokenForFilesystemWithUUID: uuid];
+	// MFLogS(self, @"Token generated for uuid %@: %@", uuid, token);
+	return token;
+}
+
+# pragma mark UI
+
+SInt32 showDialogForPasswordQuery( MFFilesystem* fs, BOOL* savePassword, NSString** password )
+{
+	// Icon URL from fs
+	const void* keychainKeys[] = {
+		kCFUserNotificationAlertHeaderKey,
+		kCFUserNotificationAlertMessageKey,
+		kCFUserNotificationTextFieldTitlesKey,
+		kCFUserNotificationCheckBoxTitlesKey,
+		kCFUserNotificationAlternateButtonTitleKey,
+		kCFUserNotificationIconURLKey
+	};
+	
+	
+	NSString* iconURL = [NSURL fileURLWithPath: fs.iconPath];
+	NSString* userName = [[fs parameters] objectForKey: kNetFSUserParameter];
+	NSString* host = [[fs parameters] objectForKey: kNetFSHostParameter];
+	NSString* dialogText = [NSString stringWithFormat: @"Please enter network password for host %@ user %@",
+							host, userName];
+	
+	const void* keychainValues[] = {
+		@"Password Needed",
+		dialogText,
+		@"Password",
+		@"Save Password in Keychain",
+		@"Cancel",
+		iconURL
+	};
+	
+	SInt32 error;
+	CFDictionaryRef dialogTemplate = CFDictionaryCreate(kCFAllocatorDefault,
+										keychainKeys,
+										keychainValues,
+										sizeof(keychainKeys)/sizeof(*keychainKeys),
+										&kCFTypeDictionaryKeyCallBacks,
+										&kCFTypeDictionaryValueCallBacks);
+	CFUserNotificationRef passwordDialog = CFUserNotificationCreate(kCFAllocatorDefault,
+																	0,
+																	kCFUserNotificationPlainAlertLevel | CFUserNotificationSecureTextField(0),
+																	&error, dialogTemplate);
+	if (error)
+		MFLogS(self, @"Dialog error received %d", error);
+
+	CFOptionFlags responseFlags;
+	error = CFUserNotificationReceiveResponse(passwordDialog, 0, &responseFlags);
+	
+	if (error)
+		MFLogS(self, @"Dialog error received after received response %d", error);
+	
+	int button = responseFlags & 0x3;
+	if (button == kCFUserNotificationAlternateResponse)
+	{
+		MFLogS(self, @"Exiting due to cancel on UI");
+		return 1;
+	}
+	
+	// This is a hack, checking responseFlags with and correctly wasn't working for some reason
+	*savePassword = (responseFlags == 256); 
+
+	MFLogS(self, @"Save password is %d Flags %d", savePassword, responseFlags);
+	CFStringRef passwordRef = CFUserNotificationGetResponseValue(passwordDialog,
+																 kCFUserNotificationTextFieldValuesKey,
+																 0);
+	*password = (NSString*)passwordRef;
+	CFRelease(passwordRef);
+	
+	return 0;
+		
+}
+
+NSString* queryForFSNetworkPassword( MFClientFS* fs )
+{
+	NSDictionary* secrets = getSecretsDictionaryForFilesystem( fs );
+	if ([secrets objectForKey: kNetFSPasswordParameter])
+	{
+		MFLogS(self, @"Should not be querying if we already have a password");
+		return nil;
+	}
+	
+	NSString* password;
+	BOOL save;
+	[fs setPauseTimeout: YES];
+	SInt32 result = showDialogForPasswordQuery(fs, &save, &password);
+	[fs setPauseTimeout: NO];
+	if (result != 0)
+	{
+		MFLogS(self, @"UI query received results %d", result);
+		return nil;
+	}
+	
+	if (save)
+	{
+		MFLogS(self, @"Updating secrets");
+		NSMutableDictionary* updatedSecrets = secrets ? [secrets mutableCopy] : [NSMutableDictionary dictionary];
+		[updatedSecrets setObject: password forKey: kNetFSPasswordParameter ];
+		setSecretsDictionaryForFilesystem([updatedSecrets copy], fs);
+	}
+	else
+	{
+		MFLogS(self, @"Not updating secrets");
+	}
+	
+	return password;
+}
+
+NSString* uuidForKeychainItemRef(SecKeychainItemRef itemRef)
+{
+	SecKeychainAttributeInfo attrInfo;
+	UInt32 tag = kSecAccountItemAttr;
+	attrInfo.tag = &tag;
+	attrInfo.format = NULL;
+	attrInfo.count = 1;
+	SecKeychainAttributeList *attrList = NULL;
+	SecKeychainAttribute* attr = NULL;
+
+	SecKeychainItemCopyAttributesAndData(itemRef, &attrInfo, NULL, &attrList, NULL, NULL);
+	// MFLogS(self, @"Loaded %d attrs", attrList->count);
+	attr = attrList -> attr;
+	NSString* uuid = [NSString stringWithCString:attr->data length:attr->length];
+	SecKeychainItemFreeAttributesAndData(attrList, NULL);
+	return uuid;
+}

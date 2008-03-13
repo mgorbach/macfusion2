@@ -20,6 +20,7 @@
 	NSMutableArray* recents;
 	id <MFServerProtocol> server;
 	id delegate;
+	bool triedBootstrap;
 }
 
 + (MFClient*)sharedClient;
@@ -31,6 +32,7 @@
 									 error:(NSError**)error;
 - (MFClientFS*)mountRecent:(MFClientRecent*)recent
 					 error:(NSError**)error;
+- (void)deleteFilesystem:(MFClientFS*)fs;
 
 // Accessors
 - (MFClientFS*)filesystemWithUUID:(NSString*)uuid;

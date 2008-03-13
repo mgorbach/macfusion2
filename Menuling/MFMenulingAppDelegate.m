@@ -71,10 +71,15 @@ OSStatus MyHotKeyHandler(EventHandlerCallRef nextHandler,EventRef theEvent,
 	statusItem = [[NSStatusBar systemStatusBar] statusItemWithLength: NSSquareStatusItemLength ];
 	if (!statusItem)
 		[NSApp terminate:self];
-	[statusItem setTitle:@"MF2"];
+	[statusItem setTitle:@""];
 	NSMenu* menu = [[NSMenu alloc] initWithTitle:@"Macfusion2"];
 	[menu setDelegate: self];
 	[statusItem setMenu: menu];
+	NSImage* menuIcon = [NSImage imageNamed:@"MacFusion_Menu_Dark.png"];
+	NSImage* menuIconSelected = [NSImage imageNamed:@"MacFusion_Menu_Light.png"];
+	[statusItem setHighlightMode: YES];
+	[statusItem setImage: menuIcon];
+	[statusItem setAlternateImage: menuIconSelected];
 
 }
 
@@ -194,40 +199,11 @@ OSStatus MyHotKeyHandler(EventHandlerCallRef nextHandler,EventRef theEvent,
 	}
 }
 
-/*
-- (void)fsMounted:(NSNotification*)note
-{
-	MFClientFS* fs = [note object];
-	if (! [fs isPersistent] )
-		return;
-
-}
-
-- (void)fsFailedToMount:(NSNotification*)note
-{
-	MFClientFS* fs = [note object];
-	if (! [fs isPersistent] )
-		return;
-	
-	NSError* error = [[note object] error];
-	[NSApp presentError: error];
-	
-	[[NSNotificationCenter defaultCenter]
-	 removeObserver:self
-	 name:kMFClientFSMountedNotification
-	 object:fs];
-	[[NSNotificationCenter defaultCenter]
-	 removeObserver:self
-	 name:kMFClientFSFailedNotification
-	 object:fs];
-}
- */
-
 - (void)filesystemDidChangeStatus:(MFClientFS*)fs
 {
 	if ([fs isMounted])
 	{
-		
+		[fs setClientFSDelegate: nil];
 	}
 	else if ([fs isFailedToMount])
 	{
@@ -237,9 +213,17 @@ OSStatus MyHotKeyHandler(EventHandlerCallRef nextHandler,EventRef theEvent,
 		}
 		else
 		{
-			NSLog(@"No error");
+			MFLogS(self, @"No error to present on faliure. FS %@", fs);
 		}
+		
+		[fs setClientFSDelegate: nil];
 	}
+}
+
+- (void)openConfiguration:(id)sender
+{
+	[[NSWorkspace sharedWorkspace] launchApplication: 
+	 (NSString*)mainUIBundlePath()];
 }
 
 - (void)applicationWillTerminate:(NSNotification*)note

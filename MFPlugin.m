@@ -1,6 +1,6 @@
 //
 //  MFPlugin.m
-//  macfusiond
+//  MacFusion2
 //
 //  Created by Michael Gorbach on 11/5/07.
 //  Copyright 2007 Michael Gorbach. All rights reserved.
@@ -51,7 +51,7 @@
 
 - (id <MFFSDelegateProtocol>)setupDelegate
 {
-	id thisDelegate;
+	id thisDelegate = nil;
 	NSString* fsDelegateClassName = [bundle objectForInfoDictionaryKey:@"MFFSDelegateClassName"];
 	if (fsDelegateClassName == nil)
 	{

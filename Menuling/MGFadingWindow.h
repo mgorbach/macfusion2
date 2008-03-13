@@ -9,7 +9,7 @@
 #import <Cocoa/Cocoa.h>
 
 
-@interface MGFadingWindow : NSWindow {
+@interface MGFadingWindow : NSPanel {
 	BOOL closing;
 }
 

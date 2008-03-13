@@ -14,11 +14,14 @@
 - (NSArray*)plugins;
 
 - (MFServerFS*)newFilesystemWithPluginName:(NSString*)pluginName;
+- (void)deleteFilesystemWithUUID:(NSString*)uuid;
 - (MFServerFS*)filesystemWithUUID:(NSString*)uuid;
 - (MFServerFS*)quickMountWithURL:(NSURL*)url;
 - (NSError*)recentError;
 - (NSArray*)recents;
 
+- (NSString*)tokenForFilesystemWithUUID:(NSString*)uuid;
+- (MFServerFS*)filesystemForToken:(NSString*)token;
 
 @end
 

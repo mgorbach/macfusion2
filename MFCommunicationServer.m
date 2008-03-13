@@ -218,6 +218,27 @@ static MFCommunicationServer* sharedServer = nil;
 	return fs;
 }
 				 
+- (void)deleteFilesystemWithUUID:(NSString*)uuid
+{
+	MFServerFS* fs = [[MFFilesystemController sharedController] filesystemWithUUID: uuid];
+	NSAssert(fs, @"CommunicationServer asked to remove filesystem with bad uuid");
+	[[MFFilesystemController sharedController] deleteFilesystem: fs];
+}
+
+#pragma mark Security Tokens
+- (NSString*)tokenForFilesystemWithUUID:(NSString*)uuid
+{
+	MFServerFS* fs = [[MFFilesystemController sharedController] filesystemWithUUID: uuid];
+	return [[MFFilesystemController sharedController] tokenForFilesystem: fs];
+}
+
+- (MFServerFS*)filesystemForToken:(NSString*)token
+{
+	MFServerFS* fs = [[MFFilesystemController sharedController] filesystemForToken: token];
+	if (fs)
+		[[MFFilesystemController sharedController] invalidateToken: token];
+	return fs;
+}
 
 #pragma mark Sever Protocol Methods
 - (NSArray*)filesystems

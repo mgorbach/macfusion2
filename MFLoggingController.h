@@ -19,9 +19,11 @@ void MFPrint(NSString* format, ...);
 
 @interface MFLoggingController : NSObject {
 	NSFileHandle* fileHandle;
+	BOOL stdOut;
 }
 
 + (MFLoggingController*)sharedController;
 - (void)logMessage:(NSString*)message ofType:(int)type sender:(id)sender;
+- (void)setPrintToStandardOut:(BOOL)b;
 
 @end

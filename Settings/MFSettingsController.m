@@ -1,4 +1,3 @@
-	//
 //  MFSettingsController.m
 //  MacFusion2
 //
@@ -13,6 +12,8 @@
 #import "MFConstants.h"
 #import "MFError.h"
 #import "MGTransitioningTabView.h"
+#import "MFFilesystemTableView.h"
+#import "MFPreferencesController.h"
 
 @interface MFSettingsController(PrivateAPI)
 
@@ -26,6 +27,7 @@
 		client = [MFClient sharedClient];
 		[NSApp setDelegate: self];
 		[client setDelegate: self];
+		creatingNewFS = NO;
 		if ([client setup])
 		{
 		}
@@ -47,43 +49,6 @@
 }
 
 # pragma mark Handling Notifications
-- (void)handleFailureNotification:(NSNotification*)note
-{
-	MFClientFS* fs = [note object];
-	if ([[filesystemArrayController arrangedObjects] 
-		 containsObject: fs])
-	{
-		[NSApp presentError: [fs error]
-						 modalForWindow:[NSApp keyWindow]
-							   delegate:nil
-					 didPresentSelector:nil
-							contextInfo:nil];
-		[[NSNotificationCenter defaultCenter]
-		 removeObserver:self name:kMFClientFSMountedNotification object:fs];
-		[[NSNotificationCenter defaultCenter]
-		 removeObserver:self name:kMFClientFSFailedNotification object:fs];
-	}
-	
-}
-
-- (void)handleMountNotification:(NSNotification*)note
-{
-	MFClientFS* fs = [note object];
-	if ([[filesystemArrayController arrangedObjects] 
-		 containsObject: fs])
-	{
-		[NSApp presentError:[fs error]
-						 modalForWindow:[NSApp keyWindow]
-							   delegate:nil
-					 didPresentSelector:nil
-							contextInfo:nil];
-		[[NSNotificationCenter defaultCenter]
-		 removeObserver:self name:kMFClientFSMountedNotification object:fs];
-		[[NSNotificationCenter defaultCenter]
-		 removeObserver:self name:kMFClientFSFailedNotification object:fs];
-	}
-}
-
 - (void)awakeFromNib
 {
 	NSCell* testCell = [[MFFilesystemCell alloc] init];
@@ -100,82 +65,24 @@
 							 action:@selector(editSelectedFilesystem:)
 					  keyEquivalent:@""];
 	
-	NSTableColumn* c = [[filesystemTableView tableColumns] objectAtIndex: 0];
-	[c setDataCell: [[MFFilesystemCell alloc] init]];
-	[filesystemTableView setMenu: tableViewMenu];
 	[[filesystemTableView window] center];
-	
-	// D&D
-	[filesystemTableView registerForDraggedTypes: [NSArray arrayWithObject: kMFFilesystemDragType ]];
-	[filesystemTableView setDataSource: self];
-	[filesystemTableView setDelegate: self];
+	[filesystemTableView bind:@"filesystems"
+					 toObject:filesystemArrayController
+				  withKeyPath:@"arrangedObjects"
+					  options:nil];
+	[filesystemTableView setController: self];
+	fsBeingEdited = nil;
 }
 
 - (void)applicationWillFinishLaunching:(NSNotification*)note
 {
-	
+
 }
 
 # pragma mark Table Delegate Methods
-- (void) tableView: (NSTableView *) tableView 
-   willDisplayCell: (NSCell*) cell 
-	forTableColumn: (NSTableColumn *) tableColumn 
-			   row: (int) row
-{
-	[cell setRepresentedObject: [client.persistentFilesystems objectAtIndex: row]];
-}
-
-# pragma mark Tableview D&D
-- (BOOL)tableView:(NSTableView *)tableView
-writeRowsWithIndexes:(NSIndexSet *)rowIndexes 
-	 toPasteboard:(NSPasteboard*)pboard
-{
-	NSMutableArray* uuids = [NSMutableArray array];
-	NSUInteger count = [rowIndexes count];
-	
-	int i;
-	NSUInteger index = [rowIndexes firstIndex];
-	for(i = 0; i < count; i++)
-	{
-		NSString* uuid = [[[filesystemArrayController arrangedObjects] objectAtIndex: index] uuid];
-		[uuids addObject: uuid];
-		index = [rowIndexes indexGreaterThanIndex:index];
-	}
-	
-	if ([uuids count] > 0)
-	{
-		[pboard declareTypes:[NSArray arrayWithObject:kMFFilesystemDragType] owner:self];
-		[pboard setPropertyList:uuids forType:kMFFilesystemDragType];
-		return YES;
-	}
-	else
-	{
-		return NO;
-	}
-	
-
-}
-
-- (NSDragOperation)tableView:(NSTableView*)tableView 
-				validateDrop:(id <NSDraggingInfo>)info 
-				 proposedRow:(int)row 
-	   proposedDropOperation:(NSTableViewDropOperation)op
-{
-	[tableView setDropRow:row dropOperation:NSTableViewDropAbove];
-	return NSDragOperationEvery;
-}
-
-- (BOOL)tableView:(NSTableView *)tableView acceptDrop:(id <NSDraggingInfo>)info
-			  row:(int)row dropOperation:(NSTableViewDropOperation)operation
-{
-	NSPasteboard* pb = [info draggingPasteboard];
-	NSArray* uuidsBeingMoved = [pb propertyListForType:kMFFilesystemDragType];
-	[client moveUUIDS:uuidsBeingMoved toRow:row];
-	return YES;
-}
 
 
-# pragma mark Actions
+# pragma mark IBActions
 - (void)popupButtonClicked:(id)sender
 {
 	NSPopUpButton* filesystemAddButton = (NSPopUpButton*)sender;
@@ -186,13 +93,23 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
 	if (selectionIndex != NSNotFound)
 	{
 		[filesystemArrayController setSelectionIndex: selectionIndex];
-		[self editSelectedFilesystem: self];
+		creatingNewFS = YES;
+		[self editFilesystem: fs];
 	}
 }
 
+- (IBAction)showPreferences:(id)sender
+{
+	MFLogS(self, @"ShowPreferences initialized");
+	if (!preferencesController)
+		preferencesController = [[MFPreferencesController alloc] initWithWindowNibName:@"MFPreferences"];
+	[preferencesController showWindow:self];
+}
+
+# pragma mark View Construction
 - (NSView*)editingViewForFS:(MFClientFS*)fs
 {
-	filesystemConfigurationViewControllers = [[fs delegate] configurationViewControllers];
+	filesystemConfigurationViewControllers = [[fs configurationViewControllers] mutableCopy];
 	NSTabView* tabView = [MGTransitioningTabView new];
 	[tabView setFont: [NSFont systemFontOfSize: 
 					   [NSFont systemFontSizeForControlSize: NSSmallControlSize]]];
@@ -207,11 +124,11 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
 		[[filesystemConfigurationViewControllers allValues] makeObjectsPerformSelector:@selector(setRepresentedObject:)
 																			withObject:fs];
 
+		// TODO: Simplify the ordering of the views in the tabview
+		// TODO: Allow adjustable height
 		NSView* mainView = [[filesystemConfigurationViewControllers objectForKey: kMFUIMainViewKey] view];
 		NSView* advancedView = [[filesystemConfigurationViewControllers objectForKey: kMFUIAdvancedViewKey] view];
-		MFLogS(self, @"Main %@ Advanced %@", NSStringFromRect([mainView frame]), NSStringFromRect([advancedView frame]));
-		NSSize viewSize = [mainView frame].size;
-//		NSSize viewSize = NSMakeSize( 400,  300);
+		NSView* mfView = [[filesystemConfigurationViewControllers objectForKey: kMFUIMacfusionAdvancedViewKey] view];
 		
 		if (mainView)
 		{
@@ -219,8 +136,6 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
 			[mainViewItem setLabel: @"Main"];
 			[mainViewItem setView: mainView];
 			[tabView addTabViewItem: mainViewItem];
-//			[tabView selectTabViewItem: mainViewItem];
-//			[mainView setFrame: NSMakeRect(0, 0, 300, 150)];
 		}
 		else
 		{
@@ -235,8 +150,12 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
 			[advancedViewItem setView: advancedView];
 			[tabView addTabViewItem: advancedViewItem];
 //			[tabView selectTabViewItem: advancedViewItem];
-			[advancedView setFrame: NSMakeRect(0, 0, 300, 150)];
 		}
+		
+		NSTabViewItem* mfViewItem = [NSTabViewItem new];
+		[mfViewItem setLabel: @"Macfusion"];
+		[mfViewItem setView: mfView];
+		[tabView addTabViewItem: mfViewItem];
 		
 
 		for(NSTabViewItem* item in [tabView tabViewItems])
@@ -244,12 +163,12 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
 			 [mainView frame]];
 		
 		[mainView setFrame: NSMakeRect(300, 100, 300, 150)];
-		MFLogS(self, @"Main %@ Advanced %@", NSStringFromRect([mainView frame]),
-			   NSStringFromRect([advancedView frame]));
+//		MFLogS(self, @"Main %@ Advanced %@", NSStringFromRect([mainView frame]),
+//			   NSStringFromRect([advancedView frame]));
 		[tabView setFrame: NSMakeRect( 0, 0, tabview_x+view_width, tabview_y+150 )];
-		MFLogS(self, @"Content area %@", NSStringFromRect([tabView contentRect]));
-		MFLogS(self, @"Main %@ Advanced %@", NSStringFromRect([mainView frame]),
-			   NSStringFromRect([advancedView frame]));
+//		MFLogS(self, @"Content area %@", NSStringFromRect([tabView contentRect]));
+//		MFLogS(self, @"Main %@ Advanced %@", NSStringFromRect([mainView frame]),
+//			   NSStringFromRect([advancedView frame]));
 
 		return tabView;
 	}
@@ -260,126 +179,219 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
 	}
 }
 
-- (NSView*)wrapViewInOKCancel:(NSView*)innerView;
+- (void)addTopViewToView:(NSView*)view 
+			  filesystem:(MFClientFS*)fs
 {
-	 NSInteger buttonWidth = 80;
-	 NSInteger buttonHeight = 25;
-	 NSInteger buttonRightPadding = 5;
-	 NSInteger buttonBottomPadding = 5;
-	 NSInteger buttonXDistance = 0;
-	 NSInteger buttonAreaHeight = 2*buttonBottomPadding + buttonHeight ;
-	 
-	 NSView* outerView = [[NSView alloc] init];
-	 
-	 [outerView setFrameSize: NSMakeSize([innerView frame].size.width, 
-	 [innerView frame].size.height +  buttonAreaHeight)];
-	 
-	 [outerView addSubview: innerView];
-	 [innerView setFrame: NSMakeRect(0, buttonAreaHeight, [innerView frame].size.width, 
-	 [innerView frame].size.height)];
-	 
-	 NSRect okButtonFrame = NSMakeRect([outerView frame].size.width-buttonRightPadding-buttonWidth,
-	 buttonBottomPadding,
-	 buttonWidth, buttonHeight);
-	 NSButton* okButton = [[NSButton alloc] initWithFrame: okButtonFrame];
-	 [okButton setBezelStyle: NSRoundedBezelStyle];
-	 [okButton setTitle:@"OK"];
-	 [okButton setTarget: self];
-	 [okButton setAction:@selector(filesystemEditOKClicked:)];
-	 [okButton setKeyEquivalent:@"\r"];
-	 
-	 
-	 NSRect cancelButtonFrame = NSMakeRect(okButtonFrame.origin.x - buttonXDistance- buttonWidth,
-	 buttonBottomPadding,
-	 buttonWidth, buttonHeight);
-	 NSButton* cancelButton = [[NSButton alloc] initWithFrame: cancelButtonFrame];
-	 [cancelButton setBezelStyle: NSRoundedBezelStyle];
-	 [cancelButton setTitle:@"Cancel"];
-	 [cancelButton setTarget: self];
-	 [cancelButton setAction:@selector(filesystemEditCancelClicked:)];
-	 [cancelButton setKeyEquivalent:@"\e"];
-	 
-	 [outerView addSubview:cancelButton];
-	 [outerView addSubview: okButton];
-	 
-	 
-	 return outerView;
+	NSBundle* bundle = [NSBundle bundleWithIdentifier: @"org.mgorbach.macfusion2.MFCore"];
+	NSViewController* nameViewController = [[NSViewController alloc] initWithNibName: @"topView"
+																			  bundle: bundle];
+	[nameViewController setRepresentedObject: fs];
+	[filesystemConfigurationViewControllers setObject: nameViewController forKey: @"Top"];
+	NSRect nameViewFrame = [[nameViewController view] frame];
+	NSRect originalViewFrame = [view frame];
+	[view setFrameSize: NSMakeSize( originalViewFrame.size.width, originalViewFrame.size.height + nameViewFrame.size.height)];
+	[view addSubview: [nameViewController view]];
+	[[nameViewController view] setFrameOrigin: NSMakePoint( 0,  originalViewFrame.size.height)];
 }
 
-- (void)editSelectedFilesystem:(id)sender
+- (NSView*)wrapViewInOKCancel:(NSView*)innerView;
 {
-	if ([filesystemArrayController selectionIndex] != NSNotFound)
+	NSInteger buttonWidth = 80;
+	NSInteger buttonHeight = 25;
+	NSInteger buttonRightPadding = 5;
+	NSInteger buttonBottomPadding = 5;
+	NSInteger buttonXDistance = 0;
+	NSInteger buttonAreaHeight = 2*buttonBottomPadding + buttonHeight;
+	
+	NSView* outerView = [[NSView alloc] init];
+	
+	[outerView setFrameSize: NSMakeSize([innerView frame].size.width, 
+	[innerView frame].size.height +  buttonAreaHeight)];
+	
+	[outerView addSubview: innerView];
+	[innerView setFrame: NSMakeRect(0, buttonAreaHeight, [innerView frame].size.width, 
+	[innerView frame].size.height)];
+	 
+	NSRect okButtonFrame = NSMakeRect([outerView frame].size.width-buttonRightPadding-buttonWidth, 
+									  buttonBottomPadding, 
+									  buttonWidth, 
+									  buttonHeight);
+	NSButton* okButton = [[NSButton alloc] initWithFrame: okButtonFrame];
+	[okButton setBezelStyle: NSRoundedBezelStyle];
+	[okButton setTitle:@"OK"];
+	[okButton setTarget: self];
+	[okButton setAction:@selector(filesystemEditOKClicked:)];
+	[okButton setKeyEquivalent:@"\r"];
+	 
+	 
+	NSRect cancelButtonFrame = NSMakeRect(okButtonFrame.origin.x - buttonXDistance- buttonWidth,
+	buttonBottomPadding,
+	buttonWidth, buttonHeight);
+	NSButton* cancelButton = [[NSButton alloc] initWithFrame: cancelButtonFrame];
+	[cancelButton setBezelStyle: NSRoundedBezelStyle];
+	[cancelButton setTitle:@"Cancel"];
+	[cancelButton setTarget: self];
+	[cancelButton setAction:@selector(filesystemEditCancelClicked:)];
+	[cancelButton setKeyEquivalent:@"\e"];
+	 
+	[outerView addSubview:cancelButton];
+	[outerView addSubview: okButton];
+	 
+	 
+	return outerView;
+}
+
+# pragma mark Action Methods
+- (void)deleteFilesystem:(MFClientFS*)fs
+{
+	if ([fs isUnmounted] || [fs isFailedToMount])
 	{
-		NSWindow* parent = [NSApp keyWindow];
-		NSWindow* mySheetWindow = [[NSWindow alloc] init];
+		NSString* messageText = [NSString stringWithFormat: @"Are you sure you want to delete the filesystem %@?", fs.name];
+		NSAlert* deleteConfirmation = [NSAlert new];
+		[deleteConfirmation setMessageText: messageText];
+		[deleteConfirmation addButtonWithTitle:@"OK"];
+		NSButton* cancelButton = [deleteConfirmation addButtonWithTitle:@"Cancel"];
+		[cancelButton setKeyEquivalent:@"\e"];
+		[deleteConfirmation setAlertStyle: NSCriticalAlertStyle];
+		[deleteConfirmation beginSheetModalForWindow: [filesystemTableView window]
+														  modalDelegate:self
+														 didEndSelector:@selector(deleteConfirmationAlertDidEnd:returnCode:contextInfo:)
+															contextInfo:fs];
+	}
+	else
+	{
+		MFLogS(self, @"Can't delete FS");
+	}
+}
+
+- (void)deleteConfirmationAlertDidEnd:(NSAlert*)alert returnCode:(NSInteger)code contextInfo:(void*)context
+{
+	MFClientFS* fs = (MFClientFS*)context;
+	if (code == NSAlertAlternateReturn)
+	{
 		
-		MFClientFS* fs = [[filesystemArrayController selectedObjects] objectAtIndex: 0];
+	}
+	else if (code == NSAlertDefaultReturn)
+	{
+		[client deleteFilesystem: fs];
+	}
+}
+- (void)editFilesystem:(MFClientFS*)fs
+{
+	// MFLogS(self, @"Editing fs %@", fs);
+	NSWindow* parent = [filesystemTableView window];
+	NSWindow* mySheetWindow = [[NSWindow alloc] init];
+	
+	NSView* editView = [self wrapViewInOKCancel: [self editingViewForFS: fs]];
+	[self addTopViewToView: editView filesystem:fs];
+	if (editView)
+	{
+		[mySheetWindow setFrame: [editView frame] display:YES];
+		[mySheetWindow setContentSize: [editView frame].size];
+		[mySheetWindow setContentView: editView];
+		[fs beginEditing];
+		fsBeingEdited = fs;
 		
-		NSView* editView = [self wrapViewInOKCancel: [self editingViewForFS: fs]];
-		if (editView)
+		[NSApp beginSheet: mySheetWindow
+		   modalForWindow: parent
+			modalDelegate: self 
+		   didEndSelector: @selector(sheetDidEnd:)
+			  contextInfo: fs];
+	}
+}
+
+- (void)toggleMountOnFilesystem:(MFClientFS*)fs
+{
+	if ([fs isMounted])
+	{
+		[fs unmount];
+	}
+	else if ([fs isUnmounted] || [fs isFailedToMount])
+	{
+		[fs setClientFSDelegate: self];
+		[fs mount];
+	}
+}
+
+
+# pragma mark Notification
+- (void)filesystemDidChangeStatus:(MFClientFS*)fs
+{
+	if ([fs isFailedToMount])
+	{
+		if ([fs error])
 		{
-			[mySheetWindow setFrame: [editView frame] display:YES];
-			[mySheetWindow setContentSize: [editView frame].size];
-			[mySheetWindow setContentView: editView];
-			[fs beginEditing];
-			
-			[NSApp beginSheet: mySheetWindow
-			   modalForWindow: parent
-				modalDelegate: self 
-			   didEndSelector: @selector(sheetDidEnd:)
-				  contextInfo: fs];
+			[NSApp presentError:[fs error]
+				 modalForWindow:[filesystemTableView window]
+					   delegate:nil
+			 didPresentSelector:nil
+					contextInfo:nil];
 		}
 		else
 		{
-			MFLogS(self, @"Editing view is nil");
-		}
-
-	}
-}
-
-- (void)mountSelectedFilesystem:(id)sender
-{
-	if ([filesystemArrayController selectionIndex] != NSNotFound)
-	{
-		MFClientFS* fs = [[filesystemArrayController selectedObjects] objectAtIndex: 0];
-		if ([fs isMounted])
-		{
-			[fs unmount];
-		}
-		else if ([fs isUnmounted] || [fs isFailedToMount])
-		{
-			[fs mount];
-			[[NSNotificationCenter defaultCenter] addObserver:self
-													 selector:@selector(handleFailureNotification:) 
-														 name:kMFClientFSFailedNotification
-													   object:fs];
-			[[NSNotificationCenter defaultCenter] addObserver:self
-													 selector:@selector(handleMountNotification:) 
-														 name:kMFClientFSFailedNotification
-													   object:fs];
+			MFLogS(@"No error");
 		}
 	}
 }
 
+
+# pragma mark Editing Mechanics
 - (void)filesystemEditOKClicked:(id)sender
 {
-	MFClientFS* fs = [[filesystemArrayController selectedObjects]
-						objectAtIndex: 0];
+	MFClientFS* fs = fsBeingEdited;
+	for(NSViewController* controller in [filesystemConfigurationViewControllers allValues])
+	{
+		BOOL ok = [controller commitEditing];
+		if (!ok)
+		{
+			MFLogS(self, @"Failed to commit edits %@", controller);
+		}
+	}
 	
 	NSError* error = [fs endEditingAndCommitChanges: YES];
 	if (error)
 	{
 		[NSApp presentError: error
-							modalForWindow: [sender window]
-								  delegate: self
-								didPresentSelector: @selector(didPresentErrorWithRecovery: contextInfo:)
-							  contextInfo: nil ];
+			 modalForWindow: [sender window]
+				   delegate: nil
+		 didPresentSelector: nil
+				contextInfo: nil ];
 	}
 	else
 	{
 		[NSApp endSheet: [sender window]];
 	}
+	
+	creatingNewFS = NO;
 }
+
+
+- (void)filesystemEditCancelClicked:(id)sender
+{
+	MFClientFS* fs = fsBeingEdited;
+	for(NSViewController* controller in [filesystemConfigurationViewControllers allValues])
+	{
+		BOOL ok = [controller commitEditing];
+		if (!ok)
+		{
+			MFLogS(self, @"Failed to commit edits %@", controller);
+		}
+	}
+	[fs endEditingAndCommitChanges: NO];
+	if (creatingNewFS)
+		[client deleteFilesystem: fsBeingEdited];
+	creatingNewFS = NO;
+	[NSApp endSheet: [sender window]];
+
+}
+
+- (void)sheetDidEnd:(NSWindow*)sheet
+{
+	[sheet orderOut:self];
+	fsBeingEdited = nil;
+	filesystemConfigurationViewControllers = nil;
+}
+
 
 - (NSError *)application:(NSApplication *)application willPresentError:(NSError *)error
 {
@@ -394,35 +406,33 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
 	}
 }
 
-- (void)filesystemEditCancelClicked:(id)sender
+- (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename
 {
-	MFClientFS* fs = [[filesystemArrayController selectedObjects]
-					  objectAtIndex: 0];
-	[fs endEditingAndCommitChanges: NO];
-	[NSApp endSheet: [sender window]];
+	NSString* fsLocation = [@"~/Library/Application Support/Macfusion/Filesystems" stringByExpandingTildeInPath];
+	MFLogS(self, @"Lastpath %@", [filename stringByDeletingLastPathComponent]);
+	if ([[filename stringByDeletingLastPathComponent] isEqualToString: fsLocation])
+	{
+		NSString* uuid = [[filename lastPathComponent] stringByDeletingPathExtension];
+		[self editFilesystem: [client filesystemWithUUID: uuid]];
+	}
+	else
+	{
+		MFLogS(self, @"Not opening file. It is in the wrong place");
+	}
+		
+	return YES;
 }
 
-- (void)sheetDidEnd:(NSWindow*)sheet
-{
-	[sheet orderOut:self];
-	filesystemConfigurationViewControllers = nil;
-}
-
+# pragma mark Misc
 - (void)windowWillClose:(NSWindow*)window
 {
 	[NSApp terminate:self];
-}
-
-- (void)clientStatusChanged
-{
-	[filesystemTableView reloadData];
 }
 
 - (void)finalize
 {
 	[super finalize];
 	[client setDelegate:nil];
-	NSLog(@"Finalizing MFSettingsController");
 }
 
 @synthesize client;

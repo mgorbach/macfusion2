@@ -14,28 +14,32 @@
 	NSMutableArray* filesystems;
 	NSMutableArray* recents;
 	NSMutableArray* mountedPaths;
+	NSMutableDictionary* tokens;
 	
 	DASessionRef appearSession;
 	DASessionRef disappearSession;
-	
-	BOOL firstTimeMounting;
 }
 
+// Init
 + (MFFilesystemController*)sharedController;
 - (void)loadFilesystems;
-- (NSDictionary*)filesystemsDictionary;
-- (NSMutableArray*)filesystems;
+
+
+// Action methods
 - (MFServerFS*)newFilesystemWithPlugin:(MFServerPlugin*)plugin;
 - (MFServerFS*)quickMountWithURL:(NSURL*)url 
 						   error:(NSError**)error;
+- (void)deleteFilesystem:(MFServerFS*)fs;
 
-- (void)storeFilesystem:(MFServerFS*)fs;
 - (MFServerFS*)filesystemWithUUID:(NSString*)uuid;
 
-- (void)addMountedPath:(NSString*)path;
-- (void)removeMountedPath:(NSString*)path;
+// Security Tokens
+- (NSString*)tokenForFilesystem:(MFServerFS*)fs;
+- (void)invalidateToken:(NSString*)token;
+- (MFServerFS*)filesystemForToken:(NSString*)token;
 
-
+// Accessors
+- (NSDictionary*)filesystemsDictionary;
 @property(readonly, retain) NSMutableArray* filesystems;
 @property(readonly, retain) NSMutableArray* recents;
 @end

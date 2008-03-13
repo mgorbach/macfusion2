@@ -5,13 +5,32 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>CFBundleDocumentTypes</key>
-	<array/>
+	<array>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>macfusion</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>Macfusion Filesystem</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>org.mgorbach.macfusion.filesystem</string>
+			</array>
+			<key>LSTypeIsPackage</key>
+			<false/>
+			<key>NSPersistentStoreTypeKey</key>
+			<string>Binary</string>
+		</dict>
+	</array>
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
 	<key>CFBundleIconFile</key>
 	<string>macfusionIcon</string>
 	<key>CFBundleIdentifier</key>
-	<string>org.mgorbach.macfusion.MacfusionMenuling</string>
+	<string>org.mgorbach.macfusion2</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundlePackageType</key>
@@ -19,11 +38,9 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>1.0</string>
-	<key>LSUIElement</key>
-	<true/>
+	<string>2.0 Beta 1</string>
 	<key>NSMainNibFile</key>
-	<string>MainMenu</string>
+	<string>main</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
 </dict>

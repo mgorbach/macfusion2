@@ -10,10 +10,13 @@
 #import "MFFilesystem.h"
 #import "MFServerPlugin.h"
 #import "MFFSDelegateProtocol.h"
+#import "MFServerFSProtocol.h"
 
-@interface MFServerFS : MFFilesystem {
+@interface MFServerFS : MFFilesystem <MFServerFSProtocol> {
 	NSTask* task;
 	MFServerPlugin* plugin;
+	BOOL pauseTimeout;
+	NSTimer* timer;
 }
 
 
@@ -38,4 +41,5 @@
 - (BOOL)validateParametersWithError:(NSError**)error;
 
 @property(retain) MFServerPlugin* plugin;
+@property(assign, readwrite) BOOL pauseTimeout;
 @end

@@ -17,6 +17,7 @@
 	id<MFServerFSProtocol> remoteFilesystem;
 	MFClientPlugin* plugin;
 	NSDictionary* backupParameters;
+	NSDictionary* backupSecrets;
 	BOOL isEditing;
 	NSInteger displayOrder;
 	id<MFClientFSDelegateProtocol> clientFSDelegate;
@@ -31,12 +32,17 @@
 // Notification handling
 - (void)handleStatusInfoChangedNotification:(NSNotification*)note;
 - (void)handleParametersChangedNotification:(NSNotification*)note;
+- (void)setPauseTimeout:(BOOL)p;
 
 // Editing
 - (NSError*)endEditingAndCommitChanges:(BOOL)commit;
 - (void)beginEditing;
 - (NSDictionary*)displayDictionary;
 
+// UI
+- (NSDictionary*)configurationViewControllers;
+
 @property(readwrite, assign) NSInteger displayOrder;
 @property(readwrite, retain) id<MFClientFSDelegateProtocol> clientFSDelegate; 
+@property(readonly) NSImage* iconImage;
 @end

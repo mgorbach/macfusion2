@@ -10,6 +10,7 @@
 #import "MFConstants.h"
 #import "MFClientPlugin.h"
 #import "MFServerFSProtocol.h"
+#import "MFSecurity.h"
 
 @interface MFClientFS (PrivateAPI)
 - (void)fillInitialData;
@@ -53,6 +54,7 @@
 		[self fillInitialData];
 		[self registerNotifications];
 		displayOrder = 9999;
+		[self updateSecrets];
 	}
 	
 	return self;
@@ -175,6 +177,7 @@
 	isEditing = YES;
 	backupParameters = [NSDictionary dictionaryWithDictionary: 
 						[self parameters]];
+	backupSecrets = [NSDictionary dictionaryWithDictionary: secrets];
 }
 
 - (NSError*)endEditingAndCommitChanges:(BOOL)commit
@@ -191,10 +194,16 @@
 		NSError* result = [remoteFilesystem validateAndSetParameters: parameters];
 		if (result)
 		{
+			// Validation failed
 			return result;
 		}
 		else
 		{
+			// Update secure information
+			if (![secrets isEqualToDictionary: backupSecrets])
+			{
+				setSecretsDictionaryForFilesystem( secrets, self );
+			}
 			isEditing = NO;
 			return nil;
 		}
@@ -203,21 +212,39 @@
 	{
 		isEditing = NO;
 		[self setParameters: [backupParameters mutableCopy] ];
+		[self setSecrets: [backupSecrets mutableCopy]];
+
 	}
 	
 	return nil;
 }
 
-- (void)willChangeValueForKey:(NSString*)key
+- (NSImage*)iconImage
 {
-	if ([key isLike:@"parameters.*"] && !isEditing)
+	return [[NSImage alloc] initWithContentsOfFile: 
+			self.iconPath];
+}
+
+- (void)setPauseTimeout:(BOOL)p
+{
+	[remoteFilesystem setPauseTimeout: p];
+}
+
+# pragma mark UI
+- (NSDictionary*)configurationViewControllers
+{
+	NSMutableDictionary* myControllers = [NSMutableDictionary dictionary];
+	NSViewController* macfusionAdvancedController = [[NSViewController alloc] initWithNibName: @"macfusionAdvancedView"
+																					   bundle: [NSBundle bundleForClass: [self class]]];
+	[myControllers setObject: macfusionAdvancedController forKey:kMFUIMacfusionAdvancedViewKey];
+	NSDictionary* delegateControllers = [delegate configurationViewControllers];
+	if (!delegateControllers)
 	{
-		[[NSException exceptionWithName:kMFBadAPIUsageException
-								reason:@"Trying to modify parameters without beginEditing"
-							  userInfo:nil] raise];
+		MFLogS(self, @"No view controllers specified by delegate");
 	}
 	
-	[super willChangeValueForKey:key];
+	[myControllers addEntriesFromDictionary: delegateControllers];
+	return [myControllers copy];
 }
 
 @synthesize displayOrder, clientFSDelegate;

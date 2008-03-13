@@ -25,6 +25,10 @@
 - (void)loadRecentFilesystems;
 - (void)recordRecentFilesystem:(MFServerFS*)fs;
 - (NSString*)getUUIDXattrAtPath:(NSString*)path;
+- (void)addMountedPath:(NSString*)path;
+- (void)removeMountedPath:(NSString*)path;
+- (void)storeFilesystem:(MFServerFS*)fs;
+- (void)removeFilesystem:(MFServerFS*)fs;
 
 @property(readwrite, retain) NSMutableArray* filesystems;
 @property(readwrite, retain) NSMutableArray* recents;
@@ -79,6 +83,7 @@ static MFFilesystemController* sharedController = nil;
 		filesystems = [NSMutableArray array];
 		mountedPaths = [NSMutableArray array];
 		recents = [NSMutableArray array];
+		tokens = [NSMutableDictionary dictionary];
 		[self loadRecentFilesystems];
 		[self setUpVolumeMonitoring];
 		MFLogS(self, @"Init complete!");
@@ -149,7 +154,7 @@ static MFFilesystemController* sharedController = nil;
 				if ([path isEqualToString: mountedPath] &&
 					[[self getUUIDXattrAtPath: mountedPath] isEqualToString: fs.uuid])
 				{
-					MFLogS(self, @"Premounth hit");
+//					MFLogS(self, @"Pre-mount condition hit on %@", fs.uuid);
 					[fs handleMountNotification];
 				}
 			}
@@ -203,6 +208,13 @@ static MFFilesystemController* sharedController = nil;
 	[self storeFilesystem: fs];
 	[fs performSelector:@selector(mount) withObject:nil afterDelay:0];
 	return fs;
+}
+
+- (void)deleteFilesystem:(MFServerFS*)fs
+{
+	if (fs.filePath)
+		[[NSFileManager defaultManager] removeFileAtPath:fs.filePath handler:nil];
+	[self removeFilesystem: fs];
 }
 
 #pragma mark Recents Managment
@@ -268,8 +280,8 @@ static MFFilesystemController* sharedController = nil;
 		}
 		if (equal) 
 		{
-			MFLogS(self, @"Duplicate recents detected, %@ and %@",
-				   params, recent);
+			// MFLogS(self, @"Duplicate recents detected, %@ and %@",
+			//	   params, recent);
 			return; // We already have this exact dictionary in recents. Don't add it.
 		}
 			
@@ -366,8 +378,42 @@ static void diskUnMounted(DADiskRef disk, void* mySelf)
 		[self performSelector:@selector(removeFilesystem:) withObject:fs afterDelay:0];
 }
 
-# pragma mark Accessors and Getters
+# pragma mark Security Tokens
+- (NSString*)tokenForFilesystem:(MFServerFS*)fs
+{
+	CFUUIDRef theUUID = CFUUIDCreate(NULL);
+    CFStringRef string = CFUUIDCreateString(NULL, theUUID);
+    CFRelease(theUUID);
+    NSString* tokenString = [(NSString *)string autorelease];
+	if ([[tokens allValues] containsObject: fs])
+	{
+		MFLogS(self, @"Uh oh ... adding a second token for an FS already in tokens");
+		MFLogS(self, @"Tokens Before %@", tokens);
+	}
+	
+	[tokens setObject: fs forKey: tokenString];
+	// MFLogS(self, @"Returning token %@ for fs %@", tokenString, fs);
+	return tokenString;
+}
 
+- (void)invalidateToken:(NSString*)token
+{
+	// MFLogS(self, @"Invalidating token %@", token);
+	NSAssert(token, @"Token is nil in invalidateToken");
+	NSAssert([[tokens allKeys] containsObject: token], @"Invalid token in invalidateToken");
+	[tokens removeObjectForKey: token];
+}
+
+- (MFServerFS*)filesystemForToken:(NSString*)token
+{
+	NSAssert(token, @"token nil in filesystemForToken");
+	// MFLogS(self, @"Tokens %@, Requested token %@", tokens, token);
+	if (![[tokens allKeys] containsObject: token]) 
+		MFLogS(self, @"Invalid token in filesystemsForToken");
+	return [tokens objectForKey: token];
+}
+
+# pragma mark Accessors and Getters
 - (void)storeFilesystem:(MFServerFS*)fs 
 {
 	NSAssert(fs && fs.uuid, @"FS or uuid is nil, storeFilesystem in MFFilesystemController");
@@ -383,6 +429,7 @@ static void diskUnMounted(DADiskRef disk, void* mySelf)
 - (void)removeFilesystem:(MFServerFS*)fs
 {
 	NSAssert(fs, @"Asked to remove nil fs in MFFilesystemController");
+	NSAssert([fs isUnmounted] || [fs isFailedToMount], @"Asked to remove fs in mounted or waiting state");
 	[fs removeMountPoint];
 	[filesystemsDictionary removeObjectForKey: fs.uuid];
 	if ([filesystems indexOfObject:fs] != NSNotFound)

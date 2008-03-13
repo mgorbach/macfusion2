@@ -29,5 +29,6 @@ NSString* kMFFilesystemUUIDKey = @"status";
 
 */
 
-NSString* kMFUIMainViewKey=@"main2";
+NSString* kMFUIMainViewKey=@"main";
 NSString* kMFUIAdvancedViewKey=@"advanced";
+NSString* kMFUIMacfusionAdvancedViewKey=@"macfusion";

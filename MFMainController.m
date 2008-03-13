@@ -1,6 +1,6 @@
 //
-//  MacFusionController.m
-//  macfusiond
+//  MFMainController.m
+//  Macfusion2
 //
 //  Created by Michael Gorbach on 11/5/07.
 //  Copyright 2007 Michael Gorbach. All rights reserved.

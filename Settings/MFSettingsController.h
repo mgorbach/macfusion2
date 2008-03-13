@@ -7,24 +7,34 @@
 //
 
 #import <Cocoa/Cocoa.h>
-@class MFClient;
+#import "MFClientFSDelegateProtocol.h"
 
-@interface MFSettingsController : NSObject {
+@class MFClient, MFClientFS, MFFilesystemTableView, MFPreferencesController;
+
+
+@interface MFSettingsController : NSObject <MFClientFSDelegateProtocol> {
 	IBOutlet NSArrayController* filesystemArrayController;
 	IBOutlet NSArrayController* pluginArrayController;
-	IBOutlet NSTableView* filesystemTableView;
+	IBOutlet MFFilesystemTableView* filesystemTableView;
 	IBOutlet NSBox* configurationViewBox;
 	IBOutlet NSPopUpButton* button;
-	IBOutlet NSCollectionView* filesystemCollectionView;
 	IBOutlet NSButton* mountButton;
 	
-	NSDictionary* filesystemConfigurationViewControllers;
+	NSMutableDictionary* filesystemConfigurationViewControllers;
 	MFClient* client;
+	MFClientFS* fsBeingEdited;
+	MFPreferencesController* preferencesController;
+	
+	BOOL creatingNewFS;
 }
 
 - (IBAction)popupButtonClicked:(id)sender;
-- (IBAction)editSelectedFilesystem:(id)sender;
-- (IBAction)mountSelectedFilesystem:(id)sender;
+- (IBAction)showPreferences:(id)sender;
+
+- (void)editFilesystem:(MFClientFS*)fs;
+- (void)deleteFilesystem:(MFClientFS*)fs;
+- (void)toggleMountOnFilesystem:(MFClientFS*)fs;
+
 
 @property(readonly) MFClient* client;
 @end

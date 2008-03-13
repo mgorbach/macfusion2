@@ -1,6 +1,6 @@
 //
 //  MFFilesystem.m
-//  macfusiond
+//  MacFusion2
 //
 //  Created by Michael Gorbach on 11/5/07.
 //  Copyright 2007 Michael Gorbach. All rights reserved.
@@ -9,7 +9,8 @@
 #import "MFFilesystem.h"
 //#import "MFPluginController.h"
 #import "MFPlugin.h"
-#import "MFConstants.h"
+#import "MFConstants.h"]
+#import "MFSecurity.h"
 
 #define FS_DIR_PATH @"~/Library/Application Support/Macfusion/Filesystems"
 
@@ -183,6 +184,12 @@
 	return impliedParameters;
 }
 
+- (void)updateSecrets
+{
+	NSMutableDictionary* updateSecrets = [getSecretsDictionaryForFilesystem( self ) mutableCopy];
+	self.secrets = updateSecrets ? updateSecrets : [NSMutableDictionary dictionary];
+}
+
 - (NSMutableDictionary*)parametersWithImpliedValues
 {
 	return [self fillParametersWithImpliedValues: parameters];
@@ -191,6 +198,11 @@
 - (NSString*)iconPath
 {
 	return [self valueForParameterNamed: kMFFSVolumeIconPathParameter ];
+}
+
+- (NSString*)imagePath
+{
+	return [self valueForParameterNamed: kMFFSVolumeImagePathParameter ];
 }
 
 - (NSString*)descriptionString
@@ -229,4 +241,10 @@
 	return delegate;
 }
 
+- (NSString*)description
+{
+	return [NSString stringWithFormat: @"%@ (%@)", [super description], self.name];
+}
+
+@synthesize secrets;
 @end

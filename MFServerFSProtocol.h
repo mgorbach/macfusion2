@@ -7,7 +7,7 @@
 //
 
 #import <Cocoa/Cocoa.h>
-
+@class MFServerPlugin;
 
 @protocol MFServerFSProtocol <NSObject>
 - (NSDictionary*)statusInfo;
@@ -16,5 +16,7 @@
 - (void)mount;
 - (void)unmount;
 - (NSError*)validateAndSetParameters:(NSDictionary*)params;
+- (MFServerPlugin*)plugin;
+- (void)setPauseTimeout:(BOOL)pause;
 
 @end
