@@ -1300,6 +1300,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = macfusionAgent_Prefix.pch;
 				INSTALL_PATH = /usr/local/bin;
+				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks/";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/SSHFS\"",
@@ -1336,6 +1337,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INSTALL_PATH = /usr/local/bin;
+				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../../../../Frameworks";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -1409,7 +1411,7 @@
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INFOPLIST_FILE = "Resources/MFCore-Info.plist";
 				INSTALL_PATH = "$(HOME)/Library/Frameworks";
-				LD_DYLIB_INSTALL_NAME = "@loader_path/../Frameworks/MFCore.framework/Versions/A/MFCore";
+				LD_DYLIB_INSTALL_NAME = "@rpath/MFCore.framework/Versions/A/MFCore";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -1434,6 +1436,7 @@
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INFOPLIST_FILE = "Resources/MacfusionMenuling-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
+				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Resources/";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -1486,6 +1489,7 @@
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INFOPLIST_FILE = "SSHFS/sshfs-info.plist";
 				INSTALL_PATH = "$(HOME)/Library/Bundles";
+				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../../../../Frameworks";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
