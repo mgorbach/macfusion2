@@ -21,6 +21,7 @@
 #import "MFFilesystem.h"
 #import "MFCommunicationServer.h"
 #include <sys/xattr.h>
+#import "MFLoggingController.h"
 
 @implementation MFMainController
 static MFMainController* sharedController = nil;
@@ -65,6 +66,7 @@ static MFMainController* sharedController = nil;
 {
 	MFPluginController* pluginController = [MFPluginController sharedController];
 	MFFilesystemController* filesystemController = [MFFilesystemController sharedController];
+	[[MFLoggingController sharedController] setPrintToStandardOut: NO];
 	[pluginController loadPlugins];
 	[filesystemController loadFilesystems];
 	

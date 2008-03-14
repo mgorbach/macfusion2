@@ -113,7 +113,7 @@ static MFClient* sharedClient = nil;
 		plugins = [NSMutableArray array];
 		recents = [NSMutableArray array];
 		[self setupKeychainMonitoring];
-		setStateForAgentLoginItem(YES);
+		// setStateForAgentLoginItem(YES);
 		triedBootstrap = NO;
 	}
 	return self;
@@ -198,8 +198,8 @@ static MFClient* sharedClient = nil;
 		}
 		else if (returnValue == NSAlertFirstButtonReturn)
 		{
-			NSString* agentPath = [[NSBundle bundleWithPath: mainUIBundlePath()] pathForResource:@"macfusionAgent" ofType:nil];
-			[NSTask launchedTaskWithLaunchPath: agentPath arguments:[NSArray array]];
+			NSString* agentPath = agentAppPath();
+			[[NSWorkspace sharedWorkspace] launchApplication: agentPath];
 			[[NSRunLoop currentRunLoop] runUntilDate:[[NSDate date] addTimeInterval: 1.5]];
 			
 			if ([self establishCommunication])

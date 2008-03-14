@@ -21,6 +21,7 @@
 NSString* mainUIBundlePath();
 NSString* menulingUIBundlePath();
 NSArray* secretClientsForFileystem( MFFilesystem* fs );
+NSString* agentAppPath();
 
 // Launch Services and Login Items Control
 BOOL getStateForAgentLoginItem();

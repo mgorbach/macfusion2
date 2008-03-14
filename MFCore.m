@@ -29,6 +29,12 @@ NSString* menulingUIBundlePath()
 	return [mainBundlePath stringByAppendingPathComponent:@"/Contents/Resources/MacfusionMenuling.app"];
 }
 
+NSString* agentAppPath()
+{
+	NSString* mainBundlePath = mainUIBundlePath();
+	return [mainBundlePath stringByAppendingPathComponent:@"/Contents/Resources/MacfusionAgent.app"];
+}
+
 NSArray* secretClientsForFileystem( MFFilesystem* fs )
 {
 	NSMutableArray* clientList = [NSMutableArray array];
@@ -43,6 +49,7 @@ NSArray* secretClientsForFileystem( MFFilesystem* fs )
 	[clientList addObject: [mainUIBundle executablePath]];
 	NSBundle* menulingUIBundle = [NSBundle bundleWithPath: menulingUIBundlePath()];
 	[clientList addObject: [menulingUIBundle executablePath]];
+	[clientList addObject: agentAppPath()];
 	// MFLogS(self, @"Client list for fs %@ is %@", fs, clientList);
 	return [clientList copy];
 }
@@ -70,9 +77,7 @@ BOOL getStateOfLoginItemWithPath( NSString* path )
 
 BOOL getStateForAgentLoginItem()
 {
-	NSString* mainBundlePath = mainUIBundlePath();
-	NSBundle* bundle = [NSBundle bundleWithPath: mainBundlePath];
-	NSString* agentPath = [bundle pathForResource:@"macfusionAgent" ofType:nil];
+	NSString* agentPath  = agentAppPath();
 	return getStateOfLoginItemWithPath( agentPath );
 }
 
@@ -85,9 +90,7 @@ BOOL getStateForMenulingLoginItem()
 # pragma mark TODO: Unify these two functions
 BOOL setStateForAgentLoginItem(BOOL state)
 {
-	NSString* mainBundlePath = mainUIBundlePath();
-	NSBundle* bundle = [NSBundle bundleWithPath: mainBundlePath];
-	NSString* agentPath = [bundle pathForResource:@"macfusionAgent" ofType:nil];
+	NSString* agentPath = agentAppPath();
 	LSSharedFileListRef loginItemsRef = LSSharedFileListCreate(NULL, kLSSharedFileListSessionLoginItems, NULL);
 	
 	if (getStateOfLoginItemWithPath(agentPath) == state)
