@@ -1,9 +1,17 @@
 //  MFSettingsController.m
 //  MacFusion2
 //
-//  Created by Michael Gorbach on 1/16/08.
-//  Copyright 2008 Michael Gorbach. All rights reserved.
-//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+// 
+//      http://www.apache.org/licenses/LICENSE-2.0
+// 
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 #import "MFSettingsController.h"
 #import "MFClient.h"
@@ -104,6 +112,21 @@
 	if (!preferencesController)
 		preferencesController = [[MFPreferencesController alloc] initWithWindowNibName:@"MFPreferences"];
 	[preferencesController showWindow:self];
+}
+
+- (IBAction)startMenuItem:(id)sender
+{
+	NSString* menuItemBundlePath = (NSString*)menulingUIBundlePath();
+	NSArray* launchedBundleIDs = [[[NSWorkspace sharedWorkspace] launchedApplications] valueForKey:@"NSApplicationBundleIdentifier"];
+	if ([launchedBundleIDs containsObject: @"org.mgorbach.macfusion2.menuling"])
+	{
+		MFLogS(self, @"Menuling already runing.");
+		return;
+	}
+	else
+	{
+		[[NSWorkspace sharedWorkspace] launchApplication: menuItemBundlePath];
+	}
 }
 
 # pragma mark View Construction
