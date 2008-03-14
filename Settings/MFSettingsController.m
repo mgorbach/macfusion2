@@ -108,7 +108,7 @@
 
 - (IBAction)showPreferences:(id)sender
 {
-	MFLogS(self, @"ShowPreferences initialized");
+	// MFLogS(self, @"ShowPreferences initialized");
 	if (!preferencesController)
 		preferencesController = [[MFPreferencesController alloc] initWithWindowNibName:@"MFPreferences"];
 	[preferencesController showWindow:self];
@@ -117,16 +117,7 @@
 - (IBAction)startMenuItem:(id)sender
 {
 	NSString* menuItemBundlePath = (NSString*)menulingUIBundlePath();
-	NSArray* launchedBundleIDs = [[[NSWorkspace sharedWorkspace] launchedApplications] valueForKey:@"NSApplicationBundleIdentifier"];
-	if ([launchedBundleIDs containsObject: @"org.mgorbach.macfusion2.menuling"])
-	{
-		MFLogS(self, @"Menuling already runing.");
-		return;
-	}
-	else
-	{
-		[[NSWorkspace sharedWorkspace] launchApplication: menuItemBundlePath];
-	}
+	[[NSWorkspace sharedWorkspace] launchApplication: menuItemBundlePath];
 }
 
 # pragma mark View Construction
