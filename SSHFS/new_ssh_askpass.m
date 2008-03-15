@@ -33,18 +33,18 @@ int main(int argc, char *argv[])
 	}
 	else
 	{
-		MFClientFS* fs = (MFClientFS*)getFilesystemForToken( token );
+		MFClientFS* fs = (MFClientFS*)mfsecGetFilesystemForToken( token );
 		if (!fs)
 		{
 			// MFLogS(self, @"Could not get fs for token"); 
 			return -1;
 		}
 		
-		NSDictionary* secrets = getSecretsDictionaryForFilesystem( fs );
+		NSDictionary* secrets = mfsecGetSecretsDictionaryForFilesystem( fs );
 		if (!secrets)
 		{
 			// MFLogS(self, @"Could not get secrets for token. Querying.");
-			password = queryForFSNetworkPassword( fs );
+			password = mfsecQueryForFSNetworkPassword( fs );
 			// MFLogS(self, @"Query result %@", password);
 			
 		}
@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
 		else
 		{
 			// MFLogS(self, @"Token secrets found, but no password. Querying.");
-			password = queryForFSNetworkPassword( fs );
+			password = mfsecQueryForFSNetworkPassword( fs );
 			// MFLogS(self, @"Query result %@", password);
 		}
 		

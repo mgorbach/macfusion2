@@ -133,7 +133,7 @@ NSDictionary* getNetworkSecretsForFilesystem( MFFilesystem* fs )
 	return getNetworkSecretsForFilesystemAndReturnItem( fs, NULL );
 }
 
-NSDictionary* getSecretsDictionaryForFilesystem( MFFilesystem* fs )
+NSDictionary* mfsecGetSecretsDictionaryForFilesystem( MFFilesystem* fs )
 {
 	NSDictionary* genericSecretsDict = getGenericSecretsForFilesystem( fs );
 	NSDictionary* networkSecretsDict = getNetworkSecretsForFilesystem( fs );
@@ -165,7 +165,7 @@ SecAccessRef keychainAccessRefForFilesystem( MFFilesystem* fs )
 	SecAccessRef accessRef;
 	OSStatus error;
 	
-	NSArray* trustedApplicationPaths = secretClientsForFileystem( fs );
+	NSArray* trustedApplicationPaths = mfcSecretClientsForFileystem( fs );
 	NSMutableArray* trustRefs = [NSMutableArray array];
 	for(NSString* path in trustedApplicationPaths)
 	{
@@ -363,7 +363,7 @@ void setGenericSecretsForFilesystem (NSDictionary* secretsDictionary, MFFilesyst
 	}
 }
 
-void setSecretsDictionaryForFilesystem( NSDictionary* secretsDictionary, MFFilesystem* fs )
+void mfsecSetSecretsDictionaryForFilesystem( NSDictionary* secretsDictionary, MFFilesystem* fs )
 {
 	// MFLogS(self, @"Setting secrets dict %@ for fs %@", secretsDictionary, fs);
 	if (! secretsDictionary )
@@ -377,7 +377,7 @@ void setSecretsDictionaryForFilesystem( NSDictionary* secretsDictionary, MFFiles
 }
 
 # pragma mark Token authentication
-MFClientFS* getFilesystemForToken( NSString* token )
+MFClientFS* mfsecGetFilesystemForToken( NSString* token )
 {
 	// MFLogS(self, @"Getting fs for token %@", token);
 	id <MFServerProtocol> server = 
@@ -409,7 +409,7 @@ MFClientFS* getFilesystemForToken( NSString* token )
 
 
 
-NSString* tokenForFilesystemWithUUID (NSString* uuid)
+NSString* mfsecTokenForFilesystemWithUUID (NSString* uuid)
 {
 	 id <MFServerProtocol> server = 
 	 (id<MFServerProtocol>)[NSConnection rootProxyForConnectionWithRegisteredName:kMFDistributedObjectName
@@ -490,9 +490,9 @@ SInt32 showDialogForPasswordQuery( MFFilesystem* fs, BOOL* savePassword, NSStrin
 		
 }
 
-NSString* queryForFSNetworkPassword( MFClientFS* fs )
+NSString* mfsecQueryForFSNetworkPassword( MFClientFS* fs )
 {
-	NSDictionary* secrets = getSecretsDictionaryForFilesystem( fs );
+	NSDictionary* secrets = mfsecGetSecretsDictionaryForFilesystem( fs );
 	if ([secrets objectForKey: kNetFSPasswordParameter])
 	{
 		MFLogS(self, @"Should not be querying if we already have a password");
@@ -515,7 +515,7 @@ NSString* queryForFSNetworkPassword( MFClientFS* fs )
 		MFLogS(self, @"Updating secrets");
 		NSMutableDictionary* updatedSecrets = secrets ? [secrets mutableCopy] : [NSMutableDictionary dictionary];
 		[updatedSecrets setObject: password forKey: kNetFSPasswordParameter ];
-		setSecretsDictionaryForFilesystem([updatedSecrets copy], fs);
+		mfsecSetSecretsDictionaryForFilesystem([updatedSecrets copy], fs);
 	}
 	else
 	{
@@ -525,7 +525,7 @@ NSString* queryForFSNetworkPassword( MFClientFS* fs )
 	return password;
 }
 
-NSString* uuidForKeychainItemRef(SecKeychainItemRef itemRef)
+NSString* mfsecUUIDForKeychainItemRef(SecKeychainItemRef itemRef)
 {
 	SecKeychainAttributeInfo attrInfo;
 	UInt32 tag = kSecAccountItemAttr;

@@ -9,7 +9,7 @@
 	<key>CFBundleIconFile</key>
 	<string>macfusionIcon</string>
 	<key>CFBundleIdentifier</key>
-	<string>org.mgorbach.macfusion2.macfusionAgentApp</string>
+	<string>org.mgorbach.macfusion2.macfusionAgent</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundlePackageType</key>
@@ -18,11 +18,11 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>1.0</string>
+	<key>LSUIElement</key>
+	<true/>
 	<key>NSMainNibFile</key>
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
-	<key>LSUIElement</key>
-	<true/>
 </dict>
 </plist>

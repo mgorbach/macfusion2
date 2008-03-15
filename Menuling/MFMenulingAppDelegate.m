@@ -231,7 +231,7 @@ OSStatus MyHotKeyHandler(EventHandlerCallRef nextHandler,EventRef theEvent,
 - (void)openConfiguration:(id)sender
 {
 	[[NSWorkspace sharedWorkspace] launchApplication: 
-	 (NSString*)mainUIBundlePath()];
+	 (NSString*)mfcMainBundlePath()];
 }
 
 - (void)applicationWillTerminate:(NSNotification*)note

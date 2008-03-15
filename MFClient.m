@@ -190,7 +190,7 @@ static MFClient* sharedClient = nil;
 		// MFLogS(self, @"Return %d supression state %d", returnValue, [[serverStartAlert suppressionButton] state]);
 		
 		if ([[serverStartAlert suppressionButton] state])
-			setStateForAgentLoginItem(YES);
+			mfcSetStateForAgentLoginItem(YES);
 			
 		if (returnValue == NSAlertSecondButtonReturn)
 		{
@@ -198,7 +198,7 @@ static MFClient* sharedClient = nil;
 		}
 		else if (returnValue == NSAlertFirstButtonReturn)
 		{
-			NSString* agentPath = agentAppPath();
+			NSString* agentPath = mfcAgentBundlePath();
 			[[NSWorkspace sharedWorkspace] launchApplication: agentPath];
 			[[NSRunLoop currentRunLoop] runUntilDate:[[NSDate date] addTimeInterval: 1.5]];
 			
@@ -337,7 +337,7 @@ OSStatus myKeychainCallback (
 	MFClient* self = (MFClient*)context;
 	// MFLogS(self, @"Keychain callback received event is %d", keychainEvent);
 	SecKeychainItemRef itemRef = info -> item;
-	NSString* uuid = (NSString*)uuidForKeychainItemRef(itemRef);
+	NSString* uuid = (NSString*)mfsecUUIDForKeychainItemRef(itemRef);
 	MFClientFS* fs = [self filesystemWithUUID:uuid];
 	if (fs)
 	{

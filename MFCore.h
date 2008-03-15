@@ -18,17 +18,17 @@
 #import "MFFilesystem.h"
 
 // Locations of clients
-NSString* mainUIBundlePath();
-NSString* menulingUIBundlePath();
-NSArray* secretClientsForFileystem( MFFilesystem* fs );
-NSString* agentAppPath();
+NSString* mfcMainBundlePath();
+NSString* mfcMenulingBundlePath();
+NSArray* mfcSecretClientsForFileystem( MFFilesystem* fs );
+NSString* mfcAgentBundlePath();
 
 // Launch Services and Login Items Control
-BOOL getStateForAgentLoginItem();
-BOOL setStateForAgentLoginItem(BOOL state);
-BOOL getStateForMenulingLoginItem();
-BOOL setStateForMenulingLoginItem(BOOL state);
+BOOL mfcGetStateForAgentLoginItem();
+BOOL mfcSetStateForAgentLoginItem(BOOL state);
+BOOL mfcGetStateForMenulingLoginItem();
+BOOL mfcSetStateForMenulingLoginItem(BOOL state);
 
 
 // FUSE versioning
-NSString* getMacFuseVersion();
+NSString* mfcGetMacFuseVersion();

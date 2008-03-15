@@ -33,9 +33,9 @@
 - (void)awakeFromNib
 {
 	[[self window] center];
-	[menuLoginItemButton setState: getStateForMenulingLoginItem()];
-	[agentLoginItemButton setState: getStateForAgentLoginItem()];
-	NSString* macfuseVersion = getMacFuseVersion();
+	[menuLoginItemButton setState: mfcGetStateForMenulingLoginItem()];
+	[agentLoginItemButton setState: mfcGetStateForAgentLoginItem()];
+	NSString* macfuseVersion = mfcGetMacFuseVersion();
 	NSString* versionString = macfuseVersion ? [NSString stringWithFormat: @"MacFuse Version %@ Found", macfuseVersion] : @"MacFuse not Found!";
 	[fuseVersionTextField setStringValue: versionString];
 	 
@@ -44,9 +44,9 @@
 - (IBAction)loginItemCheckboxChanged:(id)sender
 {
 	if (sender == agentLoginItemButton)
-		setStateForAgentLoginItem([sender state]);
+		mfcSetStateForAgentLoginItem([sender state]);
 	else if (sender == menuLoginItemButton)
-		setStateForMenulingLoginItem([sender state]);
+		mfcSetStateForMenulingLoginItem([sender state]);
 	else
 	{
 		MFLogS(self, @"Invalid sender for loginItemCheckboxChanged");

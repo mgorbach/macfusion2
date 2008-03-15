@@ -116,7 +116,7 @@
 
 - (IBAction)startMenuItem:(id)sender
 {
-	NSString* menuItemBundlePath = (NSString*)menulingUIBundlePath();
+	NSString* menuItemBundlePath = (NSString*)mfcMenulingBundlePath();
 	[[NSWorkspace sharedWorkspace] launchApplication: menuItemBundlePath];
 }
 

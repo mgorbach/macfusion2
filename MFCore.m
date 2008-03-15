@@ -16,26 +16,42 @@
 
 #import "MFCore.h"
 #define self @"MFCORE"
+#define kMFMainBundleIdentifier @"org.mgorbach.macfusion2"
+#define kMFAgentBundleIdentifier @"org.mgorbach.macfusion2.macfusionAgent"
+#define kMFMenulingBundleIdentifier @"org.mgorbach.macfusion2.menuling"
 
-NSString* mainUIBundlePath()
+NSString* mfcMainBundlePath()
 {
-	NSString* mainBundlePath = [[NSWorkspace sharedWorkspace] absolutePathForAppBundleWithIdentifier: @"org.mgorbach.macfusion2"];
-	return mainBundlePath;
+	NSString* mybundleID = [[NSBundle mainBundle] bundleIdentifier];
+	NSString* pathToReturn = nil;
+	
+	if ( [mybundleID isEqualToString: kMFMainBundleIdentifier] )
+		pathToReturn = [[NSBundle mainBundle] bundlePath];
+	if ( [mybundleID isEqualToString: kMFAgentBundleIdentifier] ||
+		[mybundleID isEqualToString: kMFMenulingBundleIdentifier] )
+	{
+		NSString* relativePath = @"/../../../";
+		NSString* fullPath = [[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent: relativePath];
+		pathToReturn = [fullPath stringByStandardizingPath];
+	}
+	
+	// MFLogS(self, @"Returning %@ for main bundle path", pathToReturn);
+	return pathToReturn;
 }
 
-NSString* menulingUIBundlePath()
+NSString* mfcMenulingBundlePath()
 {
-	NSString* mainBundlePath = mainUIBundlePath();
+	NSString* mainBundlePath = mfcMainBundlePath();
 	return [mainBundlePath stringByAppendingPathComponent:@"/Contents/Resources/MacfusionMenuling.app"];
 }
 
-NSString* agentAppPath()
+NSString* mfcAgentBundlePath()
 {
-	NSString* mainBundlePath = mainUIBundlePath();
-	return [mainBundlePath stringByAppendingPathComponent:@"/Contents/Resources/MacfusionAgent.app"];
+	NSString* mainBundlePath = mfcMainBundlePath();
+	return [mainBundlePath stringByAppendingPathComponent:@"/Contents/Resources/macfusionAgent.app"];
 }
 
-NSArray* secretClientsForFileystem( MFFilesystem* fs )
+NSArray* mfcSecretClientsForFileystem( MFFilesystem* fs )
 {
 	NSMutableArray* clientList = [NSMutableArray array];
 	if ([[fs delegate] respondsToSelector:@selector(secretsClientsList)])
@@ -45,16 +61,16 @@ NSArray* secretClientsForFileystem( MFFilesystem* fs )
 			[clientList addObjectsFromArray: fsList];
 	}
 	
-	NSBundle* mainUIBundle = [NSBundle bundleWithPath: mainUIBundlePath()];
+	NSBundle* mainUIBundle = [NSBundle bundleWithPath: mfcMainBundlePath()];
 	[clientList addObject: [mainUIBundle executablePath]];
-	NSBundle* menulingUIBundle = [NSBundle bundleWithPath: menulingUIBundlePath()];
+	NSBundle* menulingUIBundle = [NSBundle bundleWithPath: mfcMenulingBundlePath()];
 	[clientList addObject: [menulingUIBundle executablePath]];
-	[clientList addObject: agentAppPath()];
+	[clientList addObject: mfcAgentBundlePath()];
 	// MFLogS(self, @"Client list for fs %@ is %@", fs, clientList);
 	return [clientList copy];
 }
 
-BOOL getStateOfLoginItemWithPath( NSString* path )
+BOOL mfcGetStateOfLoginItemWithPath( NSString* path )
 {
 	// MFLogS(self, @"Querying for %@", path);
 	LSSharedFileListRef loginItemsRef = LSSharedFileListCreate(NULL, kLSSharedFileListSessionLoginItems, NULL);
@@ -67,33 +83,36 @@ BOOL getStateOfLoginItemWithPath( NSString* path )
 		NSURL* theURL = [NSURL new];
 		LSSharedFileListItemResolve(itemRef, 0, (CFURLRef*)&theURL, NULL);
 		present = ([[theURL path] isEqualToString: path]);
+		// MFLogS(self, @"Found %@", [theURL path]);
 		if (present)
 			break;
 	}
 	
+	// MFLogS(self, @"Returning state %d for %@", present, path);
 	CFRelease(loginItemsRef);
 	return present;
 }
 
-BOOL getStateForAgentLoginItem()
+BOOL mfcGetStateForAgentLoginItem()
 {
-	NSString* agentPath  = agentAppPath();
-	return getStateOfLoginItemWithPath( agentPath );
+	NSString* agentPath  = mfcAgentBundlePath();
+	return mfcGetStateOfLoginItemWithPath( agentPath );
 }
 
-BOOL getStateForMenulingLoginItem()
+BOOL mfcGetStateForMenulingLoginItem()
 {
-	NSString* menulingBundlePath = menulingUIBundlePath();
-	return getStateOfLoginItemWithPath(menulingBundlePath);
+	NSString* menulingBundlePath = mfcMenulingBundlePath();
+	return mfcGetStateOfLoginItemWithPath(menulingBundlePath);
 }
 
 # pragma mark TODO: Unify these two functions
-BOOL setStateForAgentLoginItem(BOOL state)
+BOOL mfcSetStateForAgentLoginItem(BOOL state)
 {
-	NSString* agentPath = agentAppPath();
+	NSString* agentPath = mfcAgentBundlePath();
 	LSSharedFileListRef loginItemsRef = LSSharedFileListCreate(NULL, kLSSharedFileListSessionLoginItems, NULL);
+	// MFLogS(self, @"agentBundlePath set %@", agentPath);
 	
-	if (getStateOfLoginItemWithPath(agentPath) == state)
+	if (mfcGetStateOfLoginItemWithPath(agentPath) == state)
 		return NO;
 	
 	UInt32 seedValue;
@@ -104,7 +123,7 @@ BOOL setStateForAgentLoginItem(BOOL state)
 		NSURL* theURL = [NSURL new];
 		LSSharedFileListItemResolve(itemRef, 0, (CFURLRef*)&theURL, NULL);
 		NSString* checkPath = [[theURL path] lastPathComponent];
-		if ([checkPath isEqualToString: @"macfusionAgent"])
+		if ([checkPath isLike: @"*macfusionAgent*"])
 		{
 			// MFLogS(self, @"Removing %@", theURL);
 			LSSharedFileListItemRemove(loginItemsRef, itemRef);
@@ -123,12 +142,12 @@ BOOL setStateForAgentLoginItem(BOOL state)
 
 
 
-BOOL setStateForMenulingLoginItem(BOOL state)
+BOOL mfcSetStateForMenulingLoginItem(BOOL state)
 {
-	NSString* menulingBundlePath = menulingUIBundlePath();
+	NSString* menulingBundlePath = mfcMenulingBundlePath();
 	LSSharedFileListRef loginItemsRef = LSSharedFileListCreate(NULL, kLSSharedFileListSessionLoginItems, NULL);
 	
-	if (getStateOfLoginItemWithPath(menulingBundlePath) == state)
+	if (mfcGetStateOfLoginItemWithPath(menulingBundlePath) == state)
 		return NO;
 	
 	UInt32 seedValue;
@@ -156,7 +175,7 @@ BOOL setStateForMenulingLoginItem(BOOL state)
 	return YES;
 }
 
-NSString* getMacFuseVersion()
+NSString* mfcGetMacFuseVersion()
 {
 	NSDictionary* fuseData = [NSDictionary dictionaryWithContentsOfFile: 
 							  @"/Library/Filesystems/fusefs.fs/Contents/Info.plist"];

@@ -194,7 +194,7 @@
 
 - (void)updateSecrets
 {
-	NSMutableDictionary* updateSecrets = [getSecretsDictionaryForFilesystem( self ) mutableCopy];
+	NSMutableDictionary* updateSecrets = [mfsecGetSecretsDictionaryForFilesystem( self ) mutableCopy];
 	self.secrets = updateSecrets ? updateSecrets : [NSMutableDictionary dictionary];
 }
 

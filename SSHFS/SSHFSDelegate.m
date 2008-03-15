@@ -81,7 +81,7 @@
 	NSMutableDictionary* env = [NSMutableDictionary dictionaryWithDictionary: 
 								[[NSProcessInfo processInfo] environment]];
 	[env setObject: [self askpassPath] forKey:@"SSH_ASKPASS"];
-	[env setObject: tokenForFilesystemWithUUID([params objectForKey: KMFFSUUIDParameter])
+	[env setObject: mfsecTokenForFilesystemWithUUID([params objectForKey: KMFFSUUIDParameter])
 			forKey: @"SSHFS_TOKEN"];
 
 	// MFLogS(self, @"Returning environment %@", env);

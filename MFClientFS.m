@@ -210,7 +210,7 @@
 			// Update secure information
 			if (![secrets isEqualToDictionary: backupSecrets])
 			{
-				setSecretsDictionaryForFilesystem( secrets, self );
+				mfsecSetSecretsDictionaryForFilesystem( secrets, self );
 			}
 			isEditing = NO;
 			return nil;
