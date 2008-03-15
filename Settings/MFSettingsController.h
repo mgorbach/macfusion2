@@ -32,6 +32,7 @@
 	MFClient* client;
 	MFClientFS* fsBeingEdited;
 	MFPreferencesController* preferencesController;
+	MFClientFS* menuArgumentFS;
 	
 	BOOL creatingNewFS;
 }
@@ -43,7 +44,8 @@
 - (void)editFilesystem:(MFClientFS*)fs;
 - (void)deleteFilesystem:(MFClientFS*)fs;
 - (void)toggleMountOnFilesystem:(MFClientFS*)fs;
-
+- (void)mountFilesystem:(MFClientFS*)fs;
+- (void)unmountFilesystem:(MFClientFS*)fs;
 
 @property(readonly) MFClient* client;
 @end

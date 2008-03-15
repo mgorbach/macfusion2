@@ -41,6 +41,7 @@
 		D403BC8F0D64C3D00049201D /* MFServerFSProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = D403BC8D0D64C3D00049201D /* MFServerFSProtocol.h */; };
 		D403BD6E0D650D630049201D /* MFError.h in Headers */ = {isa = PBXBuildFile; fileRef = D403BD6C0D650D630049201D /* MFError.h */; };
 		D403BD6F0D650D630049201D /* MFError.m in Sources */ = {isa = PBXBuildFile; fileRef = D403BD6D0D650D630049201D /* MFError.m */; };
+		D40B04800D8C5EC30005F448 /* MGActionButton.m in Sources */ = {isa = PBXBuildFile; fileRef = D40B047F0D8C5EC30005F448 /* MGActionButton.m */; };
 		D412AFC40D596E890091C12B /* MGUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = D412AFC20D596E890091C12B /* MGUtilities.m */; };
 		D412AFC60D596F4B0091C12B /* MGUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = D412AFC50D596F4B0091C12B /* MGUtilities.h */; };
 		D413146F0D7F225E00F55B9B /* MGTransitioningTabView.h in Headers */ = {isa = PBXBuildFile; fileRef = D413146D0D7F225E00F55B9B /* MGTransitioningTabView.h */; };
@@ -103,6 +104,8 @@
 		D4C6334D0D7644B300734165 /* MGFadingWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = D4C6334C0D7644B300734165 /* MGFadingWindow.m */; };
 		D4CEE0F30D3045590064042E /* MFClientFS.h in Headers */ = {isa = PBXBuildFile; fileRef = D4CEE0F10D3045580064042E /* MFClientFS.h */; };
 		D4CEE0F40D3045590064042E /* MFClientFS.m in Sources */ = {isa = PBXBuildFile; fileRef = D4CEE0F20D3045590064042E /* MFClientFS.m */; };
+		D4CF0E460D8C75B30065A2C3 /* MFPreferences.h in Headers */ = {isa = PBXBuildFile; fileRef = D4CF0E440D8C75B30065A2C3 /* MFPreferences.h */; };
+		D4CF0E470D8C75B30065A2C3 /* MFPreferences.m in Sources */ = {isa = PBXBuildFile; fileRef = D4CF0E450D8C75B30065A2C3 /* MFPreferences.m */; };
 		D4D0E9FF0D7C887A00797279 /* MFClientFSDelegateProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = D4D0E9FE0D7C887A00797279 /* MFClientFSDelegateProtocol.h */; };
 		D4D6A0D80D025B4A00BC2E2D /* MFConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = D4D6A0D70D025B4A00BC2E2D /* MFConstants.h */; };
 		D4DB420B0D3E867200C99914 /* MFCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D4FC0C980CF128480029B133 /* MFCore.framework */; };
@@ -300,6 +303,8 @@
 		D403BC8D0D64C3D00049201D /* MFServerFSProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFServerFSProtocol.h; sourceTree = "<group>"; };
 		D403BD6C0D650D630049201D /* MFError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFError.h; sourceTree = "<group>"; };
 		D403BD6D0D650D630049201D /* MFError.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MFError.m; sourceTree = "<group>"; };
+		D40B047E0D8C5EC30005F448 /* MGActionButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MGActionButton.h; sourceTree = "<group>"; };
+		D40B047F0D8C5EC30005F448 /* MGActionButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MGActionButton.m; sourceTree = "<group>"; };
 		D412AFC20D596E890091C12B /* MGUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MGUtilities.m; sourceTree = "<group>"; };
 		D412AFC50D596F4B0091C12B /* MGUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MGUtilities.h; sourceTree = "<group>"; };
 		D413146D0D7F225E00F55B9B /* MGTransitioningTabView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MGTransitioningTabView.h; sourceTree = "<group>"; };
@@ -379,6 +384,8 @@
 		D4C6334C0D7644B300734165 /* MGFadingWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MGFadingWindow.m; sourceTree = "<group>"; };
 		D4CEE0F10D3045580064042E /* MFClientFS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFClientFS.h; sourceTree = "<group>"; };
 		D4CEE0F20D3045590064042E /* MFClientFS.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MFClientFS.m; sourceTree = "<group>"; };
+		D4CF0E440D8C75B30065A2C3 /* MFPreferences.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFPreferences.h; sourceTree = "<group>"; };
+		D4CF0E450D8C75B30065A2C3 /* MFPreferences.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MFPreferences.m; sourceTree = "<group>"; };
 		D4D0E9FE0D7C887A00797279 /* MFClientFSDelegateProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFClientFSDelegateProtocol.h; sourceTree = "<group>"; };
 		D4D6A0D70D025B4A00BC2E2D /* MFConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFConstants.h; sourceTree = "<group>"; };
 		D4DB42040D3E863100C99914 /* Macfusion2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Macfusion2.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -689,6 +696,8 @@
 				D41E173A0D85CAF500F46F50 /* MFSecurity.m */,
 				D41E1DA10D87557900F46F50 /* MFCore.h */,
 				D41E1DA20D87557900F46F50 /* MFCore.m */,
+				D4CF0E440D8C75B30065A2C3 /* MFPreferences.h */,
+				D4CF0E450D8C75B30065A2C3 /* MFPreferences.m */,
 			);
 			name = Shared;
 			sourceTree = "<group>";
@@ -724,6 +733,8 @@
 				D4FEAF550D835E3000C709C1 /* MFFilesystemTableView.m */,
 				D45579150D40715F00669882 /* MFInertButton.h */,
 				D45579160D40715F00669882 /* MFInertButton.m */,
+				D40B047E0D8C5EC30005F448 /* MGActionButton.h */,
+				D40B047F0D8C5EC30005F448 /* MGActionButton.m */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -832,6 +843,7 @@
 				D41E17C40D86018500F46F50 /* MFNetworkFS.h in Headers */,
 				D41E1DA30D87557900F46F50 /* MFCore.h in Headers */,
 				D41E242A0D897F0C00F46F50 /* MFPreferencesController.h in Headers */,
+				D4CF0E460D8C75B30065A2C3 /* MFPreferences.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1120,6 +1132,7 @@
 				D41E173C0D85CAF600F46F50 /* MFSecurity.m in Sources */,
 				D41E1DA40D87557900F46F50 /* MFCore.m in Sources */,
 				D41E242B0D897F0C00F46F50 /* MFPreferencesController.m in Sources */,
+				D4CF0E470D8C75B30065A2C3 /* MFPreferences.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1160,6 +1173,7 @@
 				D4DB45D40D3FEBE300C99914 /* MFFilesystemCell.m in Sources */,
 				D45579170D40715F00669882 /* MFInertButton.m in Sources */,
 				D4FEAF560D835E3000C709C1 /* MFFilesystemTableView.m in Sources */,
+				D40B04800D8C5EC30005F448 /* MGActionButton.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

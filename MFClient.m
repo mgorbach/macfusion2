@@ -131,7 +131,10 @@ static MFClient* sharedClient = nil;
 	{
 		MFClientPlugin* plugin = [[MFClientPlugin alloc] initWithRemotePlugin: 
 								  remotePlugin];
-		[self storePlugin: plugin];
+		if (plugin)
+			[self storePlugin: plugin];
+		else
+			MFLogS(self, @"Could not init client plugin from server plugin %@", remotePlugin);
 	}
 	
 	// Fill filesystems
@@ -141,7 +144,10 @@ static MFClient* sharedClient = nil;
 		MFClientPlugin* plugin = [pluginsDictionary objectForKey: [remoteFS pluginID]];
 		MFClientFS* fs = [MFClientFS clientFSWithRemoteFS: remoteFS
 											 clientPlugin: plugin];
-		[self storeFilesystem: fs];
+		if (fs)
+			[self storeFilesystem: fs];
+		else
+			MFLogS(self, @"Could not init client fs from server fs %@", remoteFS);
 	}
 	
 	// Fill Recents
@@ -178,30 +184,25 @@ static MFClient* sharedClient = nil;
 	}
 	else
 	{
-		// Try to start the server process
-		NSAlert* serverStartAlert = [NSAlert new];
-		[serverStartAlert setMessageText: @"The macfusion agent process is not started"];
-		[serverStartAlert setInformativeText: @"Would you like to start the agent?\nOtherwise, Macfusion will Quit."];
-		[serverStartAlert setShowsSuppressionButton: YES];
-		[serverStartAlert addButtonWithTitle:@"Start"];
-		[serverStartAlert addButtonWithTitle:@"Quit"];
-		[[serverStartAlert suppressionButton] setTitle: @"Start agent automatically on login"];
-		NSInteger returnValue = [serverStartAlert runModal];
-		// MFLogS(self, @"Return %d supression state %d", returnValue, [[serverStartAlert suppressionButton] state]);
-		
-		if ([[serverStartAlert suppressionButton] state])
-			mfcSetStateForAgentLoginItem(YES);
-			
-		if (returnValue == NSAlertSecondButtonReturn)
+		BOOL agentRunning = NO;
+		NSArray* runingIDs = [[[NSWorkspace sharedWorkspace] launchedApplications] valueForKey:@"NSApplicationBundleIdentifier"];
+		MFLogS(self, @"Runing ids are %@", runingIDs);
+		for(NSString* id in runingIDs)
 		{
-			[NSApp terminate: self];
+			if ([id isEqualToString: kMFAgentBundleIdentifier])
+			{
+				agentRunning = YES;
+				break;
+			}
 		}
-		else if (returnValue == NSAlertFirstButtonReturn)
+
+		if (agentRunning)
 		{
-			NSString* agentPath = mfcAgentBundlePath();
-			[[NSWorkspace sharedWorkspace] launchApplication: agentPath];
-			[[NSRunLoop currentRunLoop] runUntilDate:[[NSDate date] addTimeInterval: 1.5]];
 			
+			// Agent is runing. Wait a bit for it to set up IPC
+			MFLogS(self, @"Waiting for agent");
+			NSDate* stopDate = [[NSDate date] addTimeInterval: 5.0];
+			[[NSRunLoop currentRunLoop] runUntilDate: stopDate];
 			if ([self establishCommunication])
 			{
 				[self fillInitialStatus];
@@ -209,16 +210,56 @@ static MFClient* sharedClient = nil;
 			}
 			else
 			{
-				NSAlert* faliureAlert = [NSAlert alertWithMessageText:@"Could not start or connect to the macfusion agent"
-														defaultButton:@"OK"
-													  alternateButton:@""
-														  otherButton:@""
-											informativeTextWithFormat:@"Macfusion will Quit."];
-				[faliureAlert setAlertStyle: NSCriticalAlertStyle];
-				[faliureAlert runModal];
-				[NSApp terminate: self];
+				return NO;
 			}
 		}
+		else
+		{
+			// Try to start the agent process
+			
+			MFLogS(self, @"Agent not runing");
+			NSAlert* serverStartAlert = [NSAlert new];
+			[serverStartAlert setMessageText: @"The macfusion agent process is not started"];
+			[serverStartAlert setInformativeText: @"Would you like to start the agent?\nOtherwise, Macfusion will Quit."];
+			[serverStartAlert setShowsSuppressionButton: YES];
+			[serverStartAlert addButtonWithTitle:@"Start"];
+			[serverStartAlert addButtonWithTitle:@"Quit"];
+			[[serverStartAlert suppressionButton] setTitle: @"Start agent automatically on login"];
+			NSInteger returnValue = [serverStartAlert runModal];
+			// MFLogS(self, @"Return %d supression state %d", returnValue, [[serverStartAlert suppressionButton] state]);
+			
+			if ([[serverStartAlert suppressionButton] state])
+				mfcSetStateForAgentLoginItem(YES);
+			
+			if (returnValue == NSAlertSecondButtonReturn)
+			{
+				[NSApp terminate: self];
+			}
+			else if (returnValue == NSAlertFirstButtonReturn)
+			{
+				NSString* agentPath = mfcAgentBundlePath();
+				[[NSWorkspace sharedWorkspace] launchApplication: agentPath];
+				[[NSRunLoop currentRunLoop] runUntilDate:[[NSDate date] addTimeInterval: 1.5]];
+				
+				if ([self establishCommunication])
+				{
+					[self fillInitialStatus];
+					return YES;
+				}
+				else
+				{
+					NSAlert* faliureAlert = [NSAlert alertWithMessageText:@"Could not start or connect to the macfusion agent"
+															defaultButton:@"OK"
+														  alternateButton:@""
+															  otherButton:@""
+												informativeTextWithFormat:@"Macfusion will Quit."];
+					[faliureAlert setAlertStyle: NSCriticalAlertStyle];
+					[faliureAlert runModal];
+					[NSApp terminate: self];
+				}
+			}
+		}
+		
 	}
 	
 	return NO;

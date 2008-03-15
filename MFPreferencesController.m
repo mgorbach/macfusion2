@@ -17,6 +17,7 @@
 #import "MFPreferencesController.h"
 #import "MFCore.h"
 #import "MFClient.h"
+#import "MFPreferences.h"
 
 @implementation MFPreferencesController
 - (id)initWithWindowNibName:(NSString*)name
@@ -33,8 +34,8 @@
 - (void)awakeFromNib
 {
 	[[self window] center];
-	[menuLoginItemButton setState: mfcGetStateForMenulingLoginItem()];
 	[agentLoginItemButton setState: mfcGetStateForAgentLoginItem()];
+	[menuLoginItemButton setState: [[MFPreferences sharedPreferences] getBoolForPreference: kMFPrefsAutoloadMenuling]];
 	NSString* macfuseVersion = mfcGetMacFuseVersion();
 	NSString* versionString = macfuseVersion ? [NSString stringWithFormat: @"MacFuse Version %@ Found", macfuseVersion] : @"MacFuse not Found!";
 	[fuseVersionTextField setStringValue: versionString];
@@ -46,7 +47,8 @@
 	if (sender == agentLoginItemButton)
 		mfcSetStateForAgentLoginItem([sender state]);
 	else if (sender == menuLoginItemButton)
-		mfcSetStateForMenulingLoginItem([sender state]);
+		[[MFPreferences sharedPreferences] setBool:[sender state]
+									 forPreference:kMFPrefsAutoloadMenuling];
 	else
 	{
 		MFLogS(self, @"Invalid sender for loginItemCheckboxChanged");

@@ -66,7 +66,7 @@ static MFMainController* sharedController = nil;
 {
 	MFPluginController* pluginController = [MFPluginController sharedController];
 	MFFilesystemController* filesystemController = [MFFilesystemController sharedController];
-	[[MFLoggingController sharedController] setPrintToStandardOut: NO];
+//	[[MFLoggingController sharedController] setPrintToStandardOut: NO];
 	[pluginController loadPlugins];
 	[filesystemController loadFilesystems];
 	

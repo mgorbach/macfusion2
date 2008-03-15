@@ -24,8 +24,9 @@
 #import "MFPreferencesController.h"
 
 @interface MFSettingsController(PrivateAPI)
-
+- (BOOL)validateFSMenuItem:(NSMenuItem*)item;
 @end
+
 @implementation MFSettingsController
 - (id) init
 {
@@ -36,6 +37,7 @@
 		[NSApp setDelegate: self];
 		[client setDelegate: self];
 		creatingNewFS = NO;
+		menuArgumentFS = nil;
 		if ([client setup])
 		{
 		}
@@ -292,7 +294,10 @@
 }
 - (void)editFilesystem:(MFClientFS*)fs
 {
-	// MFLogS(self, @"Editing fs %@", fs);
+	MFLogS(self, @"Editing fs %@", fs);
+	if (!fs)
+		return;
+	
 	NSWindow* parent = [filesystemTableView window];
 	NSWindow* mySheetWindow = [[NSWindow alloc] init];
 	
@@ -318,15 +323,30 @@
 {
 	if ([fs isMounted])
 	{
-		[fs unmount];
+		[self unmountFilesystem: fs];
 	}
 	else if ([fs isUnmounted] || [fs isFailedToMount])
 	{
-		[fs setClientFSDelegate: self];
-		[fs mount];
+		[self mountFilesystem: fs];
 	}
 }
 
+- (void)unmountFilesystem:(MFClientFS*)fs
+{
+	[fs unmount];
+}
+
+- (void)mountFilesystem:(MFClientFS*)fs
+{
+	[fs setClientFSDelegate: self];
+	[fs mount];
+}
+
+- (void)revealFilesystem:(MFClientFS*)fs
+{
+	[[NSWorkspace sharedWorkspace] selectFile:[fs filePath]
+					 inFileViewerRootedAtPath:nil];
+}
 
 # pragma mark Notification
 - (void)filesystemDidChangeStatus:(MFClientFS*)fs
@@ -347,7 +367,6 @@
 		}
 	}
 }
-
 
 # pragma mark Editing Mechanics
 - (void)filesystemEditOKClicked:(id)sender
@@ -435,6 +454,50 @@
 	}
 		
 	return YES;
+}
+
+# pragma mark Menu UI Stuff
+- (void)menuNeedsUpdate:(NSMenu*)menu
+{
+	NSInteger clickedRow = [filesystemTableView clickedRow];
+	// MFLogS(self, @"Updating menu clicked row %d", clickedRow);
+	[self willChangeValueForKey: @"menuArgumentFS"];
+	if (clickedRow != -1 && clickedRow != NSNotFound)
+		menuArgumentFS = [[filesystemArrayController arrangedObjects] objectAtIndex: clickedRow];
+	else
+	{
+		if ([[filesystemArrayController selectedObjects] count] > 0)
+			menuArgumentFS = [[filesystemArrayController selectedObjects] objectAtIndex: 0];
+		else
+			menuArgumentFS = nil;
+	}
+	[self didChangeValueForKey:@"menuArgumentFS"];
+	for (NSMenuItem* item in [menu itemArray])
+		[item setEnabled: [self validateFSMenuItem: item]];
+}
+
+- (BOOL)validateFSMenuItem:(NSMenuItem*)item
+{
+	MFLogS(self, @"Validating FS item %@", item );
+	if ([[item title] isEqualToString: @"Mount"])
+	{
+		return ([menuArgumentFS isUnmounted] || [menuArgumentFS isFailedToMount]);
+	}
+	if ([[item title] isEqualToString: @"Edit"])
+	{
+		return ([menuArgumentFS isUnmounted] || [menuArgumentFS isFailedToMount]);
+	}
+	if ([[item title] isEqualToString: @"Unmount"])
+	{
+		return [menuArgumentFS isMounted];
+	}
+	
+	if ([[item title] isEqualToString: @"Reveal"])
+	{
+		return (menuArgumentFS.filePath != nil);
+	}
+		
+	return NO;
 }
 
 # pragma mark Misc

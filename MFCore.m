@@ -16,9 +16,6 @@
 
 #import "MFCore.h"
 #define self @"MFCORE"
-#define kMFMainBundleIdentifier @"org.mgorbach.macfusion2"
-#define kMFAgentBundleIdentifier @"org.mgorbach.macfusion2.macfusionAgent"
-#define kMFMenulingBundleIdentifier @"org.mgorbach.macfusion2.menuling"
 
 NSString* mfcMainBundlePath()
 {

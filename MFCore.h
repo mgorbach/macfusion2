@@ -17,6 +17,11 @@
 #import <Cocoa/Cocoa.h>
 #import "MFFilesystem.h"
 
+#define kMFMainBundleIdentifier @"org.mgorbach.macfusion2"
+#define kMFAgentBundleIdentifier @"org.mgorbach.macfusion2.macfusionAgent"
+#define kMFMenulingBundleIdentifier @"org.mgorbach.macfusion2.menuling"
+
+
 // Locations of clients
 NSString* mfcMainBundlePath();
 NSString* mfcMenulingBundlePath();

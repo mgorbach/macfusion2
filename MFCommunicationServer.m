@@ -19,6 +19,7 @@
 #import "MFFilesystem.h"
 #import "MFPluginController.h"
 #import "MFConstants.h"
+#import "MFPreferences.h"
 
 @implementation MFCommunicationServer
 static MFCommunicationServer* sharedServer = nil;
@@ -191,10 +192,22 @@ static MFCommunicationServer* sharedServer = nil;
 	return [MFPluginController sharedController];
 }
 
+- (void)doInitializationComplete:(NSTimer*)timer
+{
+	// MFLogS(self, @"Timer complete");
+	if ([[MFPreferences sharedPreferences] getBoolForPreference: kMFPrefsAutoloadMenuling])
+	{
+		[[NSWorkspace sharedWorkspace] launchApplication: (NSString*)mfcMenulingBundlePath()];
+	}
+}
+
 - (void)startServingRunloop
 {
 	[self registerNotifications];
 	[self vendDisributedObject];
+	NSTimer* timer = [NSTimer timerWithTimeInterval:1 target:self selector:@selector(doInitializationComplete:)
+										   userInfo:nil repeats:NO];
+	[[NSRunLoop currentRunLoop] addTimer:timer forMode:NSDefaultRunLoopMode];
 	[[NSRunLoop currentRunLoop] run];
 }
 

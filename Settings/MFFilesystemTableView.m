@@ -120,6 +120,15 @@
 	[self setNeedsDisplayInRect: [self rectOfRow: row]];
 }
 
+- (MFClientFS*)clickedFilesystem
+{
+	NSInteger row = [self clickedRow];
+	if (row > 0 && row < [self.filesystems count])
+		return [self.filesystems objectAtIndex: row];
+	else
+		return nil;
+}
+
 - (void) tableView: (NSTableView *) tableView 
    willDisplayCell: (NSCell*) cell 
 	forTableColumn: (NSTableColumn *) tableColumn 

@@ -414,7 +414,7 @@ static void diskUnMounted(DADiskRef disk, void* mySelf)
 
 - (MFServerFS*)filesystemForToken:(NSString*)token
 {
-	NSAssert(token, @"token nil in filesystemForToken");
+	NSAssert(token, @"Token nil in filesystemForToken");
 	// MFLogS(self, @"Tokens %@, Requested token %@", tokens, token);
 	if (![[tokens allKeys] containsObject: token]) 
 		MFLogS(self, @"Invalid token in filesystemsForToken");

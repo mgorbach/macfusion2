@@ -15,7 +15,7 @@
 // limitations under the License.
 
 #import <Cocoa/Cocoa.h>
-@class MFSettingsController;
+@class MFSettingsController, MFClientFS;
 
 @interface MFFilesystemTableView : NSTableView
 {
@@ -30,4 +30,6 @@
 
 @property(retain, readwrite) NSMutableArray* filesystems;
 @property(retain, readwrite) MFSettingsController* controller;
+
+- (MFClientFS*)clickedFilesystem;
 @end

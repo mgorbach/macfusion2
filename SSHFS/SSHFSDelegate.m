@@ -206,9 +206,10 @@
 {
 	if ([paramName isEqualToString: kNetFSPortParameter ])
 	{
-		if( [value isKindOfClass: [NSNumber class]] && 
-			[(NSNumber*)value intValue] > 1 &&
-			[(NSNumber*)value intValue] < 10000 )
+		NSNumber* converted = [NSNumber numberWithInt: [value intValue]];
+		if( [converted isKindOfClass: [NSNumber class]] && 
+			[converted intValue] > 0 &&
+			[converted intValue] < 65535 )
 		{
 			return YES;
 		}
