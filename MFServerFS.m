@@ -286,7 +286,8 @@
 		else
 		{
 			NSString* extraArguments = [self.parameters objectForKey: kMFFSAdvancedOptionsParameter];
-			NSArray* myArguments = [extraArguments componentsSeparatedByString: @","];
+//			NSMutableArray* processedArgs = [NSMutableArray array];
+			NSArray* myArguments = [extraArguments componentsSeparatedByString: @" "];
 			return [delegateArgs arrayByAddingObjectsFromArray: myArguments];
 		}
 	}
