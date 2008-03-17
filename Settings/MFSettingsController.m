@@ -294,8 +294,8 @@
 }
 - (void)editFilesystem:(MFClientFS*)fs
 {
-	MFLogS(self, @"Editing fs %@", fs);
-	if (!fs)
+	// MFLogS(self, @"Editing fs %@", fs);
+	if (!fs || [fs isMounted] || [fs isWaiting])
 		return;
 	
 	NSWindow* parent = [filesystemTableView window];
@@ -333,13 +333,17 @@
 
 - (void)unmountFilesystem:(MFClientFS*)fs
 {
-	[fs unmount];
+	if ([fs isMounted])
+		[fs unmount];
 }
 
 - (void)mountFilesystem:(MFClientFS*)fs
 {
-	[fs setClientFSDelegate: self];
-	[fs mount];
+	if ([fs isUnmounted] || [fs isFailedToMount])
+	{
+		[fs setClientFSDelegate: self];
+		[fs mount];
+	}
 }
 
 - (void)revealFilesystem:(MFClientFS*)fs
