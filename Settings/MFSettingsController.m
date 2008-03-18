@@ -122,6 +122,17 @@
 	[[NSWorkspace sharedWorkspace] launchApplication: menuItemBundlePath];
 }
 
+- (IBAction)deleteSelectedFilesystem:(id)sender
+{
+	if ([[filesystemArrayController selectedObjects] count] > 0)
+	{
+		for(MFClientFS* fs in [filesystemArrayController selectedObjects])
+		{
+			[self deleteFilesystem: fs];
+		}
+	}
+}
+
 # pragma mark View Construction
 - (NSView*)editingViewForFS:(MFClientFS*)fs
 {
@@ -280,14 +291,15 @@
 	}
 }
 
+
 - (void)deleteConfirmationAlertDidEnd:(NSAlert*)alert returnCode:(NSInteger)code contextInfo:(void*)context
 {
 	MFClientFS* fs = (MFClientFS*)context;
-	if (code == NSAlertAlternateReturn)
+	if (code == NSAlertSecondButtonReturn)
 	{
 		
 	}
-	else if (code == NSAlertDefaultReturn)
+	else if (code == NSAlertFirstButtonReturn)
 	{
 		[client deleteFilesystem: fs];
 	}

@@ -40,6 +40,7 @@
 - (IBAction)popupButtonClicked:(id)sender;
 - (IBAction)showPreferences:(id)sender;
 - (IBAction)startMenuItem:(id)sender;
+- (IBAction)deleteSelectedFilesystem:(id)sender;
 
 - (void)editFilesystem:(MFClientFS*)fs;
 - (void)deleteFilesystem:(MFClientFS*)fs;
