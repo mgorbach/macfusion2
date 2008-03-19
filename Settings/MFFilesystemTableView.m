@@ -42,7 +42,9 @@
 		[[[self tableColumns] objectAtIndex:0] setDataCell: cell];
 		[self setDataSource: self];
 		eatEvents = NO;
-		[self registerForDraggedTypes: [NSArray arrayWithObject: kMFFilesystemDragType ]];
+		[self registerForDraggedTypes: [NSArray arrayWithObjects: kMFFilesystemDragType, NSFilesPromisePboardType, nil ]];
+		[self setDraggingSourceOperationMask:NSDragOperationEvery forLocal:NO];
+		[self setDraggingSourceOperationMask:NSDragOperationEvery forLocal:YES];
 	}
 	
 	return self;
@@ -237,6 +239,7 @@
 writeRowsWithIndexes:(NSIndexSet *)rowIndexes 
 	 toPasteboard:(NSPasteboard*)pboard
 {
+	// MFLogS(self, @"Pasteboard writeRows called");
 	NSMutableArray* uuids = [NSMutableArray array];
 	NSUInteger count = [rowIndexes count];
 	
@@ -251,8 +254,9 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
 	
 	if ([uuids count] > 0)
 	{
-		[pboard declareTypes:[NSArray arrayWithObject:kMFFilesystemDragType] owner:self];
+		[pboard declareTypes:[NSArray arrayWithObjects:kMFFilesystemDragType, NSFilesPromisePboardType, nil] owner:self];
 		[pboard setPropertyList:uuids forType:kMFFilesystemDragType];
+		[pboard setPropertyList: [NSArray arrayWithObjects: @"fusion", nil] forType:NSFilesPromisePboardType];
 		return YES;
 	}
 	else
@@ -261,6 +265,14 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
 	}
 	
 	
+}
+
+-(NSArray*)tableView:(MFFilesystemTableView*)tableView
+namesOfPromisedFilesDroppedAtDestination:(NSString*)dest
+forDraggedRowsWithIndexes:(NSIndexSet*)indexes
+{
+	
+	return nil;
 }
 
 - (NSDragOperation)tableView:(NSTableView*)tableView 
