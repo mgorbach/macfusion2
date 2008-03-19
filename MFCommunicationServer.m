@@ -194,7 +194,6 @@ static MFCommunicationServer* sharedServer = nil;
 
 - (void)doInitializationComplete:(NSTimer*)timer
 {
-	// MFLogS(self, @"Timer complete");
 	if ([[MFPreferences sharedPreferences] getBoolForPreference: kMFPrefsAutoloadMenuling])
 	{
 		[[NSWorkspace sharedWorkspace] launchApplication: (NSString*)mfcMenulingBundlePath()];
@@ -208,7 +207,6 @@ static MFCommunicationServer* sharedServer = nil;
 	NSTimer* timer = [NSTimer timerWithTimeInterval:1 target:self selector:@selector(doInitializationComplete:)
 										   userInfo:nil repeats:NO];
 	[[NSRunLoop currentRunLoop] addTimer:timer forMode:NSDefaultRunLoopMode];
-	[[NSRunLoop currentRunLoop] run];
 }
 
 

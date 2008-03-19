@@ -20,6 +20,7 @@
 #import "MFClient.h"
 #import "MFConstants.h"
 #import "MFClientFS.h"
+#import "MGNSImage.h"
 
 @implementation MFFilesystemTableView
 
@@ -268,11 +269,21 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
 }
 
 -(NSArray*)tableView:(MFFilesystemTableView*)tableView
-namesOfPromisedFilesDroppedAtDestination:(NSString*)dest
+namesOfPromisedFilesDroppedAtDestination:(NSURL*)dest
 forDraggedRowsWithIndexes:(NSIndexSet*)indexes
 {
+	NSInteger index = [indexes firstIndex];
+	NSInteger i;
+	NSMutableArray* files = [NSMutableArray array];
+	for( i=0; i < [indexes count]; i++ )
+	{
+		MFClientFS* fs = [self.filesystems objectAtIndex: index];
+		NSString* filename = [[MFClient sharedClient] createMountIconForFilesystem:fs
+														   atPath:dest];
+		[files addObject: filename];
+	}
 	
-	return nil;
+	return [files copy];
 }
 
 - (NSDragOperation)tableView:(NSTableView*)tableView 
@@ -303,6 +314,20 @@ forDraggedRowsWithIndexes:(NSIndexSet*)indexes
 	}
 	[self selectRowIndexes: toSelect byExtendingSelection:NO];
 	return YES;
+}
+
+- (NSImage *)dragImageForRowsWithIndexes:(NSIndexSet *)theRowIndexes
+							tableColumns:(NSArray *)theTableColumns
+								   event:(NSEvent *)theEvent
+								  offset:(NSPointPointer)theOffset
+{
+	NSInteger myIndex = [theRowIndexes firstIndex];
+	MFClientFS* fs = [self.filesystems objectAtIndex: myIndex];
+	NSImage* image = [[NSImage alloc] initWithContentsOfFile: [fs imagePath]];
+	CIImage* ciRep = [image ciImageRepresentation];
+	ciRep = [ciRep flippedImage];
+	NSImage* bla = [[ciRep ciImageByScalingToSize: NSMakeSize(48, 48)] nsImageRepresentation];
+	return bla;
 }
  
 @synthesize filesystems, controller;

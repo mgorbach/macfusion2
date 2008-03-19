@@ -61,6 +61,7 @@
 # pragma mark Handling Notifications
 - (void)awakeFromNib
 {
+
 	NSCell* testCell = [[MFFilesystemCell alloc] init];
 	[[filesystemTableView tableColumnWithIdentifier:@"test"] 
 	 setDataCell: testCell];
@@ -86,7 +87,8 @@
 
 - (void)applicationWillFinishLaunching:(NSNotification*)note
 {
-
+	[NSApp activateIgnoringOtherApps:YES];
+	[[filesystemTableView window] makeKeyWindow];
 }
 
 # pragma mark Table Delegate Methods
@@ -110,7 +112,6 @@
 
 - (IBAction)showPreferences:(id)sender
 {
-	// MFLogS(self, @"ShowPreferences initialized");
 	if (!preferencesController)
 		preferencesController = [[MFPreferencesController alloc] initWithWindowNibName:@"MFPreferences"];
 	[preferencesController showWindow:self];
@@ -458,7 +459,7 @@
 - (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename
 {
 	NSString* fsLocation = [@"~/Library/Application Support/Macfusion/Filesystems" stringByExpandingTildeInPath];
-	MFLogS(self, @"Lastpath %@", [filename stringByDeletingLastPathComponent]);
+	// MFLogS(self, @"Lastpath %@", [filename stringByDeletingLastPathComponent]);
 	if ([[filename stringByDeletingLastPathComponent] isEqualToString: fsLocation])
 	{
 		NSString* uuid = [[filename lastPathComponent] stringByDeletingPathExtension];
@@ -494,7 +495,7 @@
 
 - (BOOL)validateFSMenuItem:(NSMenuItem*)item
 {
-	MFLogS(self, @"Validating FS item %@", item );
+	// MFLogS(self, @"Validating FS item %@", item );
 	if ([[item title] isEqualToString: @"Mount"])
 	{
 		return ([menuArgumentFS isUnmounted] || [menuArgumentFS isFailedToMount]);

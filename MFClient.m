@@ -186,7 +186,7 @@ static MFClient* sharedClient = nil;
 	{
 		BOOL agentRunning = NO;
 		NSArray* runingIDs = [[[NSWorkspace sharedWorkspace] launchedApplications] valueForKey:@"NSApplicationBundleIdentifier"];
-		MFLogS(self, @"Runing ids are %@", runingIDs);
+		// MFLogS(self, @"Runing ids are %@", runingIDs);
 		for(NSString* id in runingIDs)
 		{
 			if ([id isEqualToString: kMFAgentBundleIdentifier])
@@ -216,7 +216,6 @@ static MFClient* sharedClient = nil;
 		else
 		{
 			// Try to start the agent process
-			
 			MFLogS(self, @"Agent not runing");
 			NSAlert* serverStartAlert = [NSAlert new];
 			[serverStartAlert setMessageText: @"The macfusion agent process is not started"];
@@ -542,6 +541,26 @@ OSStatus myKeychainCallback (
 - (void)handleApplicationTerminatingNotification:(NSNotification*)note
 {
 	// [self writeOrdering];
+}
+
+- (NSString*)createMountIconForFilesystem:(MFClientFS*)fs
+								   atPath:(NSURL*)dirPathURL
+{
+	if (![fs isPersistent]) // We shouldn't be creating a mount icon for a non-persistent fs
+		return nil;
+	
+	NSString* dirPath = [dirPathURL path];
+	NSString* filename = [NSString stringWithFormat: @"%@.fusion", [fs name]];
+	NSString* fullPath = [dirPath stringByAppendingPathComponent: filename];
+	NSDictionary* dict = [NSDictionary dictionaryWithObjectsAndKeys:
+						  [fs uuid], KMFFSUUIDParameter, nil];
+	[dict writeToFile: fullPath
+		   atomically: YES];
+	NSImage* iconImage = [NSImage imageNamed:@"macfusionIcon.icns"];
+	[[NSWorkspace sharedWorkspace] setIcon: iconImage
+								   forFile:fullPath
+								   options:0];
+	return filename;
 }
 
 @synthesize delegate, persistentFilesystems, temporaryFilesystems, plugins, recents;

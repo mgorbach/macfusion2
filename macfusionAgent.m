@@ -18,12 +18,10 @@
 #import "MFMainController.h"
 
 int main (int argc, const char * argv[]) {
-    NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
-
 	MFMainController* primaryController = [MFMainController sharedController];
-	[primaryController initialize];
-	
-    [pool drain];
+	[NSApplication sharedApplication];
+	[NSApp setDelegate: primaryController];
+	[NSApp run];
     return 0;
 }
 

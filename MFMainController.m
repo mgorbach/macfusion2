@@ -22,6 +22,7 @@
 #import "MFCommunicationServer.h"
 #include <sys/xattr.h>
 #import "MFLoggingController.h"
+#import "MFConstants.h"
 
 @implementation MFMainController
 static MFMainController* sharedController = nil;
@@ -58,7 +59,6 @@ static MFMainController* sharedController = nil;
 - (void)startRunloop
 {
 	NSRunLoop* runloop = [NSRunLoop currentRunLoop];
-
 	[runloop run];
 }
 
@@ -66,11 +66,48 @@ static MFMainController* sharedController = nil;
 {
 	MFPluginController* pluginController = [MFPluginController sharedController];
 	MFFilesystemController* filesystemController = [MFFilesystemController sharedController];
-//	[[MFLoggingController sharedController] setPrintToStandardOut: NO];
 	[pluginController loadPlugins];
 	[filesystemController loadFilesystems];
-	
 	[[MFCommunicationServer sharedServer] startServingRunloop];
 }
+
+- (void)applicationDidFinishLaunching:(NSNotification *)aNotification
+{
+	[self initialize];
+}
+
+# pragma mark Opening Files
+- (BOOL)application:(NSApplication *)theApplication 
+		   openFile:(NSString *)filePath
+{
+	NSDictionary* fileDict = [NSDictionary dictionaryWithContentsOfFile: filePath];
+	NSString* uuid = [fileDict objectForKey: KMFFSUUIDParameter];
+	if (!uuid)
+	{
+		MFLogS(self, @"Asked to open bad file at pah %@", filePath);
+		return NO;
+	}
+	
+	MFServerFS* fs = [[MFFilesystemController sharedController] filesystemWithUUID: uuid];
+	if (!fs)
+	{
+		MFLogS(self, @"Can not find filesystem references at by file with uuid %@", uuid);
+		return NO;
+	}
+
+	if ([fs isMounted])
+	{
+		[[NSWorkspace sharedWorkspace] selectFile:nil
+						 inFileViewerRootedAtPath:[fs mountPath]];
+	}
+	else if ([fs isUnmounted] || [fs isFailedToMount])
+	{
+		[fs mount];
+	}
+	
+	return YES;
+}
+
+
 
 @end

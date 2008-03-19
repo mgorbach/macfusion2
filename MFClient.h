@@ -63,5 +63,7 @@
 // UI Stuff
 - (void)moveUUIDS:(NSArray*)uuid 
 			toRow:(NSUInteger)row;
+- (NSString*)createMountIconForFilesystem:(MFClientFS*)fs
+								   atPath:(NSURL*)path;
 
 @end
