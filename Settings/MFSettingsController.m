@@ -167,7 +167,7 @@
 		}
 		else
 		{
-			MFLogS(self, @"No main view found");
+			MFLogSO(self, fs, @"No main view found for fs %@", fs);
 		}
 		
 
@@ -202,7 +202,7 @@
 	}
 	else
 	{
-		MFLogS(self, @"No view loaded");
+		MFLogSO(self, fs, @"No view loaded for fs %@", fs);
 		return nil;
 	}
 }
@@ -288,7 +288,7 @@
 	}
 	else
 	{
-		MFLogS(self, @"Can't delete FS");
+		MFLogSO(self, fs, @"Can't delete FS %@", fs);
 	}
 }
 
@@ -380,7 +380,7 @@
 		}
 		else
 		{
-			MFLogS(@"No error");
+			MFLogSO(self, fs, @"No error for fs %@", fs);
 		}
 	}
 }
@@ -394,7 +394,7 @@
 		BOOL ok = [controller commitEditing];
 		if (!ok)
 		{
-			MFLogS(self, @"Failed to commit edits %@", controller);
+			MFLogSO(self, fs, @"Failed to commit edits %@ for fs %@", controller, fs);
 		}
 	}
 	
@@ -424,7 +424,7 @@
 		BOOL ok = [controller commitEditing];
 		if (!ok)
 		{
-			MFLogS(self, @"Failed to commit edits %@", controller);
+			MFLogSO(self, fs, @"Failed to commit edits %@ for fs %@", controller, fs);
 		}
 	}
 	[fs endEditingAndCommitChanges: NO];

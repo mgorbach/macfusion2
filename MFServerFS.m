@@ -18,7 +18,7 @@
 #import "MFConstants.h"
 #import "MFPluginController.h"
 #import "MFError.h"
-#import "MFLoggingController.h"
+#import "MFLogging.h"
 #include <sys/xattr.h>
 
 #define FS_DIR_PATH @"~/Library/Application Support/Macfusion/Filesystems"
@@ -349,7 +349,7 @@
 							[@"org.mgorbach.macfusion.xattr.uuid" cStringUsingEncoding:NSUTF8StringEncoding],
 							[value cStringUsingEncoding: NSUTF8StringEncoding], 
 							[value lengthOfBytesUsingEncoding: NSUTF8StringEncoding] *sizeof(char), 0, 0);
-	// MFLogS(self, @"Mount point tag responds %d", response);
+	MFLogS(self, @"Mount point tag responds %d", response);
 }
 
 - (BOOL)setupMountPoint
@@ -447,7 +447,6 @@
 		timer = [self newTimeoutTimer];
 		[task launch];
 		MFLogS(self, @"Task launched OK");
-		[self tagMountPoint];
 	}
 	else
 	{

@@ -87,7 +87,7 @@ static MFCommunicationServer* sharedServer = nil;
 - (void)vendDisributedObject
 {
 	NSConnection* connection = [NSConnection defaultConnection];
-	// TODO: Vend a proxy to set up protocol instead of, um , everything
+	// TODO: Vend a proxy to set up protocol
 	[connection setRootObject:self];
 	if ([connection registerName:kMFDistributedObjectName] == YES)
 	{

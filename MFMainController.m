@@ -21,7 +21,7 @@
 #import "MFFilesystem.h"
 #import "MFCommunicationServer.h"
 #include <sys/xattr.h>
-#import "MFLoggingController.h"
+#import "MFLogging.h"
 #import "MFConstants.h"
 
 @implementation MFMainController

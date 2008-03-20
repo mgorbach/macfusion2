@@ -16,13 +16,13 @@
 
 #import "MFSecurity.h"
 #import "MFClientFS.h"
-#import "MFLoggingController.h"
+#import "MFLogging.h"
 #import "MFNetworkFS.h"
 #define self @"SSHFS_ASKPASS"
 
 int main(int argc, char *argv[])
 {
-	[[MFLoggingController sharedController] setPrintToStandardOut: NO];
+	[[MFLogging sharedLogging] setPrintToStandardOut: NO];
 	NSString* token = [[[NSProcessInfo processInfo] environment] objectForKey: @"SSHFS_TOKEN"];
 	NSString* password;
 	

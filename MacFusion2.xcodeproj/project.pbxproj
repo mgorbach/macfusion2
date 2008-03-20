@@ -97,8 +97,8 @@
 		D4B14BCA0CE03D25003195A3 /* sshfs.plist in Resources */ = {isa = PBXBuildFile; fileRef = D4B14BAB0CE03C84003195A3 /* sshfs.plist */; };
 		D4B14BCB0CE03D25003195A3 /* sshfs-static in Resources */ = {isa = PBXBuildFile; fileRef = D4B14BAC0CE03C84003195A3 /* sshfs-static */; };
 		D4B14D740CE195CB003195A3 /* mfctl.m in Sources */ = {isa = PBXBuildFile; fileRef = D4B14D730CE195CB003195A3 /* mfctl.m */; };
-		D4B14EE30CE2468B003195A3 /* MFLoggingController.h in Headers */ = {isa = PBXBuildFile; fileRef = D4B14EE10CE2468B003195A3 /* MFLoggingController.h */; };
-		D4B14EE40CE2468B003195A3 /* MFLoggingController.m in Sources */ = {isa = PBXBuildFile; fileRef = D4B14EE20CE2468B003195A3 /* MFLoggingController.m */; };
+		D4B14EE30CE2468B003195A3 /* MFLogging.h in Headers */ = {isa = PBXBuildFile; fileRef = D4B14EE10CE2468B003195A3 /* MFLogging.h */; };
+		D4B14EE40CE2468B003195A3 /* MFLogging.m in Sources */ = {isa = PBXBuildFile; fileRef = D4B14EE20CE2468B003195A3 /* MFLogging.m */; };
 		D4B657990D0DE41300ED34B3 /* MFClient.h in Headers */ = {isa = PBXBuildFile; fileRef = D4B657970D0DE41300ED34B3 /* MFClient.h */; };
 		D4B6579A0D0DE41300ED34B3 /* MFClient.m in Sources */ = {isa = PBXBuildFile; fileRef = D4B657980D0DE41300ED34B3 /* MFClient.m */; };
 		D4C6334D0D7644B300734165 /* MGFadingWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = D4C6334C0D7644B300734165 /* MGFadingWindow.m */; };
@@ -374,8 +374,8 @@
 		D4B14C850CE0455A003195A3 /* MFPluginController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MFPluginController.m; sourceTree = "<group>"; };
 		D4B14D730CE195CB003195A3 /* mfctl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = mfctl.m; sourceTree = "<group>"; };
 		D4B14E730CE198AC003195A3 /* mfctl */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = mfctl; sourceTree = BUILT_PRODUCTS_DIR; };
-		D4B14EE10CE2468B003195A3 /* MFLoggingController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFLoggingController.h; sourceTree = "<group>"; };
-		D4B14EE20CE2468B003195A3 /* MFLoggingController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MFLoggingController.m; sourceTree = "<group>"; };
+		D4B14EE10CE2468B003195A3 /* MFLogging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFLogging.h; sourceTree = "<group>"; };
+		D4B14EE20CE2468B003195A3 /* MFLogging.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MFLogging.m; sourceTree = "<group>"; };
 		D4B14FC00CE25A88003195A3 /* MFFilesystemController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFFilesystemController.h; sourceTree = "<group>"; };
 		D4B14FC10CE25A88003195A3 /* MFFilesystemController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MFFilesystemController.m; sourceTree = "<group>"; };
 		D4B657970D0DE41300ED34B3 /* MFClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFClient.h; sourceTree = "<group>"; };
@@ -686,8 +686,8 @@
 				D412AFC00D596E740091C12B /* Utility */,
 				D4905C6A0D394A1500E21C1E /* Model */,
 				D4905BAA0D38061F00E21C1E /* Protocols */,
-				D4B14EE10CE2468B003195A3 /* MFLoggingController.h */,
-				D4B14EE20CE2468B003195A3 /* MFLoggingController.m */,
+				D4B14EE10CE2468B003195A3 /* MFLogging.h */,
+				D4B14EE20CE2468B003195A3 /* MFLogging.m */,
 				D4D6A0D70D025B4A00BC2E2D /* MFConstants.h */,
 				D46E4C0D0D02593B004926CE /* MFConstants.m */,
 				D4B657970D0DE41300ED34B3 /* MFClient.h */,
@@ -825,7 +825,7 @@
 				D4E51FE60CE03AC3009B1A30 /* MFMainController.h in Headers */,
 				D4E51FE70CE03AC3009B1A30 /* MFPlugin.h in Headers */,
 				D4E51FE80CE03AC3009B1A30 /* MFFilesystem.h in Headers */,
-				D4B14EE30CE2468B003195A3 /* MFLoggingController.h in Headers */,
+				D4B14EE30CE2468B003195A3 /* MFLogging.h in Headers */,
 				D4D6A0D80D025B4A00BC2E2D /* MFConstants.h in Headers */,
 				D439D5950D09E4390025574A /* MFServerProtocol.h in Headers */,
 				D4B657990D0DE41300ED34B3 /* MFClient.h in Headers */,
@@ -1117,7 +1117,7 @@
 			files = (
 				D4E51FEA0CE03ACA009B1A30 /* MFPlugin.m in Sources */,
 				D4E51FEB0CE03ACA009B1A30 /* MFFilesystem.m in Sources */,
-				D4B14EE40CE2468B003195A3 /* MFLoggingController.m in Sources */,
+				D4B14EE40CE2468B003195A3 /* MFLogging.m in Sources */,
 				D46E4C0E0D02593B004926CE /* MFConstants.m in Sources */,
 				D4B6579A0D0DE41300ED34B3 /* MFClient.m in Sources */,
 				D4CEE0F40D3045590064042E /* MFClientFS.m in Sources */,

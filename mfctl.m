@@ -16,7 +16,7 @@
 // limitations under the License.
 
 #import <Foundation/Foundation.h>
-#import "MFLoggingController.h"
+#import "MFLogging.h"
 #import "MFServerProtocol.h"
 #import "MFClient.h"
 #import "MFClientFS.h"

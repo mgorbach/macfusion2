@@ -14,13 +14,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#import "MFLoggingController.h"
+#import "MFLogging.h"
+#import "MFFilesystem.h"
+
 #define LOG_FILE_PATH @"~/Library/Logs/MacFusion2.log"
 
 // Print to logging system
 void MFLog(NSString* format, ...)
 {
-	MFLoggingController* logger = [MFLoggingController sharedController];
+	MFLogging* logger = [MFLogging sharedLogging];
 	
 	// get a reference to the arguments on the stack that follow
     // the format paramter
@@ -33,7 +35,7 @@ void MFLog(NSString* format, ...)
     string = [[NSString alloc] initWithFormat: format
 									arguments: argList];
     va_end  (argList);
-	[logger logMessage:string ofType:kMFLogTypeCore sender:nil]; 
+	[logger logMessage:string ofType:0 object: nil sender:@"MFCORE"]; 
 	
     [string release];
 }
@@ -41,7 +43,7 @@ void MFLog(NSString* format, ...)
 
 void MFLogP(int type, NSString* format, ...)
 {
-	MFLoggingController* logger = [MFLoggingController sharedController];
+	MFLogging* logger = [MFLogging sharedLogging];
 	
 	// get a reference to the arguments on the stack that follow
     // the format paramter
@@ -54,14 +56,14 @@ void MFLogP(int type, NSString* format, ...)
     string = [[NSString alloc] initWithFormat: format
 									arguments: argList];
     va_end  (argList);
-	[logger logMessage:string ofType:type sender:nil]; 
+	[logger logMessage:string ofType:type object: nil sender:nil]; 
 	
     [string release];
 }
 
 void MFLogS(id sender, NSString* format, ...)
 {
-	MFLoggingController* logger = [MFLoggingController sharedController];
+	MFLogging* logger = [MFLogging sharedLogging];
 	
 	// get a reference to the arguments on the stack that follow
     // the format paramter
@@ -74,7 +76,27 @@ void MFLogS(id sender, NSString* format, ...)
     string = [[NSString alloc] initWithFormat: format
 									arguments: argList];
     va_end  (argList);
-	[logger logMessage:string ofType:0 sender:sender]; 
+	[logger logMessage:string ofType:0 object: nil sender:sender]; 
+	
+    [string release];
+}
+
+void MFLogSO(id sender, id object, NSString* format, ...)
+{
+	MFLogging* logger = [MFLogging sharedLogging];
+	
+	// get a reference to the arguments on the stack that follow
+    // the format paramter
+    va_list argList;
+    va_start (argList, format);
+	
+    // NSString luckily provides us with this handy method which
+    // will do all the work for us, including %@
+    NSString *string;
+    string = [[NSString alloc] initWithFormat: format
+									arguments: argList];
+    va_end  (argList);
+	[logger logMessage:string ofType:0 object:object sender:sender]; 
 	
     [string release];
 }
@@ -99,92 +121,65 @@ void MFPrint(NSString* format, ...)
 }
 
 
-@implementation MFLoggingController
+@implementation MFLogging
 
-static MFLoggingController* sharedController = nil;
+static MFLogging* sharedLogging = nil;
 
-+ (MFLoggingController*) sharedController
++ (MFLogging*) sharedLogging
 {
-	if (sharedController == nil)
+	if (sharedLogging == nil)
 		[[self alloc] init];
 	
-	return sharedController;
+	return sharedLogging;
 }
 
 + (id)allocWithZone:(NSZone*)zone
 {
-	if (sharedController == nil)
+	if (sharedLogging == nil)
 	{
-		sharedController = [super allocWithZone:zone];
-		return sharedController;
+		sharedLogging = [super allocWithZone:zone];
+		return sharedLogging;
 	}
 	
 	return nil;
 }
 
-- (void)registerNotifications
-{
-	// We need notifications here, but what about the differnece between
-	// client and server processes?
-}
-
 - (void)init
 {
-	// Nothing here yet
+	fd = -1;
 	stdOut = YES;
 }
 
-- (NSString*)descriptionForObject:(id)object
+- (void)setupLogFile
 {
-	if (object == nil)
-	{
-		return @"NILL";
-	}
-	else
-	{
-		return [object description];
-	}
-}
-
-- (NSFileHandle*)handleForLogfile
-{
-	NSFileManager* fm = [NSFileManager defaultManager];
-	NSString* filePath = [ LOG_FILE_PATH stringByExpandingTildeInPath ];
-	
-	if (![fm fileExistsAtPath:filePath])
-	{
-		[fm createFileAtPath:filePath contents:nil attributes:nil];
-	}
-	
-	fileHandle = [NSFileHandle fileHandleForWritingAtPath:filePath];
-	return fileHandle;
-}
-
-- (void)logMessageToFile:(NSString*)message ofType:(int)type sender:(id)sender
-{
-	NSString* description = [self descriptionForObject: sender];
-	NSString* writeString = [NSString stringWithFormat: @"%@: %@\n",
-							 description, message];
-	
-	NSFileHandle* handle = [self handleForLogfile];
-	[handle truncateFileAtOffset: [fileHandle seekToEndOfFile]];
-	[handle writeData: [writeString dataUsingEncoding:NSUTF8StringEncoding]];
-	[handle synchronizeFile];
-}
-
-- (void)logMessage:(NSString*)message ofType:(int)type sender:(id)sender
-{
-	message = [message stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]];
-	[self logMessageToFile:message ofType:type sender:sender];
 	if (stdOut)
-	{
-		if (!sender)
-			printf("%s\n", [message cStringUsingEncoding:NSUTF8StringEncoding]);
-		else
-			printf("%s: %s\n", [[sender description] cStringUsingEncoding:NSUTF8StringEncoding],
-				   [message cStringUsingEncoding: NSUTF8StringEncoding]);
-	}
+		aslClient = asl_open(NULL, MF_ASL_SERVICE_NAME, ASL_OPT_STDERR);
+	else
+		aslClient = asl_open(NULL, MF_ASL_SERVICE_NAME, 0);
+	
+	fd = open( [[LOG_FILE_PATH stringByExpandingTildeInPath] cStringUsingEncoding: NSUTF8StringEncoding],
+			  O_CREAT | O_WRONLY | O_APPEND, S_IRUSR | S_IWUSR );
+	asl_add_log_file(aslClient, fd);
+	asl_set_filter(aslClient, ASL_FILTER_MASK_UPTO(ASL_LEVEL_INFO));
+}
 
+- (void)logMessage:(NSString*)message 
+			ofType:(NSInteger)type 
+			object:(id)object 
+			sender:(id)sender
+{
+	if (fd == -1)
+		[self setupLogFile];
+	
+	message = [message stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]];
+	aslmsg m = asl_new(ASL_TYPE_MSG);
+	asl_set(m, ASL_KEY_FACILITY, MF_ASL_SERVICE_NAME);
+	if ([sender isKindOfClass: [MFFilesystem class]])
+		asl_set(m, ASL_KEY_UUID, [[(MFFilesystem*)sender uuid] cStringUsingEncoding: NSUTF8StringEncoding]);
+	if ([object isKindOfClass: [MFFilesystem class]])
+		asl_set(m, ASL_KEY_UUID, [[(MFFilesystem*)object uuid] cStringUsingEncoding: NSUTF8StringEncoding]);
+	asl_set(m, ASL_KEY_SUBSYSTEM, [[sender description] cStringUsingEncoding: NSUTF8StringEncoding]);
+	asl_log(aslClient, m, ASL_LEVEL_NOTICE, [message cStringUsingEncoding: NSUTF8StringEncoding]);
 	return;
 }
 
@@ -195,7 +190,8 @@ static MFLoggingController* sharedController = nil;
 
 - (void)finalize
 {
-	[fileHandle closeFile];
+	asl_close(aslClient);
+	close(fd);
 	[super finalize];
 }
 

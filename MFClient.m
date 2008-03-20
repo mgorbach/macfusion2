@@ -147,7 +147,7 @@ static MFClient* sharedClient = nil;
 		if (fs)
 			[self storeFilesystem: fs];
 		else
-			MFLogS(self, @"Could not init client fs from server fs %@", remoteFS);
+			MFLogSO(self, remoteFS, @"Could not init client fs from server fs %@", remoteFS);
 	}
 	
 	// Fill Recents

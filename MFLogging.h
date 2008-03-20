@@ -15,6 +15,13 @@
 // limitations under the License.
 
 #import <Cocoa/Cocoa.h>
+#import <asl.h>
+
+#define MF_ASL_SERVICE_NAME "org.mgorbach.macfusion"
+#define ASL_KEY_SUBSYSTEM "Subsystem"
+#define ASL_KEY_UUID "UUID"
+
+
 enum MFLogType {
 	kMFLogTypeCore,
 	kMFLogTypeEvent,
@@ -24,14 +31,21 @@ enum MFLogType {
 void MFLogP(int type, NSString* format, ...);
 void MFLog(NSString* format, ...);
 void MFPrint(NSString* format, ...);
+void MFLogS(id sender, NSString* format, ...);
+void MFLogSO(id sender, id object, NSString* format, ...);
 
-@interface MFLoggingController : NSObject {
+@interface MFLogging : NSObject {
 	NSFileHandle* fileHandle;
 	BOOL stdOut;
+	aslclient aslClient;
+	int fd;
 }
 
-+ (MFLoggingController*)sharedController;
-- (void)logMessage:(NSString*)message ofType:(int)type sender:(id)sender;
++ (MFLogging*)sharedLogging;
+- (void)logMessage:(NSString*)message 
+			ofType:(NSInteger)type 
+			object:(id)object 
+			sender:(id)sender;
 - (void)setPrintToStandardOut:(BOOL)b;
 
 @end

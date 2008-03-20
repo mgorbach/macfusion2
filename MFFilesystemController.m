@@ -185,7 +185,7 @@ static MFFilesystemController* sharedController = nil;
 	}
 	else
 	{
-		MFLogS(self, @"Failed to create new filesystem with plugin %@",
+		MFLogSO(self, plugin, @"Failed to create new filesystem with plugin %@",
 			   plugin);
 		return nil;
 	}
@@ -395,8 +395,8 @@ static void diskUnMounted(DADiskRef disk, void* mySelf)
     NSString* tokenString = [(NSString *)string autorelease];
 	if ([[tokens allValues] containsObject: fs])
 	{
-		MFLogS(self, @"Uh oh ... adding a second token for an FS already in tokens");
-		MFLogS(self, @"Tokens Before %@", tokens);
+		MFLogSO(self, fs, @"Uh oh ... adding a second token for an FS already in tokens");
+		// MFLogS(self, @"Tokens Before %@", tokens);
 	}
 	
 	[tokens setObject: fs forKey: tokenString];
