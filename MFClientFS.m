@@ -19,6 +19,10 @@
 #import "MFClientPlugin.h"
 #import "MFServerFSProtocol.h"
 #import "MFSecurity.h"
+#import "IconFamily.h"
+#import "MFAdvancedViewController.h"
+#import "MGNSImage.h"
+#import <QuartzCore/QuartzCore.h>
 
 @interface MFClientFS (PrivateAPI)
 - (void)fillInitialData;
@@ -42,7 +46,8 @@
 
 + (NSSet*)keyPathsForValuesAffectingValueForKey:(NSString*)key
 {
-	if ([key isEqualToString: @"displayDictionary"])
+	if ([key isEqualToString: @"displayDictionary"] || 
+		[key isEqualToString: @"imagePath"])
 		return [NSSet setWithObjects: 
 				KMFStatusDict, kMFParameterDict, nil];
 	else
@@ -242,7 +247,7 @@
 - (NSDictionary*)configurationViewControllers
 {
 	NSMutableDictionary* myControllers = [NSMutableDictionary dictionary];
-	NSViewController* macfusionAdvancedController = [[NSViewController alloc] initWithNibName: @"macfusionAdvancedView"
+	NSViewController* macfusionAdvancedController = [[MFAdvancedViewController alloc] initWithNibName: @"macfusionAdvancedView"
 																					   bundle: [NSBundle bundleForClass: [self class]]];
 	[myControllers setObject: macfusionAdvancedController forKey:kMFUIMacfusionAdvancedViewKey];
 	NSDictionary* delegateControllers = [delegate configurationViewControllers];
@@ -253,6 +258,80 @@
 	
 	[myControllers addEntriesFromDictionary: delegateControllers];
 	return [myControllers copy];
+}
+
+- (void)setIconImage:(NSImage*)image
+{
+	if (image == nil)
+	{
+		[self willChangeValueForKey:@"parameters"];
+		[parameters removeObjectForKey: kMFFSVolumeIconPathParameter];
+		[parameters removeObjectForKey: kMFFSVolumeImagePathParameter];
+		[self didChangeValueForKey:@"parameters"];
+		return;
+	}
+	
+	// MFLogS(self, @"Writing image %@", image);
+	BOOL isDir;
+	NSString* iconDirPath = [@"~/Library/Application Support/Macfusion/Icons" stringByExpandingTildeInPath];
+	
+	// Make Icons Directory if needed
+	if (![[NSFileManager defaultManager] fileExistsAtPath:iconDirPath isDirectory:&isDir] || !isDir)
+	{
+		NSError* dirCreateError;
+		BOOL ok = [[NSFileManager defaultManager] createDirectoryAtPath:iconDirPath
+								  withIntermediateDirectories:YES
+												   attributes:nil 
+														error:&dirCreateError];
+		if (!ok)
+		{
+			MFLogS(self, @"Directory create for icon storage failed. Error %@", dirCreateError);
+			return;
+		}
+	}
+	
+	// Write Icon
+	NSString* fullIconPath = [iconDirPath stringByAppendingPathComponent:
+							  [NSString stringWithFormat:@"%@.icns", self.uuid]];
+	if ([[NSFileManager defaultManager] fileExistsAtPath:fullIconPath])
+		[[NSFileManager defaultManager] removeFileAtPath:fullIconPath handler:nil];
+	
+	IconFamily* icon = [[IconFamily alloc] initWithThumbnailsOfImage: image];
+	BOOL writeOK = [icon writeToFile: fullIconPath];
+	if (!writeOK)
+	{
+		MFLogS(self, @"Failed to write to file icon %@", icon);
+		return;
+	}
+
+	// Write Black and White image
+	NSString* fullBWImagePath = [iconDirPath stringByAppendingPathComponent:
+							   [NSString stringWithFormat:@"%@.tiff", self.uuid]];
+	if ([[NSFileManager defaultManager] fileExistsAtPath:fullBWImagePath])
+		[[NSFileManager defaultManager] removeFileAtPath: fullBWImagePath handler:nil];
+	
+	
+	CIFilter* bwFilter = [CIFilter filterWithName:@"CIColorControls"];
+	[bwFilter setDefaults];
+	[bwFilter setValue: [image ciImageRepresentation] forKey: @"inputImage"];
+	[bwFilter setValue: [NSNumber numberWithFloat:0.0] forKey: @"inputSaturation"];
+	CIImage* bwCIImage = [bwFilter valueForKey:@"outputImage"];
+	
+	NSData* tiffData = [[bwCIImage nsImageRepresentation] TIFFRepresentation];
+	writeOK = [tiffData writeToFile:fullBWImagePath atomically:YES];
+	if(!writeOK)
+	{
+		MFLogS(self, @"Failed to write BW tiff file at path %@", fullBWImagePath);
+		return;
+	}
+	
+	// Set the data and cause updates
+	[self willChangeValueForKey:@"parameters"];
+	[parameters setObject:fullIconPath
+				   forKey:kMFFSVolumeIconPathParameter];
+	[parameters setObject:fullBWImagePath
+				   forKey:kMFFSVolumeImagePathParameter];
+	[self didChangeValueForKey:@"parameters"];
 }
 
 @synthesize displayOrder, clientFSDelegate;

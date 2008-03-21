@@ -123,6 +123,14 @@
 		D4E51FE80CE03AC3009B1A30 /* MFFilesystem.h in Headers */ = {isa = PBXBuildFile; fileRef = D42E14540CDFCF9000C81814 /* MFFilesystem.h */; };
 		D4E51FEA0CE03ACA009B1A30 /* MFPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = D42E141C0CDFC99A00C81814 /* MFPlugin.m */; };
 		D4E51FEB0CE03ACA009B1A30 /* MFFilesystem.m in Sources */ = {isa = PBXBuildFile; fileRef = D42E14550CDFCF9000C81814 /* MFFilesystem.m */; };
+		D4E6CCA20D9202AA0022763F /* MFIconSettingImageView.h in Headers */ = {isa = PBXBuildFile; fileRef = D4E6CCA00D9202AA0022763F /* MFIconSettingImageView.h */; };
+		D4E6CCA30D9202AA0022763F /* MFIconSettingImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = D4E6CCA10D9202AA0022763F /* MFIconSettingImageView.m */; };
+		D4E6CEFC0D9223770022763F /* IconFamily.h in Headers */ = {isa = PBXBuildFile; fileRef = D4E6CEF80D9223770022763F /* IconFamily.h */; };
+		D4E6CEFD0D9223770022763F /* IconFamily.m in Sources */ = {isa = PBXBuildFile; fileRef = D4E6CEF90D9223770022763F /* IconFamily.m */; };
+		D4E6CEFE0D9223770022763F /* NSString+CarbonFSRefCreation.m in Sources */ = {isa = PBXBuildFile; fileRef = D4E6CEFA0D9223770022763F /* NSString+CarbonFSRefCreation.m */; };
+		D4E6CEFF0D9223770022763F /* NSString+CarbonFSRefCreation.h in Headers */ = {isa = PBXBuildFile; fileRef = D4E6CEFB0D9223770022763F /* NSString+CarbonFSRefCreation.h */; };
+		D4E6CF3E0D9224DB0022763F /* MFAdvancedViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = D4E6CF3C0D9224DB0022763F /* MFAdvancedViewController.h */; };
+		D4E6CF3F0D9224DB0022763F /* MFAdvancedViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D4E6CF3D0D9224DB0022763F /* MFAdvancedViewController.m */; };
 		D4E983450D7223CE0058AF73 /* MGNSImage.m in Sources */ = {isa = PBXBuildFile; fileRef = D4E983440D7223CE0058AF73 /* MGNSImage.m */; };
 		D4E983470D7223D70058AF73 /* MGNSImage.h in Headers */ = {isa = PBXBuildFile; fileRef = D4E983460D7223D70058AF73 /* MGNSImage.h */; };
 		D4EA61570D8B30ED006D8885 /* MFMainController.m in Sources */ = {isa = PBXBuildFile; fileRef = D42E13E50CDFC69500C81814 /* MFMainController.m */; };
@@ -399,6 +407,14 @@
 		D4DF34CD0D80FC73005C9402 /* topView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = topView.xib; sourceTree = "<group>"; };
 		D4DF353A0D812AA7005C9402 /* MGSmoothingImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MGSmoothingImageView.h; sourceTree = "<group>"; };
 		D4DF353B0D812AA7005C9402 /* MGSmoothingImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MGSmoothingImageView.m; sourceTree = "<group>"; };
+		D4E6CCA00D9202AA0022763F /* MFIconSettingImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MFIconSettingImageView.h; path = Settings/MFIconSettingImageView.h; sourceTree = "<group>"; };
+		D4E6CCA10D9202AA0022763F /* MFIconSettingImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MFIconSettingImageView.m; path = Settings/MFIconSettingImageView.m; sourceTree = "<group>"; };
+		D4E6CEF80D9223770022763F /* IconFamily.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IconFamily.h; sourceTree = "<group>"; };
+		D4E6CEF90D9223770022763F /* IconFamily.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IconFamily.m; sourceTree = "<group>"; };
+		D4E6CEFA0D9223770022763F /* NSString+CarbonFSRefCreation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+CarbonFSRefCreation.m"; sourceTree = "<group>"; };
+		D4E6CEFB0D9223770022763F /* NSString+CarbonFSRefCreation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+CarbonFSRefCreation.h"; sourceTree = "<group>"; };
+		D4E6CF3C0D9224DB0022763F /* MFAdvancedViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFAdvancedViewController.h; sourceTree = "<group>"; };
+		D4E6CF3D0D9224DB0022763F /* MFAdvancedViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MFAdvancedViewController.m; sourceTree = "<group>"; };
 		D4E983440D7223CE0058AF73 /* MGNSImage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MGNSImage.m; sourceTree = "<group>"; };
 		D4E983460D7223D70058AF73 /* MGNSImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MGNSImage.h; sourceTree = "<group>"; };
 		D4EA61500D8B30DA006D8885 /* macfusionAgent.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = macfusionAgent.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -541,12 +557,9 @@
 		D413146B0D7F224900F55B9B /* Shared */ = {
 			isa = PBXGroup;
 			children = (
-				D413146D0D7F225E00F55B9B /* MGTransitioningTabView.h */,
-				D413146E0D7F225E00F55B9B /* MGTransitioningTabView.m */,
-				D4DF353A0D812AA7005C9402 /* MGSmoothingImageView.h */,
-				D4DF353B0D812AA7005C9402 /* MGSmoothingImageView.m */,
-				D41E24280D897F0B00F46F50 /* MFPreferencesController.h */,
-				D41E24290D897F0B00F46F50 /* MFPreferencesController.m */,
+				D4E6CF3B0D9224C70022763F /* Other */,
+				D4E6CF3A0D9224AE0022763F /* Controllers */,
+				D4E6CF380D92249F0022763F /* Views */,
 			);
 			name = Shared;
 			sourceTree = "<group>";
@@ -815,6 +828,41 @@
 			path = SSHFS;
 			sourceTree = "<group>";
 		};
+		D4E6CF380D92249F0022763F /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				D4E6CCA00D9202AA0022763F /* MFIconSettingImageView.h */,
+				D4E6CCA10D9202AA0022763F /* MFIconSettingImageView.m */,
+				D413146D0D7F225E00F55B9B /* MGTransitioningTabView.h */,
+				D413146E0D7F225E00F55B9B /* MGTransitioningTabView.m */,
+				D4DF353A0D812AA7005C9402 /* MGSmoothingImageView.h */,
+				D4DF353B0D812AA7005C9402 /* MGSmoothingImageView.m */,
+			);
+			name = Views;
+			sourceTree = "<group>";
+		};
+		D4E6CF3A0D9224AE0022763F /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				D41E24280D897F0B00F46F50 /* MFPreferencesController.h */,
+				D41E24290D897F0B00F46F50 /* MFPreferencesController.m */,
+				D4E6CF3C0D9224DB0022763F /* MFAdvancedViewController.h */,
+				D4E6CF3D0D9224DB0022763F /* MFAdvancedViewController.m */,
+			);
+			name = Controllers;
+			sourceTree = "<group>";
+		};
+		D4E6CF3B0D9224C70022763F /* Other */ = {
+			isa = PBXGroup;
+			children = (
+				D4E6CEF80D9223770022763F /* IconFamily.h */,
+				D4E6CEF90D9223770022763F /* IconFamily.m */,
+				D4E6CEFA0D9223770022763F /* NSString+CarbonFSRefCreation.m */,
+				D4E6CEFB0D9223770022763F /* NSString+CarbonFSRefCreation.h */,
+			);
+			name = Other;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -844,6 +892,10 @@
 				D41E1DA30D87557900F46F50 /* MFCore.h in Headers */,
 				D41E242A0D897F0C00F46F50 /* MFPreferencesController.h in Headers */,
 				D4CF0E460D8C75B30065A2C3 /* MFPreferences.h in Headers */,
+				D4E6CCA20D9202AA0022763F /* MFIconSettingImageView.h in Headers */,
+				D4E6CEFC0D9223770022763F /* IconFamily.h in Headers */,
+				D4E6CEFF0D9223770022763F /* NSString+CarbonFSRefCreation.h in Headers */,
+				D4E6CF3E0D9224DB0022763F /* MFAdvancedViewController.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1133,6 +1185,10 @@
 				D41E1DA40D87557900F46F50 /* MFCore.m in Sources */,
 				D41E242B0D897F0C00F46F50 /* MFPreferencesController.m in Sources */,
 				D4CF0E470D8C75B30065A2C3 /* MFPreferences.m in Sources */,
+				D4E6CCA30D9202AA0022763F /* MFIconSettingImageView.m in Sources */,
+				D4E6CEFD0D9223770022763F /* IconFamily.m in Sources */,
+				D4E6CEFE0D9223770022763F /* NSString+CarbonFSRefCreation.m in Sources */,
+				D4E6CF3F0D9224DB0022763F /* MFAdvancedViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

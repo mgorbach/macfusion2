@@ -275,6 +275,7 @@
 - (NSArray*)taskArguments
 {
 	NSArray* delegateArgs;
+	// MFLogS(self, @"Parameters in server are %@, implied are %@", parameters, [self parametersWithImpliedValues]);
 	if ([delegate respondsToSelector:@selector(taskArgumentsForParameters:)])
 	{
 		delegateArgs = [delegate taskArgumentsForParameters: [self parametersWithImpliedValues]];

@@ -49,6 +49,7 @@
 
 // UI
 - (NSDictionary*)configurationViewControllers;
+- (void)setIconImage:(NSImage*)image;
 
 @property(readwrite, assign) NSInteger displayOrder;
 @property(readwrite, retain) id<MFClientFSDelegateProtocol> clientFSDelegate; 

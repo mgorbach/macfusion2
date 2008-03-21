@@ -165,6 +165,7 @@
 	[parameterList addObject: kMFFSVolumeIconPathParameter ];
 	[parameterList addObject: kMFFSFilePathParameter ];
 	[parameterList addObject: kMFFSPersistentParameter ];
+	[parameterList addObject: kMFFSVolumeImagePathParameter ];
 	
 	return [parameterList copy];
 }
@@ -205,11 +206,13 @@
 
 - (NSString*)iconPath
 {
-	return [self valueForParameterNamed: kMFFSVolumeIconPathParameter ];
+	NSString* iconPath = [self valueForParameterNamed: kMFFSVolumeIconPathParameter ];
+	return iconPath;
 }
 
 - (NSString*)imagePath
 {
+	// NSLog(@"Calc imagePath parammeter %@  implied %@", parameters, [self parametersWithImpliedValues]);
 	return [self valueForParameterNamed: kMFFSVolumeImagePathParameter ];
 }
 

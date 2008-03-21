@@ -34,7 +34,7 @@
 					<object class="NSTextField" id="761970304">
 						<reference key="NSNextResponder" ref="1005"/>
 						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{20, 20}, {145, 22}}</string>
+						<string key="NSFrame">{{20, 20}, {224, 22}}</string>
 						<reference key="NSSuperview" ref="1005"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="636741428">
@@ -238,7 +238,7 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilderKit</string>
 					<string>com.apple.InterfaceBuilderKit</string>
-					<string>{{21, 1449}, {320, 62}}</string>
+					<string>{{494, 684}, {320, 62}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>{628, 654}</string>
 					<string>{{797, 991}, {320, 62}}</string>
@@ -298,7 +298,7 @@
 			</object>
 		</object>
 		<int key="IBDocument.localizationMode">0</int>
-		<string key="IBDocument.LastKnownRelativeProjectPath">MacFusion2.xcodeproj</string>
+		<string key="IBDocument.LastKnownRelativeProjectPath">../MacFusion2.xcodeproj</string>
 		<int key="IBDocument.defaultPropertyAccessControl">3</int>
 	</data>
 </archive>

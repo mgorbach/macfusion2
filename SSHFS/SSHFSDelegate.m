@@ -52,6 +52,7 @@
 #pragma mark Mounting
 - (NSArray*)taskArgumentsForParameters:(NSDictionary*)parameters
 {
+	// MFLogS(self, @"Parameters received %@", parameters);
 	NSMutableArray* arguments = [NSMutableArray array];
 	[arguments addObject: [NSString stringWithFormat:@"%@@%@:%@",
 						   [parameters objectForKey: kNetFSUserParameter],
