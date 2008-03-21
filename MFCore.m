@@ -178,3 +178,10 @@ NSString* mfcGetMacFuseVersion()
 							  @"/Library/Filesystems/fusefs.fs/Contents/Info.plist"];
 	return [fuseData objectForKey: @"CFBundleVersion"];
 }
+
+BOOL mfcClientIsUIElement()
+{
+	NSDictionary* info = [[NSBundle mainBundle] infoDictionary];
+	BOOL uiElement = [[info objectForKey: @"LSUIElement"] boolValue];
+	return uiElement;
+}

@@ -34,6 +34,9 @@ BOOL mfcSetStateForAgentLoginItem(BOOL state);
 BOOL mfcGetStateForMenulingLoginItem();
 BOOL mfcSetStateForMenulingLoginItem(BOOL state);
 
+// Clients
+BOOL mfcClientIsUIElement();
+
 
 // FUSE versioning
 NSString* mfcGetMacFuseVersion();

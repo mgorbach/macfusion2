@@ -22,6 +22,7 @@
 #import "MGTransitioningTabView.h"
 #import "MFFilesystemTableView.h"
 #import "MFPreferencesController.h"
+#import "MFCore.h"
 
 @interface MFSettingsController(PrivateAPI)
 - (BOOL)validateFSMenuItem:(NSMenuItem*)item;
@@ -77,18 +78,25 @@
 					  keyEquivalent:@""];
 	
 	[[filesystemTableView window] center];
+
 	[filesystemTableView bind:@"filesystems"
 					 toObject:filesystemArrayController
 				  withKeyPath:@"arrangedObjects"
 					  options:nil];
 	[filesystemTableView setController: self];
 	fsBeingEdited = nil;
+	NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
+	[nc addObserver:self
+		   selector:@selector(handleConnectionDidDie:)
+			   name:NSConnectionDidDieNotification
+			 object:nil];
 }
 
 - (void)applicationWillFinishLaunching:(NSNotification*)note
 {
 	[NSApp activateIgnoringOtherApps:YES];
 	[[filesystemTableView window] makeKeyWindow];
+		[[filesystemTableView window] makeMainWindow];
 }
 
 # pragma mark Table Delegate Methods
@@ -521,6 +529,63 @@
 - (void)windowWillClose:(NSWindow*)window
 {
 	[NSApp terminate:self];
+}
+
+# pragma mark Error Recovery
+- (void)finalFaliureAlertDidEnd:(NSAlert*)alert
+					 returnCode:(NSInteger)returnValue
+					contextInfo:(void*)context
+{
+	[NSApp terminate: self];
+}
+
+- (void)connectionDidDieAlertDidEnd:(NSAlert*)alert
+						 returnCode:(NSInteger)returnValue 
+						contextInfo:(void*)context
+{
+	[[alert window] orderOut:self];
+	if (returnValue == NSAlertFirstButtonReturn)
+		[NSApp terminate: self];
+	else if (returnValue == NSAlertSecondButtonReturn)
+	{
+		NSString* agentPath = mfcAgentBundlePath();
+		[[NSWorkspace sharedWorkspace] launchApplication: agentPath];
+		[[NSRunLoop currentRunLoop] runUntilDate:[[NSDate date] addTimeInterval: 1.5]];
+		if ([client establishCommunication])
+			[client fillInitialStatus];
+		else
+		{
+			NSAlert* finalFaliureAlert = [NSAlert alertWithMessageText:@"Failed to restart Macfusion Agent"
+														 defaultButton:@"Quit"
+													   alternateButton:@"" 
+														   otherButton:@""
+											 informativeTextWithFormat:@"The Macfusion Agent failed to restart.\nMacfusion must quit."];
+			[finalFaliureAlert setAlertStyle: NSCriticalAlertStyle];
+			[finalFaliureAlert beginSheetModalForWindow:[filesystemTableView window]
+										  modalDelegate:self
+										 didEndSelector:@selector(finalFaliureAlertDidEnd:returnCode:contextInfo:)
+											contextInfo:nil];
+		}
+	}
+}
+
+- (void)handleConnectionDidDie:(NSNotification*)note
+{
+	if (mfcClientIsUIElement())
+		[NSApp terminate:self];
+	
+	NSAlert* connectDidDieAlert = [[NSAlert alloc] init];
+	[connectDidDieAlert addButtonWithTitle:@"Quit"];
+	[connectDidDieAlert addButtonWithTitle:@"Restart Agent"];
+	[connectDidDieAlert setAlertStyle: NSCriticalAlertStyle];
+	[connectDidDieAlert setMessageText:@"The Macfusion Agent has quit unexpectedly"];
+	[connectDidDieAlert setInformativeText:@"Would you like to try and restart the agent so macfusion can \
+	 continue working?\nOtherwise, Macfusion must Quit."];
+	[connectDidDieAlert beginSheetModalForWindow:[filesystemTableView window]
+								   modalDelegate:self
+								  didEndSelector:@selector(connectionDidDieAlertDidEnd:returnCode:contextInfo:)
+									 contextInfo:nil];
+	
 }
 
 - (void)finalize

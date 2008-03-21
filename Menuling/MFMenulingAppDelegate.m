@@ -88,7 +88,11 @@ OSStatus MyHotKeyHandler(EventHandlerCallRef nextHandler,EventRef theEvent,
 	[statusItem setHighlightMode: YES];
 	[statusItem setImage: menuIcon];
 	[statusItem setAlternateImage: menuIconSelected];
-
+	NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
+	[nc addObserver:self
+		   selector:@selector(handleConnectionDidDie:)
+			   name:NSConnectionDidDieNotification
+			 object:nil];
 }
 
 - (void)connectToServer:(id)sender
@@ -258,6 +262,14 @@ OSStatus MyHotKeyHandler(EventHandlerCallRef nextHandler,EventRef theEvent,
 - (void)quit:(id)sender
 {
 	[NSApp terminate: self];
+}
+
+# pragma mark Error Handling
+- (void)handleConnectionDidDie:(NSNotification*)note
+{
+	// We won't try to recover since we're a background app. Let's just die ...
+	MFLogS(self, @"Terminating due to dead agent connection");
+	[NSApp terminate:self];
 }
 
 @end

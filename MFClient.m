@@ -31,6 +31,7 @@
 - (void)loadOrdering;
 - (void)setupKeychainMonitoring;
 - (void)writeOrdering;
+- (void)initializeIvars;
 // Security monitoring
 
 @property(readwrite, retain) NSMutableArray* persistentFilesystems;
@@ -101,6 +102,7 @@ static MFClient* sharedClient = nil;
 		   selector:@selector(handleApplicationTerminatingNotification:)
 			   name:NSApplicationWillTerminateNotification
 			 object:nil];
+
 }
 
 - (id) init
@@ -108,20 +110,26 @@ static MFClient* sharedClient = nil;
 	self = [super init];
 	if (self != nil) {
 		[self registerForGeneralNotifications];
-		persistentFilesystems = [NSMutableArray array];
-		temporaryFilesystems = [NSMutableArray array];
-		plugins = [NSMutableArray array];
-		recents = [NSMutableArray array];
+		[self initializeIvars];
 		[self setupKeychainMonitoring];
-		// setStateForAgentLoginItem(YES);
-		triedBootstrap = NO;
 	}
 	return self;
 }
 
 
+- (void)initializeIvars
+{
+	persistentFilesystems = [NSMutableArray array];
+	temporaryFilesystems = [NSMutableArray array];
+	plugins = [NSMutableArray array];
+	recents = [NSMutableArray array];
+}
+
 - (void)fillInitialStatus
 {
+	// Reset everything
+	[self initializeIvars];
+	
 	// Fill plugins
 	NSArray* remotePlugins = [server plugins];
 	NSArray* remoteFilesystems = [server filesystems];

@@ -28,11 +28,14 @@
 	NSMutableArray* recents;
 	id <MFServerProtocol> server;
 	id delegate;
-	bool triedBootstrap;
 }
 
 + (MFClient*)sharedClient;
+
+// Initialization
 - (BOOL)setup;
+- (void)fillInitialStatus;
+- (BOOL)establishCommunication;
 
 // Action methods
 - (MFClientFS*)newFilesystemWithPlugin:(MFClientPlugin*)plugin;
