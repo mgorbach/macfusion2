@@ -34,16 +34,6 @@
 	{
 		NSBundle* b = [NSBundle bundleWithPath:path];
 		bundle = b;
-		NSString* plistPath = [b objectForInfoDictionaryKey:@"MFPluginPlist"];
-		dictionary = [NSMutableDictionary dictionaryWithContentsOfFile: [b pathForResource:plistPath ofType:nil]];
-		if (!dictionary)
-		{
-			// Failed to read from plist
-			return nil;
-		}
-		
-		[dictionary setObject: [b objectForInfoDictionaryKey:@"CFBundleIdentifier"] 
-					   forKey: @"BundleIdentifier"];
 		
 		delegate = [self setupDelegate];
 		if(!delegate)

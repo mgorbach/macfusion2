@@ -18,7 +18,6 @@
 #import "MFFSDelegateProtocol.h"
 
 @interface MFPlugin : NSObject {
-	NSMutableDictionary* dictionary;
 	NSBundle* bundle;
 	id <MFFSDelegateProtocol> delegate;
 	
@@ -27,7 +26,6 @@
 - (id <MFFSDelegateProtocol>)delegate;
 - (id <MFFSDelegateProtocol>)setupDelegate;
 
-@property(readonly) NSDictionary* dictionary;
 @property(readonly) NSString* shortName;
 @property(readonly) NSString* longName;
 @property(readonly) NSBundle* bundle;

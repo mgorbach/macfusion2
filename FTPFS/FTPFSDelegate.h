@@ -1,5 +1,5 @@
 //
-//  MFClientPlugin.m
+//  FTPFSDelegate.h
 //  MacFusion2
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,34 +14,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#import "MFClientPlugin.h"
-#import "MFPlugin.h"
+#import <Cocoa/Cocoa.h>
+#import "MFFSDelegateProtocol.h"
 
-@interface MFClientPlugin (PrivateAPI)
-- (void)fillInitialData;
-@end
-
-@implementation MFClientPlugin
-- (id)initWithRemotePlugin:(id)remote
-{
-	self = [super init];
-	if (self != nil)
-	{
-		remotePlugin = remote;
-		[self fillInitialData];
-		delegate = [self setupDelegate];
-		if(!delegate)
-		{
-			return nil;
-		}
-	}
+@interface FTPFSDelegate : NSObject <MFFSDelegateProtocol> {
 	
-	return self;
-}
-
-- (void)fillInitialData
-{
-	bundle = [NSBundle bundleWithPath: [remotePlugin bundlePath]];
 }
 
 

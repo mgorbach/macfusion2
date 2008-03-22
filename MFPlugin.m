@@ -39,7 +39,7 @@
 
 - (NSString*)ID
 {
-	return [self.dictionary objectForKey: @"BundleIdentifier"];
+	return [[self bundle] bundleIdentifier];
 }
 
 - (NSString*)bundlePath
@@ -92,5 +92,5 @@
 	return delegate;
 }
 
-@synthesize dictionary, bundle;
+@synthesize bundle;
 @end

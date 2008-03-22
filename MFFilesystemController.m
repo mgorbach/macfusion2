@@ -37,6 +37,7 @@
 - (void)removeMountedPath:(NSString*)path;
 - (void)storeFilesystem:(MFServerFS*)fs;
 - (void)removeFilesystem:(MFServerFS*)fs;
+- (void)invalidateTokensForFS:(MFServerFS*)fs;
 
 @property(readwrite, retain) NSMutableArray* filesystems;
 @property(readwrite, retain) NSMutableArray* recents;
@@ -384,6 +385,8 @@ static void diskUnMounted(DADiskRef disk, void* mySelf)
 	// Remove temporarily filesystems if they fail to mount
 	if ([newStatus isEqualToString: kMFStatusFSFailed] && ![fs isPersistent])
 		[self performSelector:@selector(removeFilesystem:) withObject:fs afterDelay:0];
+	if ([newStatus isEqualToString: kMFStatusFSFailed])
+		[self invalidateTokensForFS: fs];
 }
 
 # pragma mark Security Tokens
@@ -396,7 +399,7 @@ static void diskUnMounted(DADiskRef disk, void* mySelf)
 	if ([[tokens allValues] containsObject: fs])
 	{
 		MFLogSO(self, fs, @"Uh oh ... adding a second token for an FS already in tokens");
-		// MFLogS(self, @"Tokens Before %@", tokens);
+		MFLogSO(self, @"Tokens Before %@", tokens);
 	}
 	
 	[tokens setObject: fs forKey: tokenString];
@@ -410,6 +413,15 @@ static void diskUnMounted(DADiskRef disk, void* mySelf)
 	NSAssert(token, @"Token is nil in invalidateToken");
 	NSAssert([[tokens allKeys] containsObject: token], @"Invalid token in invalidateToken");
 	[tokens removeObjectForKey: token];
+}
+
+- (void)invalidateTokensForFS:(MFServerFS*)fs
+{
+	for(NSString* key in [tokens allKeys])
+	{
+		if ([tokens objectForKey: key] == fs)
+			[tokens removeObjectForKey: key];
+	}
 }
 
 - (MFServerFS*)filesystemForToken:(NSString*)token
@@ -483,6 +495,7 @@ static void diskUnMounted(DADiskRef disk, void* mySelf)
 				([fs isWaiting] ))
 			{
 				[fs handleMountNotification];
+				[self invalidateTokensForFS: fs];
 			}
 			if (! [fs isPersistent] )
 			{

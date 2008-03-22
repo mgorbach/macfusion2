@@ -331,8 +331,15 @@
 	NSArray* args = [self taskArguments];
 	[t setArguments: args];
 	NSString* launchPath = [delegate executablePath];
-	[t setLaunchPath: launchPath];
+	if (launchPath)
+		[t setLaunchPath: launchPath];
+	else
+	{
+		MFLogS(self, @"Delegate returned nil executable path");
+		return nil;
+	}
 	
+	MFLogS(self, @"Execucting task with path %@ env %@ args %@", [t launchPath], [t environment], [t arguments]);
 	[self setupIOForTask:t];
 	[self registerNotificationsForTask:t];
 	return t;
@@ -350,7 +357,7 @@
 							[@"org.mgorbach.macfusion.xattr.uuid" cStringUsingEncoding:NSUTF8StringEncoding],
 							[value cStringUsingEncoding: NSUTF8StringEncoding], 
 							[value lengthOfBytesUsingEncoding: NSUTF8StringEncoding] *sizeof(char), 0, 0);
-	MFLogS(self, @"Mount point tag responds %d", response);
+	// MFLogS(self, @"Mount point tag responds %d", response);
 }
 
 - (BOOL)setupMountPoint

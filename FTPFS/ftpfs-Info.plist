@@ -7,7 +7,7 @@
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
 	<key>CFBundleIdentifier</key>
-	<string>org.mgorbach.macfusion2.sshfs</string>
+	<string>com.yourcompany.ftpfs</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundlePackageType</key>
@@ -17,10 +17,10 @@
 	<key>CFBundleVersion</key>
 	<string>1.0</string>
 	<key>MFFSDelegateClassName</key>
-	<string>SSHFSDelegate</string>
+	<string>FTPFSDelegate</string>
 	<key>MFPluginLongName</key>
-	<string>Secure Shell Filesystem</string>
+	<string>File Transfer Protocol Filesystem</string>
 	<key>MFPluginShortName</key>
-	<string>SSHFS</string>
+	<string>FTPFS</string>
 </dict>
 </plist>
