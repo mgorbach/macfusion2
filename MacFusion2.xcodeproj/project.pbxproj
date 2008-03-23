@@ -445,7 +445,7 @@
 		D4E6D82E0D9373E40022763F /* ftpfs.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ftpfs.png; sourceTree = "<group>"; };
 		D4E6D8320D93744D0022763F /* FTPFSDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FTPFSDelegate.h; sourceTree = "<group>"; };
 		D4E6D8330D93744D0022763F /* FTPFSDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FTPFSDelegate.m; sourceTree = "<group>"; };
-		D4E6D8420D9375930022763F /* curlftpfs_static_mg */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; name = curlftpfs_static_mg; path = ../Build/Release/curlftpfs_static_mg; sourceTree = SOURCE_ROOT; };
+		D4E6D8420D9375930022763F /* curlftpfs_static_mg */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = curlftpfs_static_mg; sourceTree = "<group>"; };
 		D4E6D8470D937DB00022763F /* ftpfsConfiguration.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ftpfsConfiguration.xib; sourceTree = "<group>"; };
 		D4E6DAF80D9392450022763F /* ftpfs_askpass.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ftpfs_askpass.m; sourceTree = "<group>"; };
 		D4E6DB010D9392840022763F /* ftpfs_askpass */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ftpfs_askpass; sourceTree = BUILT_PRODUCTS_DIR; };
