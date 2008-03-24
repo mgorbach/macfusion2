@@ -152,7 +152,6 @@
 # pragma mark Handling Notifications
 - (void)awakeFromNib
 {
-	MFLogS(self, @"Awaking from nib");
 	NSCell* testCell = [[MFFilesystemCell alloc] init];
 	[[filesystemTableView tableColumnWithIdentifier:@"test"] 
 	 setDataCell: testCell];
@@ -633,8 +632,7 @@
 		[NSApp terminate: self];
 	else if (returnValue == NSAlertSecondButtonReturn)
 	{
-		NSString* agentPath = mfcAgentBundlePath();
-		[[NSWorkspace sharedWorkspace] launchApplication: agentPath];
+		mfcLaunchAgent();
 		[[NSRunLoop currentRunLoop] runUntilDate:[[NSDate date] addTimeInterval: 1.5]];
 		if ([client establishCommunication])
 			[client fillInitialStatus];
