@@ -185,6 +185,18 @@ static MFClient* sharedClient = nil;
 	}
 }
 
+- (BOOL)setup
+{
+	if ([self establishCommunication])
+	{
+		[self fillInitialStatus];
+		return YES;
+	}
+	
+	return NO;
+}
+
+
 
 #pragma mark Notification handling
 - (void)handleStatusChangedNotification:(NSNotification*)note
