@@ -687,8 +687,7 @@
 				D4C6334B0D7644B300734165 /* MGFadingWindow.h */,
 				D4C6334C0D7644B300734165 /* MGFadingWindow.m */,
 			);
-			name = Menuling;
-			path = menuling;
+			path = Menuling;
 			sourceTree = "<group>";
 		};
 		D4905BAA0D38061F00E21C1E /* Protocols */ = {
@@ -1658,7 +1657,7 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
-				INFOPLIST_FILE = "SSHFS/sshfs-info.plist";
+				INFOPLIST_FILE = "SSHFS/sshfs-Info.plist";
 				INSTALL_PATH = "$(HOME)/Library/Bundles";
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../../../../Frameworks";
 				OTHER_LDFLAGS = (
@@ -1981,7 +1980,7 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
-				INFOPLIST_FILE = "SSHFS/sshfs-info.plist";
+				INFOPLIST_FILE = "SSHFS/sshfs-Info.plist";
 				INSTALL_PATH = "$(HOME)/Library/Bundles";
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../../../../Frameworks";
 				OTHER_LDFLAGS = (
