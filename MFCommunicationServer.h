@@ -28,7 +28,7 @@
 
 - (MFFilesystemController*)filesystemController;
 - (MFPluginController*)pluginController;
-- (void)startServingRunloop;
+- (void)startServing;
 - (NSError*)recentError;
 
 @end

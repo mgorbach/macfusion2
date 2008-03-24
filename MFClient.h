@@ -33,7 +33,6 @@
 + (MFClient*)sharedClient;
 
 // Initialization
-- (BOOL)setup;
 - (void)fillInitialStatus;
 - (BOOL)establishCommunication;
 

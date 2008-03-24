@@ -34,35 +34,125 @@
 	self = [super init];
 	if (self != nil) 
 	{
-		client = [MFClient sharedClient];
 		[NSApp setDelegate: self];
-		[client setDelegate: self];
 		creatingNewFS = NO;
 		menuArgumentFS = nil;
-		if ([client setup])
-		{
-		}
-		else
-		{
-			NSAlert* alert = [NSAlert alertWithMessageText:@"Could not connect to macfusion agent."
-							defaultButton:@"OK"
-						  alternateButton:@""
-							  otherButton:@""
-								 informativeTextWithFormat:@"Macfusion settings will now quit."];
-			[alert setAlertStyle: NSCriticalAlertStyle];
-			[alert runModal];
-			[NSApp terminate:self];
-
-		}
-		
+		client = [MFClient sharedClient];
+		[client setDelegate: self];
 	}
 	return self;
 }
 
+# pragma mark Agent connection
+
+- (void)agentStartFailedSheetDidEnd:(NSAlert*)sheet returnCode:(NSInteger)returnCode contextInfo:(void*)context
+{
+	[NSApp terminate: self];
+}
+
+- (void)agentStartSheetDidEnd:(NSAlert*)sheet returnCode:(NSInteger)returnCode context:(void*)context
+{
+	NSAlert* serverStartAlert = sheet;
+	[[serverStartAlert window] orderOut: self];
+	[NSApp endSheet: [serverStartAlert window]]; 
+	
+	if ([[serverStartAlert suppressionButton] state])
+		mfcSetStateForAgentLoginItem(YES);
+	
+	if (returnCode == NSAlertSecondButtonReturn)
+	{
+		[NSApp terminate: self];
+	}
+	else if (returnCode == NSAlertFirstButtonReturn)
+	{
+		mfcLaunchAgent();
+		[[NSRunLoop currentRunLoop] runUntilDate:[[NSDate date] addTimeInterval: 1.5]];
+		
+		if ([client establishCommunication])
+		{
+			[client fillInitialStatus];
+		}
+		else
+		{
+			NSAlert* faliureAlert = [NSAlert alertWithMessageText:@"Could not start or connect to the macfusion agent"
+													defaultButton:@"OK"
+												  alternateButton:@""
+													  otherButton:@""
+										informativeTextWithFormat:@"Macfusion will Quit."];
+			[faliureAlert setAlertStyle: NSCriticalAlertStyle];
+			[faliureAlert beginSheetModalForWindow: [filesystemTableView window]
+									 modalDelegate:self
+									didEndSelector:@selector(agentStartFailedSheetDidEnd:returnCode:contextInfo:)
+									   contextInfo:nil];
+		}
+	}
+}
+
+- (BOOL)setup
+{
+	if ([client establishCommunication])
+	{
+		[client fillInitialStatus];
+		return YES;
+	}
+	else
+	{
+		BOOL agentRunning = NO;
+		NSArray* runingIDs = [[[NSWorkspace sharedWorkspace] launchedApplications] valueForKey:@"NSApplicationBundleIdentifier"];
+		// MFLogS(self, @"Runing ids are %@", runingIDs);
+		for(NSString* id in runingIDs)
+		{
+			if ([id isEqualToString: kMFAgentBundleIdentifier])
+			{
+				agentRunning = YES;
+				break;
+			}
+		}
+		
+		if (agentRunning)
+		{
+			// Agent is runing. Wait a bit for it to set up IPC
+			MFLogS(self, @"Waiting for agent");
+			NSDate* stopDate = [[NSDate date] addTimeInterval: 5.0];
+			[[NSRunLoop currentRunLoop] runUntilDate: stopDate];
+			if ([client establishCommunication])
+			{
+				[client fillInitialStatus];
+				return YES;
+			}
+			else
+			{
+				return NO;
+			}
+		}
+		else
+		{
+			// Try to start the agent process
+			MFLogS(self, @"Agent not runing. Request to Start.");
+			NSAlert* serverStartAlert = [NSAlert new];
+			[serverStartAlert setMessageText: @"The macfusion agent process is not started"];
+			[serverStartAlert setInformativeText: @"Would you like to start the agent?\nOtherwise, Macfusion will Quit."];
+			[serverStartAlert setShowsSuppressionButton: YES];
+			[serverStartAlert addButtonWithTitle:@"Start"];
+			[serverStartAlert addButtonWithTitle:@"Quit"];
+			[[serverStartAlert suppressionButton] setTitle: @"Start agent automatically on login"];
+			[[serverStartAlert suppressionButton] setState: mfcGetStateForAgentLoginItem()];
+			[serverStartAlert beginSheetModalForWindow:[filesystemTableView window]
+																 modalDelegate:self
+																didEndSelector:@selector(agentStartSheetDidEnd:returnCode:context:)
+																   contextInfo:nil];
+		}
+		
+	}
+	
+	return NO;
+}
+
+
 # pragma mark Handling Notifications
 - (void)awakeFromNib
 {
-
+	MFLogS(self, @"Awaking from nib");
 	NSCell* testCell = [[MFFilesystemCell alloc] init];
 	[[filesystemTableView tableColumnWithIdentifier:@"test"] 
 	 setDataCell: testCell];
@@ -94,13 +184,8 @@
 
 - (void)applicationWillFinishLaunching:(NSNotification*)note
 {
-	[NSApp activateIgnoringOtherApps:YES];
-	[[filesystemTableView window] makeKeyWindow];
-		[[filesystemTableView window] makeMainWindow];
+	[self setup];
 }
-
-# pragma mark Table Delegate Methods
-
 
 # pragma mark IBActions
 - (void)popupButtonClicked:(id)sender

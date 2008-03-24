@@ -185,3 +185,9 @@ BOOL mfcClientIsUIElement()
 	BOOL uiElement = [[info objectForKey: @"LSUIElement"] boolValue];
 	return uiElement;
 }
+
+void mfcLaunchAgent()
+{
+	NSString* path = mfcAgentBundlePath();
+	[NSTask launchedTaskWithLaunchPath:@"/usr/bin/open" arguments:[NSArray arrayWithObject: path]];
+}

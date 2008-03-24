@@ -24,6 +24,7 @@
 
 #define FSDEF_EXTENSION @"macfusion"
 #define RECENTS_PATH @"~/Library/Application Support/Macfusion/recents.plist"
+#define CACHE_PATH @"~/Library/Application Support/Macfusion/cache.plist" 
 
 @interface MFFilesystemController (PrivateAPI)
 - (void)setUpVolumeMonitoring;
@@ -93,6 +94,7 @@ static MFFilesystemController* sharedController = nil;
 		mountedPaths = [NSMutableArray array];
 		recents = [NSMutableArray array];
 		tokens = [NSMutableDictionary dictionary];
+		[self loadFilesystems];
 		[self loadRecentFilesystems];
 		[self setUpVolumeMonitoring];
 		MFLogS(self, @"Init complete!");
@@ -147,6 +149,10 @@ static MFFilesystemController* sharedController = nil;
 - (void)loadFilesystems
 {
 	NSArray* filesystemPaths = [self pathsToFilesystemDefs];
+	NSDictionary* cacheDict = [NSDictionary dictionaryWithContentsOfFile:
+							   [CACHE_PATH stringByExpandingTildeInPath]];
+	// MFLogS(self, @"Loaded Cache dict %@", cacheDict);
+							   
 	for(NSString* fsPath in filesystemPaths)
 	{
 		MFLogS(self, @"Loading fs at %@", fsPath);
@@ -157,15 +163,11 @@ static MFFilesystemController* sharedController = nil;
 		if (fs)
 		{
 			[self storeFilesystem: fs ];
-			NSString* path = fs.mountPath;
-			for(NSString* mountedPath in mountedPaths)
+			if ([[[NSFileManager defaultManager] directoryContentsAtPath: fs.mountPath] count] > 0
+				&& ([[cacheDict objectForKey: fs.uuid] isEqualToString: fs.mountPath]))
 			{
-				if ([path isEqualToString: mountedPath] &&
-					[[self getUUIDXattrAtPath: mountedPath] isEqualToString: fs.uuid])
-				{
-//					MFLogS(self, @"Pre-mount condition hit on %@", fs.uuid);
-					[fs handleMountNotification];
-				}
+				MFLogSO(self, fs, @"Detected Already Mounted fs %@", fs);
+				[fs handleMountNotification];
 			}
 		}
 		else
@@ -433,6 +435,21 @@ static void diskUnMounted(DADiskRef disk, void* mySelf)
 	return [tokens objectForKey: token];
 }
 
+# pragma mark Filesystem Persistence
+- (void)updateFSPersistenceCache
+{
+	NSArray* mountedFilesystems = [self.filesystems filteredArrayUsingPredicate:
+								   [NSPredicate predicateWithFormat:@"self.status == %@", kMFStatusFSMounted]];
+	// MFLogS(self, @"Updating Cache. Mounted Filesystems %@", mountedFilesystems);
+	NSDictionary* mountedDict = [NSDictionary dictionaryWithObjects:(NSArray*)[mountedFilesystems valueForKey:@"mountPath"]
+															forKeys:(NSArray*)[mountedFilesystems valueForKey:@"uuid"]];
+	// MFLogS(self, @"Mounted Cache Dictionary %@", mountedDict);
+	NSString* cachePath = [@"~/Library/Application Support/Macfusion/cache.plist" 
+						   stringByExpandingTildeInPath];
+	[mountedDict writeToFile:cachePath
+				  atomically:YES];
+}
+
 # pragma mark Accessors and Getters
 - (void)storeFilesystem:(MFServerFS*)fs 
 {
@@ -469,19 +486,6 @@ static void diskUnMounted(DADiskRef disk, void* mySelf)
 	return (NSDictionary*)filesystemsDictionary;
 }
 
-- (NSString*)getUUIDXattrAtPath:(NSString*)path
-{
-	NSString* resultString = nil;
-	char* dataBuffer = malloc(100 * sizeof(char));
-	int result = getxattr([path cStringUsingEncoding: NSUTF8StringEncoding],
-						  "org.mgorbach.macfusion.xattr.uuid", dataBuffer, 100*sizeof(char),
-						  0, 0);
-	if (result > 0)
-		resultString = [NSString stringWithCString:dataBuffer length:result]; 
-	free(dataBuffer);
-	return resultString;
-}
-
 - (void)addMountedPath:(NSString*)path
 {
 //	MFLogS(self, @"Adding mounted path %@", path);
@@ -496,6 +500,7 @@ static void diskUnMounted(DADiskRef disk, void* mySelf)
 			{
 				[fs handleMountNotification];
 				[self invalidateTokensForFS: fs];
+				[self updateFSPersistenceCache];
 			}
 			if (! [fs isPersistent] )
 			{
@@ -514,6 +519,7 @@ static void diskUnMounted(DADiskRef disk, void* mySelf)
 		NSArray* matchingFilesystems = [filesystems filteredArrayUsingPredicate: 
 										[NSPredicate predicateWithFormat:@"self.mountPath == %@", path]];
 		[matchingFilesystems makeObjectsPerformSelector:@selector(handleUnmountNotification)];
+		[self updateFSPersistenceCache];
 		
 		NSArray* matchingTemporaryFilesystems = [matchingFilesystems filteredArrayUsingPredicate:
 												 [NSPredicate predicateWithFormat:@"self.isPersistent != YES"]];

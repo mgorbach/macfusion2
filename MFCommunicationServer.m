@@ -200,7 +200,7 @@ static MFCommunicationServer* sharedServer = nil;
 	}
 }
 
-- (void)startServingRunloop
+- (void)startServing
 {
 	[self registerNotifications];
 	[self vendDisributedObject];

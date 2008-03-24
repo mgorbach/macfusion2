@@ -348,18 +348,6 @@
 
 # pragma mark Mounting mechanics
 
-- (void)tagMountPoint
-{
-	NSString* value = self.uuid;
-	int response;
-	
-	response = setxattr([self.mountPath cStringUsingEncoding: NSUTF8StringEncoding],
-							[@"org.mgorbach.macfusion.xattr.uuid" cStringUsingEncoding:NSUTF8StringEncoding],
-							[value cStringUsingEncoding: NSUTF8StringEncoding], 
-							[value lengthOfBytesUsingEncoding: NSUTF8StringEncoding] *sizeof(char), 0, 0);
-	// MFLogS(self, @"Mount point tag responds %d", response);
-}
-
 - (BOOL)setupMountPoint
 {
 	NSFileManager* fm = [NSFileManager defaultManager];
@@ -414,7 +402,6 @@
 	}
 	else
 	{
-		[self tagMountPoint];
 		return YES;
 	}
 }
@@ -544,7 +531,6 @@
 {
 	// MFLogS(self, @"Mount notification received");
 	self.status = kMFStatusFSMounted;
-	[self tagMountPoint];
 }
 
 - (void)handleTaskDidTerminate:(NSNotification*)note

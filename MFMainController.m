@@ -56,19 +56,13 @@ static MFMainController* sharedController = nil;
 
 #pragma mark Runloop and initialization methods
 
-- (void)startRunloop
-{
-	NSRunLoop* runloop = [NSRunLoop currentRunLoop];
-	[runloop run];
-}
-
 - (void)initialize
 {
 	MFPluginController* pluginController = [MFPluginController sharedController];
-	MFFilesystemController* filesystemController = [MFFilesystemController sharedController];
 	[pluginController loadPlugins];
-	[filesystemController loadFilesystems];
-	[[MFCommunicationServer sharedServer] startServingRunloop];
+	
+	[MFFilesystemController sharedController];
+	[[MFCommunicationServer sharedServer] startServing];
 }
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification

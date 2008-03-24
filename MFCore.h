@@ -36,6 +36,7 @@ BOOL mfcSetStateForMenulingLoginItem(BOOL state);
 
 // Clients
 BOOL mfcClientIsUIElement();
+void mfcLaunchAgent();
 
 
 // FUSE versioning

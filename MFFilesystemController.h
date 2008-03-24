@@ -23,6 +23,7 @@
 	NSMutableArray* recents;
 	NSMutableArray* mountedPaths;
 	NSMutableDictionary* tokens;
+	NSMutableDictionary* mountPathPersistenceCache;
 	
 	DASessionRef appearSession;
 	DASessionRef disappearSession;
