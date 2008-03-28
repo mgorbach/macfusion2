@@ -339,7 +339,7 @@
 		return nil;
 	}
 	
-	MFLogS(self, @"Execucting task with path %@ env %@ args %@", [t launchPath], [t environment], [t arguments]);
+	// MFLogS(self, @"Execucting task with path %@ env %@ args %@", [t launchPath], [t environment], [t arguments]);
 	[self setupIOForTask:t];
 	[self registerNotificationsForTask:t];
 	return t;

@@ -15,22 +15,35 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#import "MFClientPlugin.h"
+#import "MFClientProtocol.h"
+
 @class MFPluginController, MFFilesystemController, MFServerFS;
 
 @protocol MFServerProtocol <NSObject>
 
+// Accessors
 - (NSArray*)filesystems;
 - (NSArray*)plugins;
+- (NSError*)recentError;
+- (NSArray*)recents;
 
+// Actions
 - (MFServerFS*)newFilesystemWithPluginName:(NSString*)pluginName;
 - (void)deleteFilesystemWithUUID:(NSString*)uuid;
 - (MFServerFS*)filesystemWithUUID:(NSString*)uuid;
 - (MFServerFS*)quickMountWithURL:(NSURL*)url;
-- (NSError*)recentError;
-- (NSArray*)recents;
 
+//Security
 - (NSString*)tokenForFilesystemWithUUID:(NSString*)uuid;
 - (MFServerFS*)filesystemForToken:(NSString*)token;
+
+// Client Control
+- (void)registerClient:(id <MFClientProtocol>) client;
+- (void)unregisterClient:(id <MFClientProtocol>) client;
+
+// Logging
+- (void)sendASLMessageDict:(NSDictionary*)dict;
 
 @end
 

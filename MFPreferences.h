@@ -9,6 +9,7 @@
 #import <Cocoa/Cocoa.h>
 // Preference Keys
 #define kMFPrefsAutoloadMenuling @"Autoload Menuling"
+#define kMFPrefsAutoScrollLog @"AutoScroll Log"
 
 @interface MFPreferences : NSObject {
 	NSMutableDictionary* prefsDict;

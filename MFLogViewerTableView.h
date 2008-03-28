@@ -1,6 +1,9 @@
 //
-//  MFCommunicationServer.h
+//  MFLogViewerTableView.h
 //  MacFusion2
+//
+//  Created by Michael Gorbach on 3/24/08.
+//  Copyright 2008 Michael Gorbach. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,20 +18,11 @@
 // limitations under the License.
 
 #import <Cocoa/Cocoa.h>
-#import "MFServerProtocol.h"
 
-@class MFFilesystemController, MFPluginController;
 
-@interface MFCommunicationServer : NSObject <MFServerProtocol>
-{
-	NSError* recentError;
-	NSMutableArray* clients;
+@interface MFLogViewerTableView : NSTableView {
+	NSArray* logMessages;
 }
 
-+ (MFCommunicationServer*)sharedServer;
-
-- (MFFilesystemController*)filesystemController;
-- (MFPluginController*)pluginController;
-- (void)startServing;
-
+@property(readonly) NSArray* logMessages;
 @end

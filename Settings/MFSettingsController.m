@@ -23,6 +23,8 @@
 #import "MFFilesystemTableView.h"
 #import "MFPreferencesController.h"
 #import "MFCore.h"
+#import "MFLogReader.h"
+#import "MFLogViewerController.h"
 
 @interface MFSettingsController(PrivateAPI)
 - (BOOL)validateFSMenuItem:(NSMenuItem*)item;
@@ -209,6 +211,13 @@
 	[preferencesController showWindow:self];
 }
 
+- (IBAction)showLogViewer:(id)sender
+{
+	if (!logViewerController)
+		logViewerController = [[MFLogViewerController alloc] initWithWindowNibName:@"logViewer"];
+	[logViewerController showWindow:self];
+}
+
 - (IBAction)startMenuItem:(id)sender
 {
 	NSString* menuItemBundlePath = (NSString*)mfcMenulingBundlePath();
@@ -223,6 +232,15 @@
 		{
 			[self deleteFilesystem: fs];
 		}
+	}
+}
+
+- (IBAction)filterLogForFilesystem:(id)sender
+{
+	if ([sender isKindOfClass: [MFClientFS class]])
+	{
+		[self showLogViewer: self];
+		[logViewerController filterForFilesystem: sender];
 	}
 }
 
@@ -605,6 +623,8 @@
 	{
 		return (menuArgumentFS.filePath != nil);
 	}
+	if ([[item title] isEqualToString: @"Log"])
+		return YES;
 		
 	return NO;
 }

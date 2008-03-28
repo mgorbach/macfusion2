@@ -21,6 +21,13 @@
 #define ASL_KEY_SUBSYSTEM "Subsystem"
 #define ASL_KEY_UUID "UUID"
 
+#define kMFLogKeySender @"Sender"
+#define kMFLogKeyUUID @"UUID"
+#define kMFLogKeySubsystem @"Subsystem"
+#define kMFLogKeyMessage @"Message"
+#define kMFLogKeyTime @"Time"
+
+
 
 enum MFLogType {
 	kMFLogTypeCore,
@@ -39,6 +46,8 @@ void MFLogSO(id sender, id object, NSString* format, ...);
 	BOOL stdOut;
 	aslclient aslClient;
 	int fd;
+	id delegate;
+	NSDateFormatter* formatter;
 }
 
 + (MFLogging*)sharedLogging;
@@ -48,4 +57,8 @@ void MFLogSO(id sender, id object, NSString* format, ...);
 			sender:(id)sender;
 - (void)setPrintToStandardOut:(BOOL)b;
 
+NSDictionary* dictFromASLMessage(aslmsg m);
+NSString* headerStringForASLMessageDict(NSDictionary* dict);
+
+@property(retain, readwrite) id delegate;
 @end

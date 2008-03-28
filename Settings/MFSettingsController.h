@@ -17,7 +17,8 @@
 #import <Cocoa/Cocoa.h>
 #import "MFClientFSDelegateProtocol.h"
 
-@class MFClient, MFClientFS, MFFilesystemTableView, MFPreferencesController;
+@class MFClient, MFClientFS, MFFilesystemTableView, MFPreferencesController,
+MFLogViewerController;
 
 
 @interface MFSettingsController : NSObject <MFClientFSDelegateProtocol> {
@@ -32,6 +33,7 @@
 	MFClient* client;
 	MFClientFS* fsBeingEdited;
 	MFPreferencesController* preferencesController;
+	MFLogViewerController* logViewerController;
 	MFClientFS* menuArgumentFS;
 	
 	BOOL creatingNewFS;
@@ -41,6 +43,7 @@
 - (IBAction)showPreferences:(id)sender;
 - (IBAction)startMenuItem:(id)sender;
 - (IBAction)deleteSelectedFilesystem:(id)sender;
+- (IBAction)showLogViewer:(id)sender;
 
 - (void)editFilesystem:(MFClientFS*)fs;
 - (void)deleteFilesystem:(MFClientFS*)fs;

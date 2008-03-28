@@ -20,6 +20,8 @@
 #import "MFPluginController.h"
 #import "MFConstants.h"
 #import "MFPreferences.h"
+#import "MFClientProtocol.h"
+#import "MFLogging.h"
 
 @implementation MFCommunicationServer
 static MFCommunicationServer* sharedServer = nil;
@@ -80,6 +82,11 @@ static MFCommunicationServer* sharedServer = nil;
 {
 	self = [super init];
 	if (self != nil) {
+		clients = [NSMutableArray array];
+		[[NSNotificationCenter defaultCenter] addObserver:self
+			   selector:@selector(handleConnectionDidDie:)
+				   name:NSConnectionDidDieNotification
+				 object:nil];
 	}
 	return self;
 }
@@ -87,7 +94,6 @@ static MFCommunicationServer* sharedServer = nil;
 - (void)vendDisributedObject
 {
 	NSConnection* connection = [NSConnection defaultConnection];
-	// TODO: Vend a proxy to set up protocol
 	[connection setRootObject:self];
 	if ([connection registerName:kMFDistributedObjectName] == YES)
 	{
@@ -104,21 +110,15 @@ static MFCommunicationServer* sharedServer = nil;
 						 change:(NSDictionary *)change
 						context:(void *)context
 {
-	NSDistributedNotificationCenter* dnc = [NSDistributedNotificationCenter defaultCenter];
 	
 	// MFLogS(self, @"Observes: keypath %@ object %@, change %@", keyPath, object, change);
+	// TODO: We need to provide a way to call noteParametersChangedForFSWithUUID: here as well
 	
 	if ([keyPath isEqualToString:@"status"] && [object isKindOfClass: [MFFilesystem class]])
 	{
 		MFFilesystem* fs = (MFFilesystem*)object;
-		NSDictionary* userInfoDict = [NSDictionary dictionaryWithObjectsAndKeys: 
-									  fs.uuid, KMFFSUUIDParameter,
-									  fs.status, kMFSTStatusKey,
-									  nil];
-		[dnc postNotificationName:kMFStatusChangedNotification
-						   object:kMFDNCObject
-						 userInfo:userInfoDict
-			  deliverImmediately:YES];
+		[clients makeObjectsPerformSelector:@selector(noteStatusChangedForFSWithUUID:)
+								 withObject:fs.uuid];
 	}
 	
 	if ([keyPath isEqualToString:@"filesystems"] && object == [MFFilesystemController sharedController])
@@ -136,12 +136,8 @@ static MFCommunicationServer* sharedServer = nil;
 					 forKeyPath:@"parameters"
 						options:NSKeyValueObservingOptionNew
 						context:nil];
-
-				NSDictionary* userInfoDict = [NSDictionary dictionaryWithObject: [fs uuid]
-																		 forKey: KMFFSUUIDParameter];
-				[dnc postNotificationName:kMFFilesystemAddedNotification
-								   object:kMFDNCObject
-								 userInfo:userInfoDict];
+				[clients makeObjectsPerformSelector:@selector(noteFilesystemAddedWithUUID:)
+										 withObject:[fs uuid]];
 			}
 		}
 		
@@ -153,11 +149,8 @@ static MFCommunicationServer* sharedServer = nil;
 						forKeyPath:@"status"];
 				[fs removeObserver: self
 						forKeyPath:@"parameters"];
-				NSDictionary* userInfoDict = [NSDictionary dictionaryWithObject: [fs uuid]
-																		forKey: KMFFSUUIDParameter ];
-				[dnc postNotificationName:kMFFilesystemRemovedNotification
-								   object:kMFDNCObject
-								 userInfo:userInfoDict];
+				[clients makeObjectsPerformSelector:@selector(noteFilesystemRemovedWithUUID:)
+										 withObject:[fs uuid]];
 			}
 		}
 	}
@@ -167,12 +160,10 @@ static MFCommunicationServer* sharedServer = nil;
 		NSUInteger changeKind = [[change objectForKey: NSKeyValueChangeKindKey] intValue];
 		if (changeKind == NSKeyValueChangeInsertion)
 		{
-			NSArray*  newRecent = [change objectForKey:NSKeyValueChangeNewKey];
-			NSDictionary* userInfoDict = [NSDictionary dictionaryWithObject:[newRecent objectAtIndex:0]
-																	 forKey:kMFRecentKey];
-			[dnc postNotificationName:kMFRecentsUpdatedNotification
-							   object:kMFDNCObject
-							 userInfo:userInfoDict ];
+			NSArray*  newRecents = [change objectForKey:NSKeyValueChangeNewKey];
+			for(NSDictionary* recentsDict in newRecents)
+				[clients makeObjectsPerformSelector:@selector(noteRecentAdded:)
+										 withObject:recentsDict];
 		}
 	}
 }
@@ -202,6 +193,7 @@ static MFCommunicationServer* sharedServer = nil;
 
 - (void)startServing
 {
+	[[MFLogging sharedLogging] setDelegate: self];
 	[self registerNotifications];
 	[self vendDisributedObject];
 	NSTimer* timer = [NSTimer timerWithTimeInterval:1 target:self selector:@selector(doInitializationComplete:)
@@ -273,6 +265,53 @@ static MFCommunicationServer* sharedServer = nil;
 - (NSError*)recentError
 {
 	return recentError;
+}
+
+#pragma mark Client Registration/UnRegistration
+- (void)registerClient:(id <MFClientProtocol>) client
+{
+	NSAssert([client conformsToProtocol: @protocol(MFClientProtocol)], 
+			 @"Client doesn't conform to protocol, registerClient");
+	[clients addObject: client];
+}
+
+- (void)unregisterClient:(id <MFClientProtocol>) client
+{
+	NSAssert([client conformsToProtocol: @protocol(MFClientProtocol)],
+			 @"Client doesn't conform to protocol, unregisterClient");
+	NSAssert([clients containsObject: client],
+			 @"Client not registered, unregisterClient");
+	[clients removeObject: client];
+}
+
+- (void)handleConnectionDidDie:(NSNotification*)note
+{
+	// NSLog(@"Connection did die on server! %@ object %@ userInfo %@", note, [note object], [note userInfo]);
+	for(id obj in clients)
+	{
+		if ([obj connectionForProxy] == [note object])
+		{
+			// NSLog(@"Killing %@", obj);
+			[clients removeObject: obj];
+			// NSLog(@"Clients %@", clients);
+		}
+	}
+}
+
+# pragma mark Logging
+- (void)sendASLMessageDict:(NSDictionary*)messageDict
+{
+	@try
+	{
+		[clients makeObjectsPerformSelector:@selector(recordASLMessageDict:)
+								 withObject:messageDict];
+	}
+
+	@catch (NSException* e)
+	{
+		return;
+	}
+	
 }
 
 @end

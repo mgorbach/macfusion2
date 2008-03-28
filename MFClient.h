@@ -19,7 +19,7 @@
 
 @class MFClientFS, MFClientPlugin, MFClientRecent;
 
-@interface MFClient : NSObject {
+@interface MFClient : NSObject <MFClientProtocol> {
 	NSMutableDictionary* filesystemsDictionary;
 	NSMutableArray* persistentFilesystems;
 	NSMutableArray* temporaryFilesystems;

@@ -16,6 +16,10 @@
 
 #import "MFLogging.h"
 #import "MFFilesystem.h"
+#import "MFLogReader.h"
+#import "MFServerProtocol.h"
+#import "MFConstants.h"
+#import "MFClient.h"
 
 #define LOG_FILE_PATH @"~/Library/Logs/MacFusion2.log"
 
@@ -148,19 +152,79 @@ static MFLogging* sharedLogging = nil;
 {
 	fd = -1;
 	stdOut = YES;
+	formatter = [NSDateFormatter new];
+	[formatter  setDateStyle:NSDateFormatterShortStyle];
+	[formatter setTimeStyle: NSDateFormatterShortStyle];
 }
 
 - (void)setupLogFile
 {
-	if (stdOut)
-		aslClient = asl_open(NULL, MF_ASL_SERVICE_NAME, ASL_OPT_STDERR);
-	else
-		aslClient = asl_open(NULL, MF_ASL_SERVICE_NAME, 0);
+	aslClient = asl_open(NULL, MF_ASL_SERVICE_NAME, 0);
 	
 	fd = open( [[LOG_FILE_PATH stringByExpandingTildeInPath] cStringUsingEncoding: NSUTF8StringEncoding],
 			  O_CREAT | O_WRONLY | O_APPEND, S_IRUSR | S_IWUSR );
 	asl_add_log_file(aslClient, fd);
 	asl_set_filter(aslClient, ASL_FILTER_MASK_UPTO(ASL_LEVEL_INFO));
+}
+
+NSDictionary* dictFromASLMessage(aslmsg m)
+{
+	NSMutableDictionary* messageDict = [NSMutableDictionary dictionary];
+	NSInteger i;
+	const char* key;
+	const char* val;
+	for (i = 0; (NULL != (key = asl_key(m, i))); i++)
+	{
+		val = asl_get(m, key);
+		if (key && val)
+			[messageDict setObject: [[NSString alloc] initWithUTF8String: val]
+							forKey: [[NSString alloc] initWithUTF8String: key]];
+	}
+	
+	
+	return [messageDict copy];
+}
+
+- (NSDateFormatter*)formatter
+{
+	return formatter;
+}
+
+NSString* headerStringForASLMessageDict(NSDictionary* messageDict)
+{
+	MFLogging* self = [MFLogging sharedLogging];
+	NSMutableArray* headerList = [NSMutableArray array];
+	NSString* sender = [messageDict objectForKey: kMFLogKeySender];
+	NSString* uuid = [messageDict objectForKey: kMFLogKeyUUID];
+	NSString* subsystem = [messageDict objectForKey: kMFLogKeySubsystem];
+	NSString* uuidFSName = uuid ? [[[self delegate] filesystemWithUUID: uuid] name] : nil;
+	NSDate* time = [NSDate dateWithTimeIntervalSince1970: [[messageDict objectForKey: kMFLogKeyTime] intValue]];;
+	NSString* formattedDate = [[self formatter] stringFromDate: time];
+	
+	[headerList addObject: sender];
+	if (subsystem)
+		[headerList addObject: subsystem];
+	if (uuidFSName)
+		[headerList addObject: uuidFSName];
+	if (formattedDate || [formattedDate length] > 0)
+		[headerList addObject: formattedDate];
+	
+	// NSLog(@"Formatted date %@", formattedDate);
+	NSString* header = [NSString stringWithFormat: @"(%@)",
+						[headerList componentsJoinedByString: @", "]];
+	return header;
+}
+
+- (void)sendASLMessageDictOverDO:(NSDictionary*)messageDict
+{
+	id <MFServerProtocol> server = 
+	(id<MFServerProtocol>)[NSConnection rootProxyForConnectionWithRegisteredName:kMFDistributedObjectName
+																			host:nil];
+	
+	if(server)
+	{
+		[server sendASLMessageDict: messageDict];
+	}
 }
 
 - (void)logMessage:(NSString*)message 
@@ -175,13 +239,31 @@ static MFLogging* sharedLogging = nil;
 	aslmsg m = asl_new(ASL_TYPE_MSG);
 	asl_set(m, ASL_KEY_FACILITY, MF_ASL_SERVICE_NAME);
 	if ([sender isKindOfClass: [MFFilesystem class]])
-		asl_set(m, ASL_KEY_UUID, [[(MFFilesystem*)sender uuid] cStringUsingEncoding: NSUTF8StringEncoding]);
+		asl_set(m, ASL_KEY_UUID, [[(MFFilesystem*)sender uuid] UTF8String]);
 	if ([object isKindOfClass: [MFFilesystem class]])
-		asl_set(m, ASL_KEY_UUID, [[(MFFilesystem*)object uuid] cStringUsingEncoding: NSUTF8StringEncoding]);
-	asl_set(m, ASL_KEY_SUBSYSTEM, [[sender description] cStringUsingEncoding: NSUTF8StringEncoding]);
-	asl_log(aslClient, m, ASL_LEVEL_NOTICE, [message cStringUsingEncoding: NSUTF8StringEncoding]);
-	return;
+		asl_set(m, ASL_KEY_UUID, [[(MFFilesystem*)object uuid] UTF8String]);
+	asl_set(m, ASL_KEY_SUBSYSTEM, [[[sender class] description] UTF8String]);
+	asl_set(m, ASL_KEY_MSG, [message UTF8String]);
+	asl_log(aslClient, m, ASL_LEVEL_ERR, [message UTF8String]);
+	
+	// Send to other macfusion system processes over DO
+	NSDictionary* messageDict = dictFromASLMessage(m);
+	[self sendASLMessageDictOverDO: messageDict];
+	
+	NSString* printstring = [NSString stringWithFormat:
+							 @"%@ %@\n",
+							 headerStringForASLMessageDict( messageDict ),
+							 message];
+	if (stdOut)
+	{
+		printf([printstring UTF8String]);
+	}
+	
+	
+	// Send to ASL log db for storage
+	// asl_send(aslClient, m);
 }
+
 
 - (void)setPrintToStandardOut:(BOOL)b
 {
@@ -194,5 +276,7 @@ static MFLogging* sharedLogging = nil;
 	close(fd);
 	[super finalize];
 }
+
+@synthesize delegate;
 
 @end

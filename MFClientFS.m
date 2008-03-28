@@ -141,19 +141,15 @@
 }
 
 #pragma mark Synchronization across IPC
-- (void)handleStatusInfoChangedNotification:(NSNotification*)note
+- (void)noteStatusInfoChanged
 {
-//	MFLogS(self, @"Handling notification %@", note);
 	NSString* previousStatus = self.status;
 	[self copyStatusInfo];
-	// Hack this to synchronize the notifications and do
-	[statusInfo setObject: [[note userInfo] objectForKey: kMFSTStatusKey]
-				   forKey: kMFSTStatusKey];
 	[self sendNotificationForStatusChangeFrom:previousStatus
-										   to:[[note userInfo] objectForKey:kMFSTStatusKey]];
+										   to:self.status];
 }
 
-- (void)handleParametersChangedNotification:(NSNotification*)note
+- (void)noteParametersChanged
 {
 	[self copyParameters];
 }

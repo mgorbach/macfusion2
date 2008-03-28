@@ -38,8 +38,8 @@
 		  clientPlugin:(MFClientPlugin*)p;
 
 // Notification handling
-- (void)handleStatusInfoChangedNotification:(NSNotification*)note;
-- (void)handleParametersChangedNotification:(NSNotification*)note;
+- (void)noteStatusInfoChanged;
+- (void)noteParametersChanged;
 - (void)setPauseTimeout:(BOOL)p;
 
 // Editing

@@ -39,11 +39,10 @@
 		[self registerHotkey];
 		if (![client setup])
 		{
-			NSAlert* alert = [NSAlert alertWithMessageText:@"Could not connect to macfusion agent."
-											 defaultButton:@"OK"
-										   alternateButton:@""
-											   otherButton:@""
-								 informativeTextWithFormat:@"Macfusion Menuling will now quit."];
+			NSAlert* alert = [NSAlert new];
+			[alert addButtonWithTitle:@"OK"];
+			[alert setMessageText: @"Could not connect to macfusion agent."];
+			[alert setInformativeText: @"Macfusion Menuling will now quit."];
 			[alert setAlertStyle: NSCriticalAlertStyle];
 			[alert runModal];
 			[NSApp terminate:self];

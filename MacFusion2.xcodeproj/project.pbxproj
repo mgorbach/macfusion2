@@ -80,12 +80,22 @@
 		D42038700D73A76B009EE78F /* MFClientRecent.m in Sources */ = {isa = PBXBuildFile; fileRef = D420386E0D73A76B009EE78F /* MFClientRecent.m */; };
 		D439D5950D09E4390025574A /* MFServerProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = D439D5940D09E4390025574A /* MFServerProtocol.h */; };
 		D439D6D60D0A0FDE0025574A /* sshfsConfiguration.xib in Resources */ = {isa = PBXBuildFile; fileRef = D439D6D50D0A0FDE0025574A /* sshfsConfiguration.xib */; };
+		D441DB630D995C2B009F869A /* MFClientProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = D441DB620D995C2B009F869A /* MFClientProtocol.h */; };
 		D45579170D40715F00669882 /* MFInertButton.m in Sources */ = {isa = PBXBuildFile; fileRef = D45579160D40715F00669882 /* MFInertButton.m */; };
 		D45F0D950D8B3396008CC7E3 /* macfusionAgent-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D45F0D940D8B3396008CC7E3 /* macfusionAgent-Info.plist */; };
 		D4656C8D0D6FD6DC00DE2208 /* sshfs_icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = D4656C8B0D6FD6DC00DE2208 /* sshfs_icon.icns */; };
 		D4656C8E0D6FD6DC00DE2208 /* sshfs.png in Resources */ = {isa = PBXBuildFile; fileRef = D4656C8C0D6FD6DC00DE2208 /* sshfs.png */; };
 		D4656C9F0D6FDBF900DE2208 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D4656C9E0D6FDBF900DE2208 /* QuartzCore.framework */; };
 		D46E4C0E0D02593B004926CE /* MFConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = D46E4C0D0D02593B004926CE /* MFConstants.m */; };
+		D47F677E0D983F6C00E91D45 /* MFLogReader.h in Headers */ = {isa = PBXBuildFile; fileRef = D47F677C0D983F6C00E91D45 /* MFLogReader.h */; };
+		D47F677F0D983F6C00E91D45 /* MFLogReader.m in Sources */ = {isa = PBXBuildFile; fileRef = D47F677D0D983F6C00E91D45 /* MFLogReader.m */; };
+		D47F67BA0D98496200E91D45 /* MFLogViewerController.h in Headers */ = {isa = PBXBuildFile; fileRef = D47F67B80D98496200E91D45 /* MFLogViewerController.h */; };
+		D47F67BB0D98496200E91D45 /* MFLogViewerController.m in Sources */ = {isa = PBXBuildFile; fileRef = D47F67B90D98496200E91D45 /* MFLogViewerController.m */; };
+		D47F67BD0D984A8700E91D45 /* logViewer.xib in Resources */ = {isa = PBXBuildFile; fileRef = D47F67BC0D984A8700E91D45 /* logViewer.xib */; };
+		D47F68570D984FF600E91D45 /* MFLogViewerTableView.h in Headers */ = {isa = PBXBuildFile; fileRef = D47F68550D984FF600E91D45 /* MFLogViewerTableView.h */; };
+		D47F68580D984FF600E91D45 /* MFLogViewerTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = D47F68560D984FF600E91D45 /* MFLogViewerTableView.m */; };
+		D47F688E0D98524B00E91D45 /* MFLogViewerTableCell.h in Headers */ = {isa = PBXBuildFile; fileRef = D47F688C0D98524B00E91D45 /* MFLogViewerTableCell.h */; };
+		D47F688F0D98524B00E91D45 /* MFLogViewerTableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D47F688D0D98524B00E91D45 /* MFLogViewerTableCell.m */; };
 		D48DB98A0D70D7C6008A62BB /* MFMenulingAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D48DB9740D70D73A008A62BB /* MFMenulingAppDelegate.m */; };
 		D48DB9B10D70D9D4008A62BB /* menulingMain.m in Sources */ = {isa = PBXBuildFile; fileRef = D48DB9AF0D70D968008A62BB /* menulingMain.m */; };
 		D48DB9E60D70DA28008A62BB /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = D48DB9A90D70D910008A62BB /* MainMenu.xib */; };
@@ -378,6 +388,7 @@
 		D439D5940D09E4390025574A /* MFServerProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFServerProtocol.h; sourceTree = "<group>"; };
 		D439D6D50D0A0FDE0025574A /* sshfsConfiguration.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = sshfsConfiguration.xib; sourceTree = "<group>"; };
 		D441521F0CE2933C001EEF36 /* sshfs.mfplugin */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = sshfs.mfplugin; sourceTree = BUILT_PRODUCTS_DIR; };
+		D441DB620D995C2B009F869A /* MFClientProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFClientProtocol.h; sourceTree = "<group>"; };
 		D45579150D40715F00669882 /* MFInertButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFInertButton.h; sourceTree = "<group>"; };
 		D45579160D40715F00669882 /* MFInertButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MFInertButton.m; sourceTree = "<group>"; };
 		D45F0D940D8B3396008CC7E3 /* macfusionAgent-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "macfusionAgent-Info.plist"; sourceTree = "<group>"; };
@@ -385,6 +396,15 @@
 		D4656C8C0D6FD6DC00DE2208 /* sshfs.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = sshfs.png; sourceTree = "<group>"; };
 		D4656C9E0D6FDBF900DE2208 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = /System/Library/Frameworks/QuartzCore.framework; sourceTree = "<absolute>"; };
 		D46E4C0D0D02593B004926CE /* MFConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MFConstants.m; sourceTree = "<group>"; };
+		D47F677C0D983F6C00E91D45 /* MFLogReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFLogReader.h; sourceTree = "<group>"; };
+		D47F677D0D983F6C00E91D45 /* MFLogReader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MFLogReader.m; sourceTree = "<group>"; };
+		D47F67B80D98496200E91D45 /* MFLogViewerController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFLogViewerController.h; sourceTree = "<group>"; };
+		D47F67B90D98496200E91D45 /* MFLogViewerController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MFLogViewerController.m; sourceTree = "<group>"; };
+		D47F67BC0D984A8700E91D45 /* logViewer.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = logViewer.xib; sourceTree = "<group>"; };
+		D47F68550D984FF600E91D45 /* MFLogViewerTableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFLogViewerTableView.h; sourceTree = "<group>"; };
+		D47F68560D984FF600E91D45 /* MFLogViewerTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MFLogViewerTableView.m; sourceTree = "<group>"; };
+		D47F688C0D98524B00E91D45 /* MFLogViewerTableCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFLogViewerTableCell.h; sourceTree = "<group>"; };
+		D47F688D0D98524B00E91D45 /* MFLogViewerTableCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MFLogViewerTableCell.m; sourceTree = "<group>"; };
 		D48DB9730D70D73A008A62BB /* MFMenulingAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFMenulingAppDelegate.h; sourceTree = "<group>"; };
 		D48DB9740D70D73A008A62BB /* MFMenulingAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MFMenulingAppDelegate.m; sourceTree = "<group>"; };
 		D48DB97F0D70D7A4008A62BB /* MacfusionMenuling.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MacfusionMenuling.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -660,6 +680,7 @@
 				D41E24250D897D5600F46F50 /* MFPreferences.xib */,
 				D41E23980D88E7B100F46F50 /* macfusionAdvancedView.xib */,
 				D4DF34CD0D80FC73005C9402 /* topView.xib */,
+				D47F67BC0D984A8700E91D45 /* logViewer.xib */,
 			);
 			name = UI;
 			sourceTree = "<group>";
@@ -673,6 +694,17 @@
 				D4DB42060D3E863100C99914 /* MacfusionMain-Info.plist */,
 			);
 			name = Plists;
+			sourceTree = "<group>";
+		};
+		D47F677B0D983F5100E91D45 /* Logging */ = {
+			isa = PBXGroup;
+			children = (
+				D4B14EE10CE2468B003195A3 /* MFLogging.h */,
+				D4B14EE20CE2468B003195A3 /* MFLogging.m */,
+				D47F677C0D983F6C00E91D45 /* MFLogReader.h */,
+				D47F677D0D983F6C00E91D45 /* MFLogReader.m */,
+			);
+			name = Logging;
 			sourceTree = "<group>";
 		};
 		D48DB9720D70D70C008A62BB /* Menuling */ = {
@@ -697,6 +729,7 @@
 				D4F499F00D52609400CDA4A9 /* MFFSDelegateProtocol.h */,
 				D403BC8D0D64C3D00049201D /* MFServerFSProtocol.h */,
 				D4D0E9FE0D7C887A00797279 /* MFClientFSDelegateProtocol.h */,
+				D441DB620D995C2B009F869A /* MFClientProtocol.h */,
 			);
 			name = Protocols;
 			sourceTree = "<group>";
@@ -745,13 +778,12 @@
 		D4B14EE00CE24671003195A3 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				D47F677B0D983F5100E91D45 /* Logging */,
 				D41E17C20D86016600F46F50 /* Plugin Shared */,
 				D403BD6A0D650D530049201D /* Error Handling */,
 				D412AFC00D596E740091C12B /* Utility */,
 				D4905C6A0D394A1500E21C1E /* Model */,
 				D4905BAA0D38061F00E21C1E /* Protocols */,
-				D4B14EE10CE2468B003195A3 /* MFLogging.h */,
-				D4B14EE20CE2468B003195A3 /* MFLogging.m */,
 				D4D6A0D70D025B4A00BC2E2D /* MFConstants.h */,
 				D46E4C0D0D02593B004926CE /* MFConstants.m */,
 				D4B657970D0DE41300ED34B3 /* MFClient.h */,
@@ -888,6 +920,10 @@
 				D413146E0D7F225E00F55B9B /* MGTransitioningTabView.m */,
 				D4DF353A0D812AA7005C9402 /* MGSmoothingImageView.h */,
 				D4DF353B0D812AA7005C9402 /* MGSmoothingImageView.m */,
+				D47F68550D984FF600E91D45 /* MFLogViewerTableView.h */,
+				D47F68560D984FF600E91D45 /* MFLogViewerTableView.m */,
+				D47F688C0D98524B00E91D45 /* MFLogViewerTableCell.h */,
+				D47F688D0D98524B00E91D45 /* MFLogViewerTableCell.m */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -899,6 +935,8 @@
 				D41E24290D897F0B00F46F50 /* MFPreferencesController.m */,
 				D4E6CF3C0D9224DB0022763F /* MFAdvancedViewController.h */,
 				D4E6CF3D0D9224DB0022763F /* MFAdvancedViewController.m */,
+				D47F67B80D98496200E91D45 /* MFLogViewerController.h */,
+				D47F67B90D98496200E91D45 /* MFLogViewerController.m */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -970,6 +1008,11 @@
 				D4E6CEFC0D9223770022763F /* IconFamily.h in Headers */,
 				D4E6CEFF0D9223770022763F /* NSString+CarbonFSRefCreation.h in Headers */,
 				D4E6CF3E0D9224DB0022763F /* MFAdvancedViewController.h in Headers */,
+				D47F677E0D983F6C00E91D45 /* MFLogReader.h in Headers */,
+				D47F67BA0D98496200E91D45 /* MFLogViewerController.h in Headers */,
+				D47F68570D984FF600E91D45 /* MFLogViewerTableView.h in Headers */,
+				D47F688E0D98524B00E91D45 /* MFLogViewerTableCell.h in Headers */,
+				D441DB630D995C2B009F869A /* MFClientProtocol.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1183,6 +1226,7 @@
 				D41E25C20D89B4BA00F46F50 /* MacFusion_Menu_Light.png in Resources */,
 				D41E25C30D89B4BA00F46F50 /* MacFusion_Menu_Dark.png in Resources */,
 				D45F0D950D8B3396008CC7E3 /* macfusionAgent-Info.plist in Resources */,
+				D47F67BD0D984A8700E91D45 /* logViewer.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1310,6 +1354,10 @@
 				D4E6CEFD0D9223770022763F /* IconFamily.m in Sources */,
 				D4E6CEFE0D9223770022763F /* NSString+CarbonFSRefCreation.m in Sources */,
 				D4E6CF3F0D9224DB0022763F /* MFAdvancedViewController.m in Sources */,
+				D47F677F0D983F6C00E91D45 /* MFLogReader.m in Sources */,
+				D47F67BB0D98496200E91D45 /* MFLogViewerController.m in Sources */,
+				D47F68580D984FF600E91D45 /* MFLogViewerTableView.m in Sources */,
+				D47F688F0D98524B00E91D45 /* MFLogViewerTableCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1786,8 +1834,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1)";
-				ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1 = "ppc i386";
+				ARCHS = "$(NATIVE_ARCH)";
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
@@ -1842,8 +1889,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1)";
-				ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1 = "ppc i386";
+				ARCHS = "$(NATIVE_ARCH)";
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
@@ -1897,8 +1943,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1)";
-				ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1 = "ppc i386";
+				ARCHS = "$(NATIVE_ARCH)";
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;

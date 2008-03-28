@@ -54,6 +54,7 @@ static MFPreferences* sharedPreferences = nil;
 - (void)setValue:(id)value 
    forPreference:(NSString*)prefKey
 {
+	MFLogS(self, @"Setting value %@ for key %@", value, prefKey);
 	if (value != [self getValueForPreference:prefKey])
 	{
 		[prefsDict setObject: value
@@ -62,9 +63,22 @@ static MFPreferences* sharedPreferences = nil;
 	}
 }
 
+- (id)defaultValueForPrefKey:(NSString*)key
+{
+	if ([key isEqualToString: kMFPrefsAutoScrollLog])
+		return [NSNumber numberWithBool: YES];
+	
+	return nil;
+}
+
+
 - (id)getValueForPreference:(NSString*)prefKey
 {
-	return [prefsDict objectForKey: prefKey];
+	id value = [prefsDict objectForKey: prefKey];
+	if (value)
+		return value;
+	else
+		return [self defaultValueForPrefKey: prefKey];
 }
 
 - (void)writePrefs

@@ -21,6 +21,8 @@
 #import "MFClientRecent.h"
 #import <Security/Security.h>
 #import "MFCore.h"
+#import "MFLogReader.h"
+#import "MFLogging.h"
 
 #define ORDERING_FILE_PATH @"~/Library/Application Support/Macfusion/Ordering.plist"
 
@@ -81,18 +83,6 @@ static MFClient* sharedClient = nil;
 	NSDistributedNotificationCenter* dnc = [NSDistributedNotificationCenter 
 											defaultCenter];
 	[dnc addObserver:self
-			selector:@selector(handleStatusChangedNotification:)
-				name:kMFStatusChangedNotification
-			  object:kMFDNCObject];
-	[dnc addObserver:self
-			selector:@selector(handleFilesystemAddedNotification:)
-				name:kMFFilesystemAddedNotification 
-			  object:kMFDNCObject];
-	[dnc addObserver:self
-			selector:@selector(handleFilesystemRemovedNotification:)
-				name:kMFFilesystemRemovedNotification 
-			  object:kMFDNCObject];
-	[dnc addObserver:self
 			selector:@selector(handleRecentsUpdatedNotification:)
 				name:kMFRecentsUpdatedNotification 
 			  object:kMFDNCObject];
@@ -109,6 +99,7 @@ static MFClient* sharedClient = nil;
 {
 	self = [super init];
 	if (self != nil) {
+		[[MFLogging sharedLogging] setDelegate: self];
 		[self registerForGeneralNotifications];
 		[self initializeIvars];
 		[self setupKeychainMonitoring];
@@ -175,6 +166,7 @@ static MFClient* sharedClient = nil;
 																		host:nil];
 	[serverObject setProtocolForProxy:@protocol(MFServerProtocol)];
 	server = (id <MFServerProtocol>)serverObject;
+	[serverObject registerClient: self];
 	if (serverObject)
 	{
 		return YES;
@@ -198,21 +190,17 @@ static MFClient* sharedClient = nil;
 
 
 
-#pragma mark Notification handling
-- (void)handleStatusChangedNotification:(NSNotification*)note
+#pragma mark Server Callback Handling
+- (void)noteStatusChangedForFSWithUUID:(NSString*)uuid
 {
-	// MFLogS(self, @"Status change notification received %@", note);
-	NSDictionary* info = [note userInfo];
-	NSString* uuid = [info objectForKey: KMFFSUUIDParameter];
 	MFClientFS* fs = [self filesystemWithUUID: uuid];
-	[fs handleStatusInfoChangedNotification:note];
+	MFLogSO(self, fs, @"Note status changed for fs %@", fs);
+	[fs noteStatusInfoChanged];
 }
 
-- (void)handleFilesystemAddedNotification:(NSNotification*)note
+- (void)noteFilesystemAddedWithUUID:(NSString*)uuid
 {
-	NSDictionary* info = [note userInfo];
-	NSString* uuid = [info objectForKey:  KMFFSUUIDParameter];
- 
+	MFLogS(self, @"Note fs added with uuid %@", uuid);
 	id remoteFilesystem = [server filesystemWithUUID: uuid];
 	if (![self filesystemWithUUID:uuid])
 	{
@@ -224,12 +212,20 @@ static MFClient* sharedClient = nil;
 	}
 }
 
-- (void)handleFilesystemRemovedNotification:(NSNotification*)note
+- (void)noteFilesystemRemovedWithUUID:(NSString*)uuid
 {
-	NSDictionary* info = [note userInfo];
-	NSString* uuid = [info objectForKey: KMFFSUUIDParameter];
+	MFLogS(self, @"Note fs removed with uuid %@", uuid);
 	MFClientFS* fs = [self filesystemWithUUID: uuid];
-	[self removeFilesystem:fs];
+	[self removeFilesystem: fs];
+}
+
+- (void)noteRecentAdded:(NSDictionary*)recentParameters
+{
+	[[self mutableArrayValueForKey:@"recents"] addObject: 
+	 [[MFClientRecent alloc] initWithParameterDictionary: recentParameters ]];
+	
+	if ([[self recents] count] > 10)
+		[[self mutableArrayValueForKey:@"recents"] removeObjectAtIndex: 0];
 }
 
 #pragma mark Action methods
@@ -237,10 +233,7 @@ static MFClient* sharedClient = nil;
 {
 	NSAssert(plugin, @"MFClient asked to make new filesystem with nil plugin");
 	id newRemoteFS = [server newFilesystemWithPluginName: plugin.ID];
-	MFClientFS* newFS = [[MFClientFS alloc]	initWithRemoteFS: newRemoteFS
-												clientPlugin: plugin];
-	[self storeFilesystem:newFS ];
-	return newFS;
+	return [self filesystemWithUUID: [newRemoteFS uuid]];
 }
 
 - (MFClientFS*)quickMountFilesystemWithURL:(NSURL*)url
@@ -276,15 +269,7 @@ static MFClient* sharedClient = nil;
 }
 
 #pragma mark Recents
-- (void)handleRecentsUpdatedNotification:(NSNotification*)note
-{
-	NSDictionary* recentParameterDict = [[note userInfo] objectForKey: kMFRecentKey ];
-	[[self mutableArrayValueForKey:@"recents"] addObject: 
-	 [[MFClientRecent alloc] initWithParameterDictionary: recentParameterDict ]];
-	
-	if ([[self recents] count] > 10)
-		[[self mutableArrayValueForKey:@"recents"] removeObjectAtIndex: 0];
-}
+
 
 - (MFClientFS*)mountRecent:(MFClientRecent*)recent
 					 error:(NSError**)error;
@@ -325,6 +310,20 @@ OSStatus myKeychainCallback (
 {
 	SecKeychainEventMask eventMask = kSecUpdateEventMask | kSecAddEventMask;
 	SecKeychainAddCallback(myKeychainCallback , eventMask, self);
+}
+
+#pragma mark Logging
+- (void)sendASLMessageDict:(NSDictionary*)messageDict
+{
+	[server sendASLMessageDict: messageDict];
+}
+
+- (void)recordASLMessageDict:(NSDictionary*)messageDict
+{
+	if ([[MFLogReader sharedReader] isRunning])
+	{
+		[[MFLogReader sharedReader] recordASLMessageDict: messageDict];
+	}
 }
 
 #pragma mark Accessors and Setters
@@ -474,7 +473,7 @@ OSStatus myKeychainCallback (
 
 - (void)handleApplicationTerminatingNotification:(NSNotification*)note
 {
-	// [self writeOrdering];
+	[server unregisterClient: self];
 }
 
 - (NSString*)createMountIconForFilesystem:(MFClientFS*)fs
