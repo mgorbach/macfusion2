@@ -46,6 +46,7 @@
 		formatter = [NSDateFormatter new];
 		[formatter  setDateStyle:NSDateFormatterShortStyle];
 		[formatter setTimeStyle: NSDateFormatterShortStyle];
+		heightCache = [NSMapTable mapTableWithStrongToStrongObjects];
 	}
 	
 	return self;
@@ -116,22 +117,30 @@
 - (CGFloat)heightForCellInWidth:(CGFloat)width
 {
 	NSDictionary* messageDict = [self representedObject];
-	NSAttributedString* header = [self headerForMessage:messageDict controlView: [self controlView]];
-	
-	CGFloat textHeight = 0;
-	textHeight += [header size].height;
-	
-	NSDictionary* attributes = [self textAttributesWithControlView: [self controlView]];
-	NSArray* lines = [[messageDict objectForKey: kMFLogKeyMessage] componentsSeparatedByString:@"\n"];
-	for (NSString* line in lines)
+	NSString* key = [NSString stringWithFormat: @"%d", messageDict];
+	if ([heightCache objectForKey: key])
+		return [[heightCache objectForKey: key] floatValue];
+	else
 	{
-		NSSize lineSize = [[line stringByTrimmingCharactersInSet: [NSCharacterSet newlineCharacterSet]]
-						   sizeWithAttributes: attributes];
-		float numLines = ceilf(lineSize.width / width);		
-		textHeight += lineSize.height * numLines;
+		NSAttributedString* header = [self headerForMessage:messageDict controlView: [self controlView]];
+		
+		CGFloat textHeight = 0;
+		textHeight += [header size].height;
+		
+		NSDictionary* attributes = [self textAttributesWithControlView: [self controlView]];
+		NSArray* lines = [[messageDict objectForKey: kMFLogKeyMessage] componentsSeparatedByString:@"\n"];
+		for (NSString* line in lines)
+		{
+			NSSize lineSize = [[line stringByTrimmingCharactersInSet: [NSCharacterSet newlineCharacterSet]]
+							   sizeWithAttributes: attributes];
+			float numLines = ceilf(lineSize.width / width);		
+			textHeight += lineSize.height * numLines;
+		}
+		
+		[heightCache setObject: [NSNumber numberWithFloat: textHeight] forKey: key];
+		return textHeight;
 	}
 
-	return textHeight;
 }
 
 @end

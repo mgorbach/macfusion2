@@ -49,6 +49,11 @@ static MFLogReader* sharedReader;
 	return nil;
 }
 
+- (void)addASLEntries:(NSArray*)array
+{
+	[[self mutableArrayValueForKey: @"logMessages"] addObjectsFromArray: array];
+}
+
 - (void)readEntriesFromASL
 {	
 	aslmsg q = asl_new(ASL_TYPE_QUERY);
@@ -66,8 +71,10 @@ static MFLogReader* sharedReader;
 	}
 	
 	aslresponse_free(r);
-	[[self mutableSetValueForKey:@"logMessages"] addObjectsFromArray:
-	 logMessagesToAdd];
+//	[[self mutableSetValueForKey:@"logMessages"] addObjectsFromArray:
+//	 logMessagesToAdd];
+	[self performSelectorOnMainThread:@selector(addASLEntries:)
+						   withObject:logMessagesToAdd waitUntilDone:NO];
 	NSLog(@"Loaded messages toAddCount %d totalCount %d", [logMessagesToAdd count],
 		  [logMessages count]);
 }
@@ -82,7 +89,9 @@ static MFLogReader* sharedReader;
 - (void)init
 {
 	logMessages = [NSMutableArray array];
-	[self readEntriesFromASL];
+	[NSThread detachNewThreadSelector: @selector(readEntriesFromASL)
+							 toTarget: self
+						   withObject:nil ];
 	isRunning = NO;
 	
 }

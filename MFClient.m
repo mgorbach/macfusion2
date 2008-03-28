@@ -100,6 +100,7 @@ static MFClient* sharedClient = nil;
 	self = [super init];
 	if (self != nil) {
 		[[MFLogging sharedLogging] setDelegate: self];
+		[MFLogReader sharedReader];
 		[self registerForGeneralNotifications];
 		[self initializeIvars];
 		[self setupKeychainMonitoring];
