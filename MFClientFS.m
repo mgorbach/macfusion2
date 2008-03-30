@@ -38,8 +38,9 @@
 					   clientPlugin:(MFClientPlugin*)plugin
 {
 	MFClientFS* fs = nil;
+	Class FSClass = [plugin subclassForClass: self];
 	
-	fs = [[MFClientFS alloc] initWithRemoteFS: remoteFS
+	fs = [[FSClass alloc] initWithRemoteFS: remoteFS
 								 clientPlugin: plugin];
 	return fs;
 }

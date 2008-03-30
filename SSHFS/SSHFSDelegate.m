@@ -21,6 +21,8 @@
 #import "MFNetworkFS.h"
 #import "MFSecurity.h"
 #import <Security/Security.h>
+#import "MFServerFS.h"
+#import "SSHServerFS.h"
 
 // SSHFS Parameter Names
 
@@ -306,6 +308,17 @@
 			[self primaryViewController], kMFUIMainViewKey,
 			[self advancedviewController], kMFUIAdvancedViewKey,
 			nil];
+}
+
+
+# pragma mark Subclassing
+
+// This is an example of how to specify subclasses
+- (Class)subclassForClass:(Class)superclass
+{
+	if ([NSStringFromClass(superclass) isEqualToString: @"MFServerFS"])
+		return [SSHServerFS class];
+	return nil;
 }
 
 @end

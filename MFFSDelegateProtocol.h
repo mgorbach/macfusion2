@@ -54,4 +54,8 @@
 // Security
 - (NSArray*)secretsList;
 - (NSArray*)secretsClientsList;
+
+// Subclassing
+- (Class)subclassForClass:(Class)superclass;
+
 @end

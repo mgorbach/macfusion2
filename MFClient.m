@@ -100,7 +100,6 @@ static MFClient* sharedClient = nil;
 	self = [super init];
 	if (self != nil) {
 		[[MFLogging sharedLogging] setDelegate: self];
-		[MFLogReader sharedReader];
 		[self registerForGeneralNotifications];
 		[self initializeIvars];
 		[self setupKeychainMonitoring];
@@ -131,7 +130,14 @@ static MFClient* sharedClient = nil;
 	pluginsDictionary = [NSMutableDictionary dictionaryWithCapacity:10];
 	for(id remotePlugin in remotePlugins)
 	{
-		MFClientPlugin* plugin = [[MFClientPlugin alloc] initWithRemotePlugin: 
+		Class PluginClientClass = NSClassFromString( [remotePlugin subclassNameForClassName: NSStringFromClass( [MFClientPlugin class ] ) ] );
+		if (!PluginClientClass)
+		{
+			MFLogS(self, @"Problem getting client plugin class for plugin %@", remotePlugin);
+			PluginClientClass = [MFClientPlugin class];
+		}
+			
+		MFClientPlugin* plugin = [[PluginClientClass alloc] initWithRemotePlugin: 
 								  remotePlugin];
 		if (plugin)
 			[self storePlugin: plugin];
@@ -143,8 +149,15 @@ static MFClient* sharedClient = nil;
 	filesystemsDictionary = [NSMutableDictionary dictionaryWithCapacity:10];
 	for(id remoteFS in remoteFilesystems)
 	{
+		Class FSClientClass = NSClassFromString( [[remoteFS plugin] subclassNameForClassName: NSStringFromClass( [MFClientFS class] ) ] );
+		if (!FSClientClass)
+		{
+			MFLogS(self, @"Problem getting client fs class for fs %@", remoteFS);
+			FSClientClass = [ MFClientFS class ];
+		}
+		
 		MFClientPlugin* plugin = [pluginsDictionary objectForKey: [remoteFS pluginID]];
-		MFClientFS* fs = [MFClientFS clientFSWithRemoteFS: remoteFS
+		MFClientFS* fs = [FSClientClass clientFSWithRemoteFS: remoteFS
 											 clientPlugin: plugin];
 		if (fs)
 			[self storeFilesystem: fs];
@@ -170,6 +183,7 @@ static MFClient* sharedClient = nil;
 	[serverObject registerClient: self];
 	if (serverObject)
 	{
+		[MFLogReader sharedReader]; // Tell the log reader to update
 		return YES;
 	}
 	else
@@ -321,10 +335,7 @@ OSStatus myKeychainCallback (
 
 - (void)recordASLMessageDict:(NSDictionary*)messageDict
 {
-	if ([[MFLogReader sharedReader] isRunning])
-	{
-		[[MFLogReader sharedReader] recordASLMessageDict: messageDict];
-	}
+	[[MFLogReader sharedReader] recordASLMessageDict: messageDict];
 }
 
 #pragma mark Accessors and Setters

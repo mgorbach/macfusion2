@@ -25,6 +25,9 @@
 
 - (id <MFFSDelegateProtocol>)delegate;
 - (id <MFFSDelegateProtocol>)setupDelegate;
+- (NSString*)subclassNameForClassName:(NSString*)superClassName;
+- (NSString*)subclassNameForClass:(Class)superClass;
+- (Class)subclassForClass:(Class)superClass;
 
 @property(readonly) NSString* shortName;
 @property(readonly) NSString* longName;

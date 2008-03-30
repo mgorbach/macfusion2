@@ -87,6 +87,9 @@
 		D4656C8E0D6FD6DC00DE2208 /* sshfs.png in Resources */ = {isa = PBXBuildFile; fileRef = D4656C8C0D6FD6DC00DE2208 /* sshfs.png */; };
 		D4656C9F0D6FDBF900DE2208 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D4656C9E0D6FDBF900DE2208 /* QuartzCore.framework */; };
 		D46E4C0E0D02593B004926CE /* MFConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = D46E4C0D0D02593B004926CE /* MFConstants.m */; };
+		D47DED810D9ED5C700C0F934 /* SSHServerFS.m in Sources */ = {isa = PBXBuildFile; fileRef = D47DED800D9ED5C700C0F934 /* SSHServerFS.m */; };
+		D47DEDBC0D9ED73900C0F934 /* MFServerPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = D4905C6F0D394A6700E21C1E /* MFServerPlugin.m */; };
+		D47DEDBD0D9ED74000C0F934 /* MFServerFS.m in Sources */ = {isa = PBXBuildFile; fileRef = D4905C6C0D394A5D00E21C1E /* MFServerFS.m */; };
 		D47F677E0D983F6C00E91D45 /* MFLogReader.h in Headers */ = {isa = PBXBuildFile; fileRef = D47F677C0D983F6C00E91D45 /* MFLogReader.h */; };
 		D47F677F0D983F6C00E91D45 /* MFLogReader.m in Sources */ = {isa = PBXBuildFile; fileRef = D47F677D0D983F6C00E91D45 /* MFLogReader.m */; };
 		D47F67BA0D98496200E91D45 /* MFLogViewerController.h in Headers */ = {isa = PBXBuildFile; fileRef = D47F67B80D98496200E91D45 /* MFLogViewerController.h */; };
@@ -103,7 +106,6 @@
 		D49059750D35681F00E21C1E /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D49059740D35681F00E21C1E /* AppKit.framework */; };
 		D4905C330D393F8300E21C1E /* MFClientPlugin.h in Headers */ = {isa = PBXBuildFile; fileRef = D4905C310D393F8300E21C1E /* MFClientPlugin.h */; };
 		D4905C340D393F8300E21C1E /* MFClientPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = D4905C320D393F8300E21C1E /* MFClientPlugin.m */; };
-		D4905D4D0D39791B00E21C1E /* MFServerPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = D4905C6F0D394A6700E21C1E /* MFServerPlugin.m */; };
 		D4B14BC90CE03D25003195A3 /* sshnodelay.so in Resources */ = {isa = PBXBuildFile; fileRef = D4B14BAA0CE03C84003195A3 /* sshnodelay.so */; };
 		D4B14BCB0CE03D25003195A3 /* sshfs-static in Resources */ = {isa = PBXBuildFile; fileRef = D4B14BAC0CE03C84003195A3 /* sshfs-static */; };
 		D4B14D740CE195CB003195A3 /* mfctl.m in Sources */ = {isa = PBXBuildFile; fileRef = D4B14D730CE195CB003195A3 /* mfctl.m */; };
@@ -158,7 +160,6 @@
 		D4EA61590D8B30ED006D8885 /* macfusionAgent.m in Sources */ = {isa = PBXBuildFile; fileRef = 08FB7796FE84155DC02AAC07 /* macfusionAgent.m */; };
 		D4EA615A0D8B30ED006D8885 /* MFFilesystemController.m in Sources */ = {isa = PBXBuildFile; fileRef = D4B14FC10CE25A88003195A3 /* MFFilesystemController.m */; };
 		D4EA615B0D8B30ED006D8885 /* MFCommunicationServer.m in Sources */ = {isa = PBXBuildFile; fileRef = D439D5910D09E1510025574A /* MFCommunicationServer.m */; };
-		D4EA615C0D8B30ED006D8885 /* MFServerFS.m in Sources */ = {isa = PBXBuildFile; fileRef = D4905C6C0D394A5D00E21C1E /* MFServerFS.m */; };
 		D4EA63500D8B30F6006D8885 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D49059740D35681F00E21C1E /* AppKit.framework */; };
 		D4EA63510D8B30F6006D8885 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08FB779EFE84155DC02AAC07 /* Foundation.framework */; };
 		D4EA63520D8B30F6006D8885 /* MFCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D4FC0C980CF128480029B133 /* MFCore.framework */; };
@@ -396,6 +397,8 @@
 		D4656C8C0D6FD6DC00DE2208 /* sshfs.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = sshfs.png; sourceTree = "<group>"; };
 		D4656C9E0D6FDBF900DE2208 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = /System/Library/Frameworks/QuartzCore.framework; sourceTree = "<absolute>"; };
 		D46E4C0D0D02593B004926CE /* MFConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MFConstants.m; sourceTree = "<group>"; };
+		D47DED7F0D9ED5C700C0F934 /* SSHServerFS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSHServerFS.h; sourceTree = "<group>"; };
+		D47DED800D9ED5C700C0F934 /* SSHServerFS.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSHServerFS.m; sourceTree = "<group>"; };
 		D47F677C0D983F6C00E91D45 /* MFLogReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFLogReader.h; sourceTree = "<group>"; };
 		D47F677D0D983F6C00E91D45 /* MFLogReader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MFLogReader.m; sourceTree = "<group>"; };
 		D47F67B80D98496200E91D45 /* MFLogViewerController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFLogViewerController.h; sourceTree = "<group>"; };
@@ -907,6 +910,8 @@
 				D41E17CA0D86035500F46F50 /* new_ssh_askpass.m */,
 				D4F499ED0D52601B00CDA4A9 /* SSHFSDelegate.h */,
 				D4F499EE0D52601B00CDA4A9 /* SSHFSDelegate.m */,
+				D47DED7F0D9ED5C700C0F934 /* SSHServerFS.h */,
+				D47DED800D9ED5C700C0F934 /* SSHServerFS.m */,
 			);
 			path = SSHFS;
 			sourceTree = "<group>";
@@ -1339,7 +1344,6 @@
 				D4B6579A0D0DE41300ED34B3 /* MFClient.m in Sources */,
 				D4CEE0F40D3045590064042E /* MFClientFS.m in Sources */,
 				D4905C340D393F8300E21C1E /* MFClientPlugin.m in Sources */,
-				D4905D4D0D39791B00E21C1E /* MFServerPlugin.m in Sources */,
 				D412AFC40D596E890091C12B /* MGUtilities.m in Sources */,
 				D403BD6F0D650D630049201D /* MFError.m in Sources */,
 				D4E983450D7223CE0058AF73 /* MGNSImage.m in Sources */,
@@ -1378,6 +1382,7 @@
 			files = (
 				D4F499EF0D52601B00CDA4A9 /* SSHFSDelegate.m in Sources */,
 				D41E17CB0D86035500F46F50 /* new_ssh_askpass.m in Sources */,
+				D47DED810D9ED5C700C0F934 /* SSHServerFS.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1427,7 +1432,8 @@
 				D4EA61590D8B30ED006D8885 /* macfusionAgent.m in Sources */,
 				D4EA615A0D8B30ED006D8885 /* MFFilesystemController.m in Sources */,
 				D4EA615B0D8B30ED006D8885 /* MFCommunicationServer.m in Sources */,
-				D4EA615C0D8B30ED006D8885 /* MFServerFS.m in Sources */,
+				D47DEDBC0D9ED73900C0F934 /* MFServerPlugin.m in Sources */,
+				D47DEDBD0D9ED74000C0F934 /* MFServerFS.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1698,6 +1704,7 @@
 		D4B14BB90CE03CC4003195A3 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				BUNDLE_LOADER = "${TARGET_BUILD_DIR}/macfusionAgent.app/Contents/MacOS/macfusionAgent";
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
@@ -2018,6 +2025,7 @@
 		D4FC0DC90CF23DE30029B133 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				BUNDLE_LOADER = "${TARGET_BUILD_DIR}/macfusionAgent.app/Contents/MacOS/macfusionAgent";
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;

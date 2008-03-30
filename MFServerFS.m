@@ -46,7 +46,8 @@
 {
 	if (plugin)
 	{
-		return [[self alloc] initWithPlugin: plugin];
+		Class FSClass = [plugin subclassForClass: self];
+		return [[FSClass alloc] initWithPlugin: plugin];
 	}
 	
 	return nil;
@@ -89,7 +90,8 @@
 							  pluginWithID:pluginID];
 	if (plugin)
 	{
-		fs = [[MFServerFS alloc] initWithParameters: fsParameters
+		Class FSClass = [plugin subclassForClass: self];
+		fs = [[FSClass alloc] initWithParameters: fsParameters
 											 plugin: plugin ];
 		NSError* validationError;
 		BOOL ok = [fs validateParametersWithError: &validationError];
@@ -137,7 +139,9 @@
 			  forKey: kMFFSTypeParameter ];
 	[params setValue: [NSString stringWithFormat: @"%@", url]
 			  forKey: kMFFSDescriptionParameter ];
-	MFServerFS* fs = [[MFServerFS alloc] initWithParameters: params
+	
+	Class FSClass = [p subclassForClass: self];
+	MFServerFS* fs = [[FSClass alloc] initWithParameters: params
 													 plugin: p];
 	NSError* validationError;
 	BOOL ok = [fs validateParametersWithError: &validationError];

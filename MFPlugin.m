@@ -77,7 +77,7 @@
 			if (!thisDelegate)
 			{
 				
-				MFLogS(self, @"Failed to create delegate for plugin at pat %@. Specified delegate class could not \
+				MFLogS(self, @"Failed to create delegate for plugin at path %@. Specified delegate class could not \
 					   be instantiated");
 
 			}
@@ -90,6 +90,50 @@
 - (id <MFFSDelegateProtocol>)delegate
 {
 	return delegate;
+}
+
+# pragma mark Subclassing API
+- (NSString*)subclassNameForClass:(Class)superclass
+{
+	if ([delegate respondsToSelector: @selector(subclassForClass:)] )
+	{
+		Class subclass = [delegate subclassForClass: superclass];
+		if (subclass == nil)
+		{
+//			MFLogS(self, @"Failed to get plugins requested subclass for superclass %@", NSStringFromClass(superclass));
+			return NSStringFromClass(superclass);
+		}
+		if (![subclass isSubclassOfClass: superclass])
+		{
+			MFLogS(self, @"Plugins requested subclass %@ for superclass %@. Is not a subclass of the superclass",
+				   NSStringFromClass(subclass), NSStringFromClass(superclass));
+			return NSStringFromClass(superclass);
+		}
+		
+		return NSStringFromClass( subclass );
+	}
+	else
+	{
+//		MFLogS(self, @"Delegate %@ doesn't respond to subclassing selector.", delegate);
+		return NSStringFromClass( superclass );
+	}
+}
+
+- (Class)subclassForClass:(Class)superclass
+{
+	return NSClassFromString( [self subclassNameForClass: superclass] );
+}
+
+- (NSString*)subclassNameForClassName:(NSString*)superClassName
+{
+	Class superClass = NSClassFromString( superClassName );
+	if (!superClass)
+	{
+		MFLogS(self, @"Bad superclass given in subclassNameForClassName %@", superClassName);
+		return nil;
+	}
+	
+	return [self subclassNameForClass: superClass];
 }
 
 @synthesize bundle;

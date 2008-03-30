@@ -17,6 +17,7 @@
 #import "MFPluginController.h"
 #import "MFServerPlugin.h"
 #import "MFServerFS.h"
+#import "MFCore.h"
 
 #define PLUGIN_EXTENSION @"mfplugin"
 
@@ -75,8 +76,9 @@ static MFPluginController* sharedController = nil;
 		}
 	}
 	
-	NSString* mainBundlePath = [[NSWorkspace sharedWorkspace] absolutePathForAppBundleWithIdentifier:@"org.mgorbach.macfusion2"];
-	NSBundle* mainBundle = [NSBundle bundleWithPath: mainBundlePath];
+	NSString* mainBundlePath = mfcMainBundlePath();
+	MFLogS(self, @"Main bundle path  %@", mainBundlePath);
+	NSBundle* mainBundle = [NSBundle bundleWithPath: mfcMainBundlePath()];
 	NSString* pluginsPath = [mainBundle builtInPlugInsPath];
 	if (pluginsPath)
 		[pluginSearchPaths addObject: pluginsPath];
