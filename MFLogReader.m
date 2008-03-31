@@ -51,7 +51,9 @@ static MFLogReader* sharedReader;
 
 - (void)addASLEntries:(NSArray*)array
 {
-	[[self mutableArrayValueForKey: @"logMessages"] addObjectsFromArray: array];
+	[self willChangeValueForKey:@"logMessages"];
+	[logMessages addObjectsFromArray: array];
+	[self didChangeValueForKey:@"logMessages"];
 }
 
 - (void)readEntriesFromASL
@@ -75,13 +77,12 @@ static MFLogReader* sharedReader;
 //	 logMessagesToAdd];
 	[self performSelectorOnMainThread:@selector(addASLEntries:)
 						   withObject:logMessagesToAdd waitUntilDone:NO];
-	NSLog(@"Loaded messages toAddCount %d totalCount %d", [logMessagesToAdd count],
-		  [logMessages count]);
 }
 
 - (void)recordASLMessageDict:(NSDictionary*)messageDict
 {
 	// NSLog(@"Processing %@", messageDict);
+	
 	[[self mutableArrayValueForKey: @"logMessages"] addObject:
 	 messageDict];
 }

@@ -74,6 +74,10 @@ static NSString* kAutoscrollToolbarItemIdentifier = @"autoscroll";
 				 withKeyPath:@"fullLogPredicate"
 					 options:nil];
 	
+//	NSSortDescriptor* timeSort = [[NSSortDescriptor alloc] initWithKey:kMFLogKeyTime ascending:NO];
+//	[logArrayController setSortDescriptors: 
+//	 [NSArray arrayWithObject: timeSort]];
+	
 	[logTableView scrollRowToVisible: [logTableView numberOfRows] - 1];
 	NSMenu* fsMenu = [[NSMenu alloc] initWithTitle:@"Filesystems"];
 	[fsMenu setDelegate: self];
@@ -115,17 +119,10 @@ static NSString* kAutoscrollToolbarItemIdentifier = @"autoscroll";
 }
 
 # pragma mark Updating
-- (IBAction)refresh:(id)sender
-{
-	// NSLog(@"count %d", [logTableView numberOfRows]);
-}
-
 
 - (void) observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
     if (context == self) {
-		// NSLog(@"Controlled observes change!");
-		// NSLog(@"logArrayController content count %d", [[logArrayController arrangedObjects] count]);
 		[logTableView reloadData];
 		if ([[MFPreferences sharedPreferences] getBoolForPreference: kMFPrefsAutoScrollLog])
 			[logTableView scrollRowToVisible: [logTableView numberOfRows] - 1];

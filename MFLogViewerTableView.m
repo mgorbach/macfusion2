@@ -121,6 +121,14 @@ objectValueForTableColumn: (NSTableColumn *) tableColumn
 		return [super validateUserInterfaceItem: item];
 }
 
+# pragma mark Tooltip
+- (NSString *)tableView:(NSTableView *)aTableView toolTipForCell:(NSCell *)aCell
+				   rect:(NSRectPointer)rect tableColumn:(NSTableColumn *)aTableColumn 
+					row:(NSInteger)row 
+		  mouseLocation:(NSPoint)mouseLocation
+{
+	return [NSString stringWithFormat: @"%@", [self.logMessages objectAtIndex: row]];
+}
 
 @synthesize logMessages;
 @end

@@ -29,13 +29,12 @@ MFLogViewerController;
 	IBOutlet NSPopUpButton* button;
 	IBOutlet NSButton* mountButton;
 	
-	NSMutableDictionary* filesystemConfigurationViewControllers;
 	MFClient* client;
 	MFClientFS* fsBeingEdited;
 	MFPreferencesController* preferencesController;
 	MFLogViewerController* logViewerController;
 	MFClientFS* menuArgumentFS;
-	
+
 	BOOL creatingNewFS;
 }
 

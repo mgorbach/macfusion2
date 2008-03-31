@@ -42,7 +42,8 @@
 - (NSArray*)urlSchemesHandled;
 
 // UI
-- (NSDictionary*)configurationViewControllers;
+- (NSArray*)viewControllerKeys;
+- (NSViewController*)viewControllerForKey:(NSString*)key;
  
 @optional
 - (NSDictionary*)taskEnvironmentForParameters:(NSDictionary*)parameters;

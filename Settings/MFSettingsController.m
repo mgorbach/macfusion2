@@ -25,6 +25,8 @@
 #import "MFCore.h"
 #import "MFLogReader.h"
 #import "MFLogViewerController.h"
+#import "MFClientFSUI.h"
+#import "MGTestView.h"
 
 @interface MFSettingsController(PrivateAPI)
 - (BOOL)validateFSMenuItem:(NSMenuItem*)item;
@@ -245,92 +247,7 @@
 }
 
 # pragma mark View Construction
-- (NSView*)editingViewForFS:(MFClientFS*)fs
-{
-	filesystemConfigurationViewControllers = [[fs configurationViewControllers] mutableCopy];
-	NSTabView* tabView = [MGTransitioningTabView new];
-	[tabView setFont: [NSFont systemFontOfSize: 
-					   [NSFont systemFontSizeForControlSize: NSSmallControlSize]]];
-	[tabView setControlSize: NSSmallControlSize];
-	
-	float view_width = 300;
-	float tabview_x = 20;
-	float tabview_y = 38;
-	
-	if (filesystemConfigurationViewControllers && [filesystemConfigurationViewControllers count] > 0)
-	{
-		[[filesystemConfigurationViewControllers allValues] makeObjectsPerformSelector:@selector(setRepresentedObject:)
-																			withObject:fs];
 
-		// TODO: Simplify the ordering of the views in the tabview
-		// TODO: Allow adjustable height
-		NSView* mainView = [[filesystemConfigurationViewControllers objectForKey: kMFUIMainViewKey] view];
-		NSView* advancedView = [[filesystemConfigurationViewControllers objectForKey: kMFUIAdvancedViewKey] view];
-		NSView* mfView = [[filesystemConfigurationViewControllers objectForKey: kMFUIMacfusionAdvancedViewKey] view];
-		
-		if (mainView)
-		{
-			NSTabViewItem* mainViewItem = [NSTabViewItem new];
-			[mainViewItem setLabel: @"Main"];
-			[mainViewItem setView: mainView];
-			[tabView addTabViewItem: mainViewItem];
-		}
-		else
-		{
-			MFLogSO(self, fs, @"No main view found for fs %@", fs);
-		}
-		
-
-		if (advancedView)
-		{
-			NSTabViewItem* advancedViewItem = [NSTabViewItem new];
-			[advancedViewItem setLabel: @"Advanced"];
-			[advancedViewItem setView: advancedView];
-			[tabView addTabViewItem: advancedViewItem];
-//			[tabView selectTabViewItem: advancedViewItem];
-		}
-		
-		NSTabViewItem* mfViewItem = [NSTabViewItem new];
-		[mfViewItem setLabel: @"Macfusion"];
-		[mfViewItem setView: mfView];
-		[tabView addTabViewItem: mfViewItem];
-		
-
-		for(NSTabViewItem* item in [tabView tabViewItems])
-			[[item view] setFrame:
-			 [mainView frame]];
-		
-		[mainView setFrame: NSMakeRect(300, 100, 300, 150)];
-//		MFLogS(self, @"Main %@ Advanced %@", NSStringFromRect([mainView frame]),
-//			   NSStringFromRect([advancedView frame]));
-		[tabView setFrame: NSMakeRect( 0, 0, tabview_x+view_width, tabview_y+150 )];
-//		MFLogS(self, @"Content area %@", NSStringFromRect([tabView contentRect]));
-//		MFLogS(self, @"Main %@ Advanced %@", NSStringFromRect([mainView frame]),
-//			   NSStringFromRect([advancedView frame]));
-
-		return tabView;
-	}
-	else
-	{
-		MFLogSO(self, fs, @"No view loaded for fs %@", fs);
-		return nil;
-	}
-}
-
-- (void)addTopViewToView:(NSView*)view 
-			  filesystem:(MFClientFS*)fs
-{
-	NSBundle* bundle = [NSBundle bundleWithIdentifier: @"org.mgorbach.macfusion2.MFCore"];
-	NSViewController* nameViewController = [[NSViewController alloc] initWithNibName: @"topView"
-																			  bundle: bundle];
-	[nameViewController setRepresentedObject: fs];
-	[filesystemConfigurationViewControllers setObject: nameViewController forKey: @"Top"];
-	NSRect nameViewFrame = [[nameViewController view] frame];
-	NSRect originalViewFrame = [view frame];
-	[view setFrameSize: NSMakeSize( originalViewFrame.size.width, originalViewFrame.size.height + nameViewFrame.size.height)];
-	[view addSubview: [nameViewController view]];
-	[[nameViewController view] setFrameOrigin: NSMakePoint( 0,  originalViewFrame.size.height)];
-}
 
 - (NSView*)wrapViewInOKCancel:(NSView*)innerView;
 {
@@ -360,6 +277,7 @@
 	[okButton setTarget: self];
 	[okButton setAction:@selector(filesystemEditOKClicked:)];
 	[okButton setKeyEquivalent:@"\r"];
+	[okButton setAutoresizingMask: NSViewMaxYMargin | NSViewMinXMargin];
 	 
 	 
 	NSRect cancelButtonFrame = NSMakeRect(okButtonFrame.origin.x - buttonXDistance- buttonWidth,
@@ -371,10 +289,11 @@
 	[cancelButton setTarget: self];
 	[cancelButton setAction:@selector(filesystemEditCancelClicked:)];
 	[cancelButton setKeyEquivalent:@"\e"];
+	[cancelButton setAutoresizingMask: NSViewMaxYMargin | NSViewMinXMargin];
 	 
+	[outerView setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
 	[outerView addSubview:cancelButton];
 	[outerView addSubview: okButton];
-	 
 	 
 	return outerView;
 }
@@ -424,13 +343,22 @@
 	NSWindow* parent = [filesystemTableView window];
 	NSWindow* mySheetWindow = [[NSWindow alloc] init];
 	
-	NSView* editView = [self wrapViewInOKCancel: [self editingViewForFS: fs]];
-	[self addTopViewToView: editView filesystem:fs];
-	if (editView)
+	NSView* editingViewForFS = [fs editingView];
+	[(MGTransitioningTabView*)editingViewForFS setDelegate: self];
+	
+	if (!editingViewForFS)
 	{
-		[mySheetWindow setFrame: [editView frame] display:YES];
-		[mySheetWindow setContentSize: [editView frame].size];
-		[mySheetWindow setContentView: editView];
+		MFLogSO(self, fs, @"Editing view nil");
+		return;
+	}
+	
+	NSView* fullEditView = [self wrapViewInOKCancel: 
+							[fs addTopViewToView: editingViewForFS]];
+	if (fullEditView)
+	{
+		[mySheetWindow setFrame: [fullEditView frame] display:YES];
+		[mySheetWindow setContentSize: [fullEditView frame].size];
+		[mySheetWindow setContentView: fullEditView];
 		[fs beginEditing];
 		fsBeingEdited = fs;
 		
@@ -440,6 +368,25 @@
 		   didEndSelector: @selector(sheetDidEnd:)
 			  contextInfo: fs];
 	}
+}
+
+
+- (void)tabView:(NSTabView *)tabView 
+	didSelectTabViewItem:(NSTabViewItem *)tabViewItem
+{
+	MGTransitioningTabView* myTabView = (MGTransitioningTabView*)tabView;
+	NSWindow* sheetWindow = [NSApp keyWindow];
+	NSRect oldSheetFrame = [sheetWindow frame];
+	NSSize oldTabViewSize = [tabView frame].size;
+	CGFloat deltaX = [sheetWindow frame].size.width - oldTabViewSize.width;
+	CGFloat deltaY = [sheetWindow frame].size.height - oldTabViewSize.height;
+	NSSize newtabViewSize = [myTabView sizeWithTabviewItem: tabViewItem];
+	NSSize newSize = NSMakeSize(newtabViewSize.width+deltaX, newtabViewSize.height+deltaY);
+	[sheetWindow setFrame: NSMakeRect(oldSheetFrame.origin.x-0.5*(newSize.width-oldSheetFrame.size.width), 
+									  oldSheetFrame.origin.y-(newSize.height-oldSheetFrame.size.height), 
+									  newSize.width, newSize.height) 
+				  display:YES 
+				  animate:YES];
 }
 
 - (void)toggleMountOnFilesystem:(MFClientFS*)fs
@@ -499,15 +446,6 @@
 - (void)filesystemEditOKClicked:(id)sender
 {
 	MFClientFS* fs = fsBeingEdited;
-	for(NSViewController* controller in [filesystemConfigurationViewControllers allValues])
-	{
-		BOOL ok = [controller commitEditing];
-		if (!ok)
-		{
-			MFLogSO(self, fs, @"Failed to commit edits %@ for fs %@", controller, fs);
-		}
-	}
-	
 	NSError* error = [fs endEditingAndCommitChanges: YES];
 	if (error)
 	{
@@ -529,14 +467,6 @@
 - (void)filesystemEditCancelClicked:(id)sender
 {
 	MFClientFS* fs = fsBeingEdited;
-	for(NSViewController* controller in [filesystemConfigurationViewControllers allValues])
-	{
-		BOOL ok = [controller commitEditing];
-		if (!ok)
-		{
-			MFLogSO(self, fs, @"Failed to commit edits %@ for fs %@", controller, fs);
-		}
-	}
 	[fs endEditingAndCommitChanges: NO];
 	if (creatingNewFS)
 		[client deleteFilesystem: fsBeingEdited];
@@ -549,7 +479,6 @@
 {
 	[sheet orderOut:self];
 	fsBeingEdited = nil;
-	filesystemConfigurationViewControllers = nil;
 }
 
 

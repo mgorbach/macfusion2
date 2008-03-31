@@ -23,9 +23,10 @@
 #import <Security/Security.h>
 #import "MFServerFS.h"
 #import "SSHServerFS.h"
+#import "MFClientFSUI.h"
 
-// SSHFS Parameter Names
-
+static NSString* primaryViewControllerKey = @"sshfsPrimaryView";
+static NSString* advancedViewControllerKey = @"sshfsAdvancedView";
 
 @implementation SSHFSDelegate
 
@@ -287,6 +288,7 @@
 	NSViewController* primaryViewController = [[NSViewController alloc]
 											   initWithNibName:@"sshfsConfiguration"
 											   bundle: [NSBundle bundleForClass: [self class]]];
+	[primaryViewController setTitle: @"SSH"];
 	return primaryViewController;
 	
 }
@@ -296,18 +298,25 @@
 	NSViewController* advancedviewController = [[NSViewController alloc]
 											   initWithNibName:@"sshfsAdvanced"
 											   bundle: [NSBundle bundleForClass: [self class]]];
+	[advancedviewController setTitle: @"SSH Advanced"];
 	return advancedviewController;
 }
 
-- (NSDictionary*)configurationViewControllers
+- (NSArray*)viewControllerKeys
 {
-	NSView* emptyView = [NSView new];
-	NSViewController* secondViewController = [NSViewController new];
-	[secondViewController setView: emptyView];
-	return [NSDictionary dictionaryWithObjectsAndKeys:
-			[self primaryViewController], kMFUIMainViewKey,
-			[self advancedviewController], kMFUIAdvancedViewKey,
+	return [NSArray arrayWithObjects: 
+			primaryViewControllerKey, advancedViewControllerKey, kMFUIMacfusionAdvancedViewKey,
 			nil];
+}
+
+- (NSViewController*)viewControllerForKey:(NSString*)key
+{
+	if (key == primaryViewControllerKey)
+		return [self primaryViewController];
+	if (key == advancedViewControllerKey)
+		return [self advancedviewController];
+	
+	return nil;
 }
 
 

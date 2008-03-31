@@ -21,8 +21,10 @@
 #import "MFNetworkFS.h"
 #import "MFSecurity.h"
 #import <Security/Security.h>
+#import "MFClientFSUI.h"
 
-// FTPFS Parameter Names
+static NSString* primaryViewControllerKey = @"sshfsPrimaryView";
+static NSString* advancedViewControllerKey = @"sshfsAdvancedView";
 
 
 @implementation FTPFSDelegate
@@ -264,27 +266,30 @@
 	NSViewController* primaryViewController = [[NSViewController alloc]
 											   initWithNibName:@"ftpfsConfiguration"
 											   bundle: [NSBundle bundleForClass: [self class]]];
+	[primaryViewController setTitle: @"FTP"];
 	return primaryViewController;
 	
 }
 
 - (NSViewController*)advancedviewController
 {
-	NSViewController* advancedviewController = [[NSViewController alloc]
-												initWithNibName:@"sshfsAdvanced"
-												bundle: [NSBundle bundleForClass: [self class]]];
-	return advancedviewController;
+	return nil;
 }
 
-- (NSDictionary*)configurationViewControllers
+- (NSArray*)viewControllerKeys
 {
-	NSView* emptyView = [NSView new];
-	NSViewController* secondViewController = [NSViewController new];
-	[secondViewController setView: emptyView];
-	return [NSDictionary dictionaryWithObjectsAndKeys:
-			[self primaryViewController], kMFUIMainViewKey,
-	//		[self advancedviewController], kMFUIAdvancedViewKey,
+	return [NSArray arrayWithObjects: 
+			primaryViewControllerKey, kMFUIMacfusionAdvancedViewKey,
 			nil];
 }
 
+- (NSViewController*)viewControllerForKey:(NSString*)key
+{
+	if (key == primaryViewControllerKey)
+		return [self primaryViewController];
+	if (key == advancedViewControllerKey)
+		return [self advancedviewController];
+	
+	return nil;
+}
 @end

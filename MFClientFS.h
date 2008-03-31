@@ -24,11 +24,19 @@
 @interface MFClientFS : MFFilesystem {
 	id<MFServerFSProtocol> remoteFilesystem;
 	MFClientPlugin* plugin;
+	
+	// For Undo
 	NSDictionary* backupParameters;
 	NSDictionary* backupSecrets;
+	
 	BOOL isEditing;
 	NSInteger displayOrder;
 	id<MFClientFSDelegateProtocol> clientFSDelegate;
+	
+	// UI references
+	NSArray* viewControllers;
+	NSViewController* topViewController;
+	NSView* editingTabView;
 }
 
 + (MFClientFS*)clientFSWithRemoteFS:(id)remoteFS 
@@ -48,7 +56,6 @@
 - (NSDictionary*)displayDictionary;
 
 // UI
-- (NSDictionary*)configurationViewControllers;
 - (void)setIconImage:(NSImage*)image;
 
 @property(readwrite, assign) NSInteger displayOrder;

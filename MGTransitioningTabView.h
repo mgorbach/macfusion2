@@ -21,7 +21,10 @@
 	NSRect imageRect;
 	CIFilter* transitionFilter;
 	NSAnimation* animation;
+	NSMutableDictionary* viewDimensions;
 }
+
+- (NSSize)sizeWithTabviewItem:(NSTabViewItem*)item;
 @end
 
 @interface TabViewAnimation : NSAnimation {

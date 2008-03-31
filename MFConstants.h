@@ -112,8 +112,5 @@ enum macfusionErrorCodes {
 // D&D
 #define kMFFilesystemDragType @"org.mgorbach.macfusion.drag.mffilesystem"
 
-// UI Keys
-extern NSString* kMFUIMainViewKey;
-extern NSString* kMFUIAdvancedViewKey;
-extern NSString* kMFUIMacfusionAdvancedViewKey;
+
 

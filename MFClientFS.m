@@ -192,6 +192,9 @@
 
 - (NSError*)endEditingAndCommitChanges:(BOOL)commit
 {
+	[viewControllers makeObjectsPerformSelector: @selector(commitEditing)];
+	[topViewController commitEditing];
+	
 	if (!isEditing)
 	{
 		[[NSException exceptionWithName:kMFBadAPIUsageException
@@ -241,21 +244,6 @@
 }
 
 # pragma mark UI
-- (NSDictionary*)configurationViewControllers
-{
-	NSMutableDictionary* myControllers = [NSMutableDictionary dictionary];
-	NSViewController* macfusionAdvancedController = [[MFAdvancedViewController alloc] initWithNibName: @"macfusionAdvancedView"
-																					   bundle: [NSBundle bundleForClass: [self class]]];
-	[myControllers setObject: macfusionAdvancedController forKey:kMFUIMacfusionAdvancedViewKey];
-	NSDictionary* delegateControllers = [delegate configurationViewControllers];
-	if (!delegateControllers)
-	{
-		MFLogS(self, @"No view controllers specified by delegate");
-	}
-	
-	[myControllers addEntriesFromDictionary: delegateControllers];
-	return [myControllers copy];
-}
 
 - (void)setIconImage:(NSImage*)image
 {

@@ -19,6 +19,17 @@
 
 
 @implementation MGTransitioningTabView
+- (id)initWithFrame:(NSRect)frame
+{
+	if (self = [super initWithFrame: frame])
+	{
+		viewDimensions = [NSMutableDictionary dictionary];
+		[self setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
+	}
+	
+	return self;
+}
+
 static void ClearBitmapImageRep(NSBitmapImageRep *bitmap) {
     unsigned char *bitmapData = [bitmap bitmapData];
     if (bitmapData != NULL) {
@@ -27,6 +38,14 @@ static void ClearBitmapImageRep(NSBitmapImageRep *bitmap) {
     }
 }
 
+- (void)addTabViewItem:(NSTabViewItem*)item
+{
+//	NSLog(@"Adding Tabview Item %@", item);
+	[viewDimensions setObject: [NSValue valueWithSize: [[item view] frame].size]
+					   forKey: [item label] ];
+	[super addTabViewItem: item];
+//	NSLog(@"Dimensions Dict %@", viewDimensions);
+}
 
 - (void)drawRect:(NSRect)rect
 {
@@ -55,12 +74,16 @@ static void ClearBitmapImageRep(NSBitmapImageRep *bitmap) {
 
 - (void)selectTabViewItem:(NSTabViewItem*)tabViewItem
 {
+	[super selectTabViewItem: tabViewItem];
+	NSSize newViewSize = [[viewDimensions objectForKey: [tabViewItem label]] sizeValue];
+	[[tabViewItem view] setFrameSize: newViewSize];
+	
+	/*
 	if ([self selectedTabViewItem] == nil || [self isHiddenOrHasHiddenAncestor])
 	{
 		[super selectTabViewItem: tabViewItem];
 		return;
 	}
-		
 		
 	NSView* initialView = [[self selectedTabViewItem] view];
 	NSView* finalView = [tabViewItem view];
@@ -84,10 +107,21 @@ static void ClearBitmapImageRep(NSBitmapImageRep *bitmap) {
 	animation = [[TabViewAnimation alloc] initWithDuration: .5 animationCurve:NSAnimationEaseInOut];
 	[animation setDelegate: self];
 	[finalView setHidden: YES];
-	[animation startAnimation];
+	// [animation startAnimation];
 	[finalView setHidden: NO];
 	animation = nil;
+	 */;
 }
+
+- (NSSize)sizeWithTabviewItem:(NSTabViewItem*)item
+{
+	NSSize itemSize = [[viewDimensions objectForKey:[item label]] sizeValue];
+	CGFloat deltaX = [self frame].size.width - [self contentRect].size.width;
+	CGFloat deltaY = [self frame].size.height - [self contentRect].size.height;
+	NSSize sizeToReturn = NSMakeSize(itemSize.width+deltaX, itemSize.height+deltaY);
+	return sizeToReturn;
+}
+
 @end
 
 @implementation TabViewAnimation

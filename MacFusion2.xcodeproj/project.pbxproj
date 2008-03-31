@@ -90,6 +90,10 @@
 		D47DED810D9ED5C700C0F934 /* SSHServerFS.m in Sources */ = {isa = PBXBuildFile; fileRef = D47DED800D9ED5C700C0F934 /* SSHServerFS.m */; };
 		D47DEDBC0D9ED73900C0F934 /* MFServerPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = D4905C6F0D394A6700E21C1E /* MFServerPlugin.m */; };
 		D47DEDBD0D9ED74000C0F934 /* MFServerFS.m in Sources */ = {isa = PBXBuildFile; fileRef = D4905C6C0D394A5D00E21C1E /* MFServerFS.m */; };
+		D47DF1790DA034AF00C0F934 /* MFClientFSUI.h in Headers */ = {isa = PBXBuildFile; fileRef = D47DF1770DA034AF00C0F934 /* MFClientFSUI.h */; };
+		D47DF17A0DA034AF00C0F934 /* MFClientFSUI.m in Sources */ = {isa = PBXBuildFile; fileRef = D47DF1780DA034AF00C0F934 /* MFClientFSUI.m */; };
+		D47DF78A0DA0764900C0F934 /* MGTestView.h in Headers */ = {isa = PBXBuildFile; fileRef = D47DF7880DA0764800C0F934 /* MGTestView.h */; };
+		D47DF78B0DA0764900C0F934 /* MGTestView.m in Sources */ = {isa = PBXBuildFile; fileRef = D47DF7890DA0764800C0F934 /* MGTestView.m */; };
 		D47F677E0D983F6C00E91D45 /* MFLogReader.h in Headers */ = {isa = PBXBuildFile; fileRef = D47F677C0D983F6C00E91D45 /* MFLogReader.h */; };
 		D47F677F0D983F6C00E91D45 /* MFLogReader.m in Sources */ = {isa = PBXBuildFile; fileRef = D47F677D0D983F6C00E91D45 /* MFLogReader.m */; };
 		D47F67BA0D98496200E91D45 /* MFLogViewerController.h in Headers */ = {isa = PBXBuildFile; fileRef = D47F67B80D98496200E91D45 /* MFLogViewerController.h */; };
@@ -399,6 +403,10 @@
 		D46E4C0D0D02593B004926CE /* MFConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MFConstants.m; sourceTree = "<group>"; };
 		D47DED7F0D9ED5C700C0F934 /* SSHServerFS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSHServerFS.h; sourceTree = "<group>"; };
 		D47DED800D9ED5C700C0F934 /* SSHServerFS.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSHServerFS.m; sourceTree = "<group>"; };
+		D47DF1770DA034AF00C0F934 /* MFClientFSUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFClientFSUI.h; sourceTree = "<group>"; };
+		D47DF1780DA034AF00C0F934 /* MFClientFSUI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MFClientFSUI.m; sourceTree = "<group>"; };
+		D47DF7880DA0764800C0F934 /* MGTestView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MGTestView.h; sourceTree = "<group>"; };
+		D47DF7890DA0764800C0F934 /* MGTestView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MGTestView.m; sourceTree = "<group>"; };
 		D47F677C0D983F6C00E91D45 /* MFLogReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFLogReader.h; sourceTree = "<group>"; };
 		D47F677D0D983F6C00E91D45 /* MFLogReader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MFLogReader.m; sourceTree = "<group>"; };
 		D47F67B80D98496200E91D45 /* MFLogViewerController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFLogViewerController.h; sourceTree = "<group>"; };
@@ -750,6 +758,8 @@
 				D4905C320D393F8300E21C1E /* MFClientPlugin.m */,
 				D420386D0D73A76B009EE78F /* MFClientRecent.h */,
 				D420386E0D73A76B009EE78F /* MFClientRecent.m */,
+				D47DF1770DA034AF00C0F934 /* MFClientFSUI.h */,
+				D47DF1780DA034AF00C0F934 /* MFClientFSUI.m */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -929,6 +939,8 @@
 				D47F68560D984FF600E91D45 /* MFLogViewerTableView.m */,
 				D47F688C0D98524B00E91D45 /* MFLogViewerTableCell.h */,
 				D47F688D0D98524B00E91D45 /* MFLogViewerTableCell.m */,
+				D47DF7880DA0764800C0F934 /* MGTestView.h */,
+				D47DF7890DA0764800C0F934 /* MGTestView.m */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -1018,6 +1030,8 @@
 				D47F68570D984FF600E91D45 /* MFLogViewerTableView.h in Headers */,
 				D47F688E0D98524B00E91D45 /* MFLogViewerTableCell.h in Headers */,
 				D441DB630D995C2B009F869A /* MFClientProtocol.h in Headers */,
+				D47DF1790DA034AF00C0F934 /* MFClientFSUI.h in Headers */,
+				D47DF78A0DA0764900C0F934 /* MGTestView.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1362,6 +1376,8 @@
 				D47F67BB0D98496200E91D45 /* MFLogViewerController.m in Sources */,
 				D47F68580D984FF600E91D45 /* MFLogViewerTableView.m in Sources */,
 				D47F688F0D98524B00E91D45 /* MFLogViewerTableCell.m in Sources */,
+				D47DF17A0DA034AF00C0F934 /* MFClientFSUI.m in Sources */,
+				D47DF78B0DA0764900C0F934 /* MGTestView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
