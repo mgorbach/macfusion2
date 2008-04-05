@@ -121,6 +121,13 @@ static MFCommunicationServer* sharedServer = nil;
 								 withObject:fs.uuid];
 	}
 	
+	if ([keyPath isEqualToString:@"parameters"] && [object isKindOfClass: [MFFilesystem class]])
+	{
+		MFFilesystem* fs = (MFFilesystem*)object;
+		[clients makeObjectsPerformSelector:@selector(noteParametersChangedForFSWithUUID:)
+								 withObject:fs.uuid];
+	}
+	
 	if ([keyPath isEqualToString:@"filesystems"] && object == [MFFilesystemController sharedController])
 	{
 		NSUInteger changeKind = [[change objectForKey: NSKeyValueChangeKindKey] intValue];

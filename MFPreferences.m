@@ -3,7 +3,7 @@
 //  MacFusion2
 //
 //  Created by Michael Gorbach on 3/15/08.
-//  Copyright 2008 __MyCompanyName__. All rights reserved.
+//  Copyright 2008 Michael Gorbach. All rights reserved.
 //
 
 #import "MFPreferences.h"

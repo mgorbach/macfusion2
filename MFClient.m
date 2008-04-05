@@ -176,11 +176,12 @@ static MFClient* sharedClient = nil;
 - (BOOL)establishCommunication
 {
 	// Set up DO
-	id serverObject = [NSConnection rootProxyForConnectionWithRegisteredName:kMFDistributedObjectName
-																		host:nil];
+	connection = [NSConnection connectionWithRegisteredName:kMFDistributedObjectName host:nil];
+	id serverObject = [connection rootProxy];
 	[serverObject setProtocolForProxy:@protocol(MFServerProtocol)];
 	server = (id <MFServerProtocol>)serverObject;
 	[serverObject registerClient: self];
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleConnectionDied:) name:NSConnectionDidDieNotification object:connection];
 	if (serverObject)
 	{
 		[MFLogReader sharedReader]; // Tell the log reader to update
@@ -191,6 +192,8 @@ static MFClient* sharedClient = nil;
 		return NO;
 	}
 }
+
+
 
 - (BOOL)setup
 {
@@ -211,6 +214,13 @@ static MFClient* sharedClient = nil;
 	MFClientFS* fs = [self filesystemWithUUID: uuid];
 	MFLogSO(self, fs, @"Note status changed for fs %@", fs);
 	[fs noteStatusInfoChanged];
+}
+
+- (void)noteParametersChangedForFSWithUUID:(NSString*)uuid
+{
+	MFClientFS* fs = [self filesystemWithUUID: uuid];
+	MFLogSO(self, fs, @"Note parameters changed for fs %@", fs);
+	[fs noteParametersChanged];
 }
 
 - (void)noteFilesystemAddedWithUUID:(NSString*)uuid
@@ -281,6 +291,13 @@ static MFClient* sharedClient = nil;
 {
 	NSString* uuid = [fs uuid];
 	[server deleteFilesystemWithUUID: uuid];
+}
+
+- (void)handleConnectionDied:(NSNotification*)note
+{
+	MFLogS(self, @"Connection died %@", note);
+	if ([delegate respondsToSelector: @selector(handleConnectionDied)])
+		[delegate handleConnectionDied];
 }
 
 #pragma mark Recents

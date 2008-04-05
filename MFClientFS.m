@@ -218,6 +218,9 @@
 				mfsecSetSecretsDictionaryForFilesystem( secrets, self );
 			}
 			isEditing = NO;
+			viewControllers = nil;
+			topViewController = nil;
+			editingTabView = nil;
 			return nil;
 		}
 	}
@@ -226,7 +229,9 @@
 		isEditing = NO;
 		[self setParameters: [backupParameters mutableCopy] ];
 		[self setSecrets: [backupSecrets mutableCopy]];
-
+		viewControllers = nil;
+		topViewController = nil;
+		editingTabView = nil;
 	}
 	
 	return nil;

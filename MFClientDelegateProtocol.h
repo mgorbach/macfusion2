@@ -1,10 +1,11 @@
-//
-//  MFIconSettingImageView.h
-//  MacFusion2
-//
-//  Created by Michael Gorbach on 3/19/08.
-//  Copyright 2008 Michael Gorbach. All rights reserved.
-//
+/*
+ *  MFClientDelegateProtocol.h
+ *  MacFusion2
+ *
+ *  Created by Michael Gorbach on 4/5/08.
+ *  Copyright 2008 Michael Gorbach. All rights reserved.
+ *
+ */
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -17,15 +18,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#import <Cocoa/Cocoa.h>
-@class MFClientFS;
-
-@interface MFIconSettingImageView : NSView {
-	MFClientFS* fs;
-	CIImage* normalImage;
-	CIImage* selectedImage;
-	BOOL dragHighlight;
-}
-
-@property(readwrite, retain) MFClientFS* fs;
+@protocol MFClientDelegateProtocol <NSObject>
+- (void)handleConnectionDied;
 @end
+

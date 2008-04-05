@@ -16,6 +16,7 @@
 
 #import <Cocoa/Cocoa.h>
 #import "MFServerProtocol.h"
+#import "MFClientDelegateProtocol.h"
 
 @class MFClientFS, MFClientPlugin, MFClientRecent;
 
@@ -27,7 +28,8 @@
 	NSMutableArray* plugins;
 	NSMutableArray* recents;
 	id <MFServerProtocol> server;
-	id delegate;
+	id<MFClientDelegateProtocol> delegate;
+	NSConnection* connection;
 }
 
 + (MFClient*)sharedClient;

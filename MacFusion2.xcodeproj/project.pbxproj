@@ -394,6 +394,7 @@
 		D439D6D50D0A0FDE0025574A /* sshfsConfiguration.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = sshfsConfiguration.xib; sourceTree = "<group>"; };
 		D441521F0CE2933C001EEF36 /* sshfs.mfplugin */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = sshfs.mfplugin; sourceTree = BUILT_PRODUCTS_DIR; };
 		D441DB620D995C2B009F869A /* MFClientProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFClientProtocol.h; sourceTree = "<group>"; };
+		D44FA6AB0DA7D0FB007AB734 /* MFClientDelegateProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFClientDelegateProtocol.h; sourceTree = "<group>"; };
 		D45579150D40715F00669882 /* MFInertButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFInertButton.h; sourceTree = "<group>"; };
 		D45579160D40715F00669882 /* MFInertButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MFInertButton.m; sourceTree = "<group>"; };
 		D45F0D940D8B3396008CC7E3 /* macfusionAgent-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "macfusionAgent-Info.plist"; sourceTree = "<group>"; };
@@ -741,6 +742,7 @@
 				D403BC8D0D64C3D00049201D /* MFServerFSProtocol.h */,
 				D4D0E9FE0D7C887A00797279 /* MFClientFSDelegateProtocol.h */,
 				D441DB620D995C2B009F869A /* MFClientProtocol.h */,
+				D44FA6AB0DA7D0FB007AB734 /* MFClientDelegateProtocol.h */,
 			);
 			name = Protocols;
 			sourceTree = "<group>";

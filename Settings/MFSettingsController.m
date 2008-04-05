@@ -178,11 +178,6 @@
 					  options:nil];
 	[filesystemTableView setController: self];
 	fsBeingEdited = nil;
-	NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
-	[nc addObserver:self
-		   selector:@selector(handleConnectionDidDie:)
-			   name:NSConnectionDidDieNotification
-			 object:nil];
 }
 
 - (void)applicationWillFinishLaunching:(NSNotification*)note
@@ -601,8 +596,9 @@
 	}
 }
 
-- (void)handleConnectionDidDie:(NSNotification*)note
+- (void)handleConnectionDied
 {
+		
 	if (mfcClientIsUIElement())
 		[NSApp terminate:self];
 	
@@ -616,7 +612,7 @@
 	[connectDidDieAlert beginSheetModalForWindow:[filesystemTableView window]
 								   modalDelegate:self
 								  didEndSelector:@selector(connectionDidDieAlertDidEnd:returnCode:contextInfo:)
-									 contextInfo:nil];
+									 contextInfo:nil]; 
 	
 }
 
