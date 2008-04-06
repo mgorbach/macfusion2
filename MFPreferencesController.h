@@ -15,13 +15,14 @@
 // limitations under the License.
 
 #import <Cocoa/Cocoa.h>
-@class MFClient;
+@class MFClient, MFPreferences;
 
 @interface MFPreferencesController : NSWindowController {
 	IBOutlet NSButton* agentLoginItemButton;
 	IBOutlet NSButton* menuLoginItemButton;
 	MFClient* client;
 	IBOutlet NSTextField* fuseVersionTextField;
+	MFPreferences* sharedPreferences;
 }
 
 - (IBAction)loginItemCheckboxChanged:(id)sender;

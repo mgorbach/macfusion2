@@ -57,6 +57,15 @@
 	return [bundle objectForInfoDictionaryKey: kMFPluginLongNameKey];
 }
 
+- (NSString*)urlSchemesString
+{
+	NSArray* urlSchemes = [delegate urlSchemesHandled];
+	if ( !urlSchemes || [urlSchemes count] == 0 )
+		return @"None";
+	else
+		return [urlSchemes componentsJoinedByString: @", "];
+}
+
 - (id <MFFSDelegateProtocol>)setupDelegate
 {
 	id thisDelegate = nil;

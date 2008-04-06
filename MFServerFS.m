@@ -19,7 +19,7 @@
 #import "MFPluginController.h"
 #import "MFError.h"
 #import "MFLogging.h"
-#include <sys/xattr.h>
+#import "MFPreferences.h"
 
 #define FS_DIR_PATH @"~/Library/Application Support/Macfusion/Filesystems"
 
@@ -622,7 +622,8 @@
 
 - (NSTimer*)newTimeoutTimer
 {
-	return [NSTimer scheduledTimerWithTimeInterval:5.0
+	return [NSTimer scheduledTimerWithTimeInterval: 
+			[[[MFPreferences sharedPreferences] getValueForPreference: kMFPrefsTimeout] doubleValue]
 								   target:self
 								 selector:@selector(handleMountTimeout:)
 								 userInfo:nil

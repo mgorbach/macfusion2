@@ -36,7 +36,7 @@
 	// UI references
 	NSArray* viewControllers;
 	NSViewController* topViewController;
-	NSView* editingTabView;
+	NSTabView* editingTabView;
 }
 
 + (MFClientFS*)clientFSWithRemoteFS:(id)remoteFS 

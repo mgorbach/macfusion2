@@ -7,6 +7,8 @@
 //
 
 #import "MFPreferences.h"
+#import <Carbon/Carbon.h>
+
 #define PREFS_FILE_PATH @"~/Library/Application Support/Macfusion/preferences.plist"
 
 @interface MFPreferences(PrivateAPI)
@@ -22,6 +24,7 @@ static MFPreferences* sharedPreferences = nil;
 	if (sharedPreferences == nil)
 		[[self alloc] init];
 	
+	
 	return sharedPreferences;
 }
 
@@ -36,6 +39,18 @@ static MFPreferences* sharedPreferences = nil;
 	return nil;
 }
 
+void prefsFSEventCallBack(ConstFSEventStreamRef streamRef, 
+						  void *clientCallBackInfo, 
+						  size_t numEvents, 
+						  void *eventPaths, 
+						  const FSEventStreamEventFlags eventFlags[], 
+						  const FSEventStreamEventId eventIds[])
+{
+	MFLogS([MFPreferences sharedPreferences], 
+		   @"Prefs update FSEvents callback received");
+	[[MFPreferences sharedPreferences] readPrefsFromDisk];
+}
+
 - (void)init
 {
 	NSString* fullPrefsFilePath = [PREFS_FILE_PATH stringByExpandingTildeInPath];
@@ -43,12 +58,29 @@ static MFPreferences* sharedPreferences = nil;
 	if (!readFromDisk)
 		firstTimeRun = YES;
 	prefsDict = readFromDisk ? [readFromDisk mutableCopy] : [NSMutableDictionary dictionary];
-//	MFLogS(self, @"Loaded prefs dict %@", prefsDict);
+	FSEventStreamRef eventStream = FSEventStreamCreate(NULL, prefsFSEventCallBack, NULL, 
+													   (CFArrayRef)[NSArray arrayWithObject: [fullPrefsFilePath stringByDeletingLastPathComponent]],
+													   kFSEventStreamEventIdSinceNow, 0, kFSEventStreamCreateFlagUseCFTypes);
+	FSEventStreamScheduleWithRunLoop(eventStream, [[NSRunLoop currentRunLoop] getCFRunLoop],
+									 kCFRunLoopDefaultMode);
+	FSEventStreamStart(eventStream);
 }
 
 - (BOOL)firstTimeRun
 {
 	return firstTimeRun;
+}
+
+- (void)readPrefsFromDisk
+{
+	NSString* fullPrefsFilePath = [PREFS_FILE_PATH stringByExpandingTildeInPath];
+	NSDictionary* readFromDisk = [NSDictionary dictionaryWithContentsOfFile: fullPrefsFilePath];
+	for(NSString* key in [readFromDisk allKeys])
+	{
+		id diskValue = [readFromDisk objectForKey: key];
+		if (! [diskValue isEqualTo: [self getValueForPreference: key]] )
+			[self setValue:diskValue forPreference:key];
+	}
 }
 
 - (void)setValue:(id)value 
@@ -57,8 +89,10 @@ static MFPreferences* sharedPreferences = nil;
 	MFLogS(self, @"Setting value %@ for key %@", value, prefKey);
 	if (value != [self getValueForPreference:prefKey])
 	{
+		[self willChangeValueForKey: prefKey];
 		[prefsDict setObject: value
 					  forKey: prefKey ];
+		[self didChangeValueForKey: prefKey];
 		[self writePrefs];
 	}
 }
@@ -67,6 +101,8 @@ static MFPreferences* sharedPreferences = nil;
 {
 	if ([key isEqualToString: kMFPrefsAutoScrollLog])
 		return [NSNumber numberWithBool: YES];
+	if ([key isEqualToString: kMFPrefsTimeout])
+		return [NSNumber numberWithFloat: 5.0];
 	
 	return nil;
 }
@@ -117,6 +153,19 @@ static MFPreferences* sharedPreferences = nil;
 {
 	[self setValue: [NSNumber numberWithBool: value]
 	 forPreference: prefKey ];
+}
+
+- (id)valueForUndefinedKey:(NSString*)key
+{
+	NSLog(@"Value being called");
+	return [self getValueForPreference: key];
+}
+
+- (void)setValue:(id)value 
+		  forUndefinedKey:(NSString*)key
+{
+	[self setValue: value
+	 forPreference: key];
 }
 
 @end

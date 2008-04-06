@@ -121,7 +121,7 @@
 - (void)sendNotificationForStatusChangeFrom:(NSString*)previousStatus
 										 to:(NSString*)newStatus
 {
-	// MFLogS(self, @"Notifying for status %@ -> %@", previousStatus, newStatus);
+	MFLogS(self, @"Notifying for status %@ -> %@", previousStatus, newStatus);
 	if ([previousStatus isEqualToString: newStatus])
 	{
 		// Send No Notification
@@ -204,7 +204,9 @@
 	
 	if (commit)
 	{
-		NSError* result = [remoteFilesystem validateAndSetParameters: parameters];
+		NSError* result = nil;
+		if (![backupParameters isEqualToDictionary: parameters])
+			[remoteFilesystem validateAndSetParameters: parameters];
 		if (result)
 		{
 			// Validation failed

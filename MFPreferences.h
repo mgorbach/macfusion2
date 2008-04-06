@@ -21,6 +21,7 @@
 // Preference Keys
 #define kMFPrefsAutoloadMenuling @"Autoload Menuling"
 #define kMFPrefsAutoScrollLog @"AutoScroll Log"
+#define kMFPrefsTimeout @"timeout"
 
 @interface MFPreferences : NSObject {
 	NSMutableDictionary* prefsDict;
@@ -33,5 +34,6 @@
    forPreference:(NSString*)prefKey;
 - (void)setBool:(BOOL)value forPreference:(NSString*)prefKey;
 - (BOOL)getBoolForPreference:(NSString*)prefKey;
+- (void)readPrefsFromDisk;
 
 @end

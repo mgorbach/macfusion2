@@ -35,6 +35,7 @@
 @property(readonly) NSString* ID;
 @property(readonly) NSString* bundlePath;
 @property(readonly) NSString* nibName;
+@property(readonly) NSString* urlSchemesString;
 
 
 

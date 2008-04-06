@@ -26,6 +26,7 @@
 	{
 		// MFLogS(self, @"Preferences system initialized");
 		client = [MFClient sharedClient];
+		sharedPreferences = [MFPreferences sharedPreferences];
 	}
 	
 	return self;
@@ -33,9 +34,8 @@
 
 - (void)awakeFromNib
 {
-	[[self window] center];
 	[agentLoginItemButton setState: mfcGetStateForAgentLoginItem()];
-	[menuLoginItemButton setState: [[MFPreferences sharedPreferences] getBoolForPreference: kMFPrefsAutoloadMenuling]];
+	[menuLoginItemButton setState: [sharedPreferences getBoolForPreference: kMFPrefsAutoloadMenuling]];
 	NSString* macfuseVersion = mfcGetMacFuseVersion();
 	NSString* versionString = macfuseVersion ? [NSString stringWithFormat: @"MacFuse Version %@ Found", macfuseVersion] : @"MacFuse not Found!";
 	[fuseVersionTextField setStringValue: versionString];

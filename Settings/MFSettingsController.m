@@ -548,7 +548,7 @@
 		return (menuArgumentFS.filePath != nil);
 	}
 	if ([[item title] isEqualToString: @"Log"])
-		return YES;
+		return (menuArgumentFS != nil);
 		
 	return NO;
 }
