@@ -25,6 +25,9 @@
 #import "SSHServerFS.h"
 #import "MFClientFSUI.h"
 
+#define kSSHFSCompressionParameter @"compression"
+#define kSSHFSFollowSymlinksParameter @"followSymlinks"
+
 static NSString* primaryViewControllerKey = @"sshfsPrimaryView";
 static NSString* advancedViewControllerKey = @"sshfsAdvancedView";
 
@@ -124,7 +127,8 @@ static NSString* advancedViewControllerKey = @"sshfsAdvancedView";
 {
 	return [NSArray arrayWithObjects: kNetFSUserParameter, 
 			kNetFSHostParameter, kNetFSDirectoryParameter, kNetFSUserParameter,
-			kNetFSPortParameter, kNetFSProtocolParameter, nil ];
+			kNetFSPortParameter, kNetFSProtocolParameter, kSSHFSFollowSymlinksParameter, 
+			kSSHFSCompressionParameter, nil ];
 }
 
 - (NSArray*)secretsList
@@ -135,11 +139,13 @@ static NSString* advancedViewControllerKey = @"sshfsAdvancedView";
 - (NSDictionary*)defaultParameterDictionary
 {
 	NSDictionary* defaultParameters = [NSDictionary dictionaryWithObjectsAndKeys: 
-						 NSUserName(), kNetFSUserParameter,
-						 @"", kNetFSDirectoryParameter,
-						 [NSNumber numberWithInt: 22], kNetFSPortParameter,
+						NSUserName(), kNetFSUserParameter,
+						@"", kNetFSDirectoryParameter,
+						[NSNumber numberWithInt: 22], kNetFSPortParameter,
 						[NSNumber numberWithInt: kSecProtocolTypeSSH], kNetFSProtocolParameter,
-								nil];
+						[NSNumber numberWithBool: YES], kSSHFSFollowSymlinksParameter,
+						[NSNumber numberWithBool: NO], kSSHFSCompressionParameter,
+									   nil];
 	
 	return defaultParameters;
 }
@@ -225,7 +231,7 @@ static NSString* advancedViewControllerKey = @"sshfsAdvancedView";
 		{
 			*error = [MFError invalidParameterValueErrorWithParameterName: kNetFSPortParameter
 																	value: value
-															  description: @"Must be positive number < 10000"];
+															  description: @"Must be positive number < 65535"];
 			return NO;
 		}
 	}

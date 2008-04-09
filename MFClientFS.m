@@ -206,7 +206,7 @@
 	{
 		NSError* result = nil;
 		if (![backupParameters isEqualToDictionary: parameters])
-			[remoteFilesystem validateAndSetParameters: parameters];
+			result = [remoteFilesystem validateAndSetParameters: parameters];
 		if (result)
 		{
 			// Validation failed

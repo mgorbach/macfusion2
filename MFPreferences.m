@@ -9,7 +9,7 @@
 #import "MFPreferences.h"
 #import <Carbon/Carbon.h>
 
-#define PREFS_FILE_PATH @"~/Library/Application Support/Macfusion/preferences.plist"
+#define PREFS_FILE_PATH @"~/Library/Application Support/Macfusion/Preferences/preferences.plist"
 
 @interface MFPreferences(PrivateAPI)
 - (void)writePrefs;
@@ -86,7 +86,7 @@ void prefsFSEventCallBack(ConstFSEventStreamRef streamRef,
 - (void)setValue:(id)value 
    forPreference:(NSString*)prefKey
 {
-	MFLogS(self, @"Setting value %@ for key %@", value, prefKey);
+	// MFLogS(self, @"Setting value %@ for key %@", value, prefKey);
 	if (value != [self getValueForPreference:prefKey])
 	{
 		[self willChangeValueForKey: prefKey];

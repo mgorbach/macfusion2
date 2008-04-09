@@ -229,10 +229,14 @@
 
 - (NSDictionary*)defaultParameterDictionary
 {
-	NSMutableDictionary* defaultParameterDictionary =[NSMutableDictionary dictionary];
+	NSMutableDictionary* defaultParameterDictionary = [NSMutableDictionary dictionary];
 	NSDictionary* delegateDict = [delegate defaultParameterDictionary];
 	
 	[defaultParameterDictionary addEntriesFromDictionary: delegateDict];
+	[defaultParameterDictionary setObject: [NSNumber numberWithBool: YES] 
+								   forKey: kMFFSNegativeVNodeCacheParameter ];
+	[defaultParameterDictionary setObject: [NSNumber numberWithBool: YES]
+								   forKey: kMFFSNoAppleDoubleParameter ];
 	
 	return [defaultParameterDictionary copy];
 }
@@ -279,21 +283,35 @@
 - (NSArray*)taskArguments
 {
 	NSArray* delegateArgs;
-	// MFLogS(self, @"Parameters in server are %@, implied are %@", parameters, [self parametersWithImpliedValues]);
+	NSMutableArray* taskArguments = [NSMutableArray array];
+	
+	// MFLogS(self, @"Parameters are %@, implied parameters are %@", parameters, [self parametersWithImpliedValues]);
 	if ([delegate respondsToSelector:@selector(taskArgumentsForParameters:)])
 	{
 		delegateArgs = [delegate taskArgumentsForParameters: [self parametersWithImpliedValues]];
-		if (!delegateArgs)
+		if (!delegateArgs || [delegateArgs count] == 0)
 		{
-			MFLogS(self, @"Delegate returned nil arguments!");
+			MFLogS(self, @"Delegate returned nil arguments or empty array!");
 			return nil;
 		}
 		else
 		{
-			NSString* extraArguments = [self.parameters objectForKey: kMFFSAdvancedOptionsParameter];
-//			NSMutableArray* processedArgs = [NSMutableArray array];
-			NSArray* myArguments = [extraArguments componentsSeparatedByString: @" "];
-			return [delegateArgs arrayByAddingObjectsFromArray: myArguments];
+			[taskArguments addObjectsFromArray: delegateArgs];
+			NSString* advancedArgumentsString = [self.parameters objectForKey: kMFFSAdvancedOptionsParameter];
+			NSArray* advancedArguments = [advancedArgumentsString componentsSeparatedByString: @" "];
+			[taskArguments addObjectsFromArray: advancedArguments];
+			
+			if ([[self.parameters objectForKey: kMFFSNoAppleDoubleParameter] boolValue])
+			{
+				[taskArguments addObject: @"-onoappledouble"];
+			}
+			
+			if ([[self.parameters objectForKey: kMFFSNegativeVNodeCacheParameter] boolValue])
+			{
+				[taskArguments addObject: @"-onegative_vncache"];
+			}
+			
+			return taskArguments;
 		}
 	}
 	else

@@ -75,6 +75,8 @@ extern NSString* kMFFilesystemStatusKey;
 #define kMFFSDescriptionParameter @"description"
 #define kMFFSVolumeImagePathParameter @"imagePath"
 #define kMFFSAdvancedOptionsParameter @"advancedOptions"
+#define kMFFSNoAppleDoubleParameter @"noAppleDouble"
+#define kMFFSNegativeVNodeCacheParameter @"negativeVNCache"
 
 // Status keys
 #define KMFStatusDict @"statusInfo"
