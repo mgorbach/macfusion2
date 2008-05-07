@@ -20,7 +20,6 @@
 #import "MFLogReader.h"
 #import <asl.h>
 #import "MFLogging.h"
-#include "/usr/local/include/asl_private.h"
 
 @interface MFLogReader(PrivatAPI)
 @property(readwrite, retain) NSMutableArray* logMessages;
