@@ -233,9 +233,9 @@
 	NSDictionary* delegateDict = [delegate defaultParameterDictionary];
 	
 	[defaultParameterDictionary addEntriesFromDictionary: delegateDict];
-	[defaultParameterDictionary setObject: [NSNumber numberWithBool: YES] 
+	[defaultParameterDictionary setObject: [NSNumber numberWithBool: NO] 
 								   forKey: kMFFSNegativeVNodeCacheParameter ];
-	[defaultParameterDictionary setObject: [NSNumber numberWithBool: YES]
+	[defaultParameterDictionary setObject: [NSNumber numberWithBool: NO]
 								   forKey: kMFFSNoAppleDoubleParameter ];
 	
 	return [defaultParameterDictionary copy];
