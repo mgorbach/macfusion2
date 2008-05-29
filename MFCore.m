@@ -32,7 +32,6 @@ NSString* mfcMainBundlePath()
 		pathToReturn = [fullPath stringByStandardizingPath];
 	}
 	
-	// MFLogS(self, @"Returning %@ for main bundle path", pathToReturn);
 	return pathToReturn;
 }
 
@@ -63,13 +62,11 @@ NSArray* mfcSecretClientsForFileystem( MFFilesystem* fs )
 	NSBundle* menulingUIBundle = [NSBundle bundleWithPath: mfcMenulingBundlePath()];
 	[clientList addObject: [menulingUIBundle executablePath]];
 	[clientList addObject: mfcAgentBundlePath()];
-	// MFLogS(self, @"Client list for fs %@ is %@", fs, clientList);
 	return [clientList copy];
 }
 
 BOOL mfcGetStateOfLoginItemWithPath( NSString* path )
 {
-	// MFLogS(self, @"Querying for %@", path);
 	LSSharedFileListRef loginItemsRef = LSSharedFileListCreate(NULL, kLSSharedFileListSessionLoginItems, NULL);
 	BOOL present = FALSE;
 	UInt32 seedValue;
@@ -80,12 +77,10 @@ BOOL mfcGetStateOfLoginItemWithPath( NSString* path )
 		NSURL* theURL = [NSURL new];
 		LSSharedFileListItemResolve(itemRef, 0, (CFURLRef*)&theURL, NULL);
 		present = ([[theURL path] isEqualToString: path]);
-		// MFLogS(self, @"Found %@", [theURL path]);
 		if (present)
 			break;
 	}
 	
-	// MFLogS(self, @"Returning state %d for %@", present, path);
 	CFRelease(loginItemsRef);
 	return present;
 }
@@ -96,18 +91,10 @@ BOOL mfcGetStateForAgentLoginItem()
 	return mfcGetStateOfLoginItemWithPath( agentPath );
 }
 
-BOOL mfcGetStateForMenulingLoginItem()
-{
-	NSString* menulingBundlePath = mfcMenulingBundlePath();
-	return mfcGetStateOfLoginItemWithPath(menulingBundlePath);
-}
-
-# pragma mark TODO: Unify these two functions
 BOOL mfcSetStateForAgentLoginItem(BOOL state)
 {
 	NSString* agentPath = mfcAgentBundlePath();
 	LSSharedFileListRef loginItemsRef = LSSharedFileListCreate(NULL, kLSSharedFileListSessionLoginItems, NULL);
-	// MFLogS(self, @"agentBundlePath set %@", agentPath);
 	
 	if (mfcGetStateOfLoginItemWithPath(agentPath) == state)
 		return NO;
@@ -122,7 +109,6 @@ BOOL mfcSetStateForAgentLoginItem(BOOL state)
 		NSString* checkPath = [[theURL path] lastPathComponent];
 		if ([checkPath isLike: @"*macfusionAgent*"])
 		{
-			// MFLogS(self, @"Removing %@", theURL);
 			LSSharedFileListItemRemove(loginItemsRef, itemRef);
 		}
 	}
@@ -131,41 +117,6 @@ BOOL mfcSetStateForAgentLoginItem(BOOL state)
 	{
 		LSSharedFileListInsertItemURL(loginItemsRef, kLSSharedFileListItemBeforeFirst, NULL, NULL, 
 									  (CFURLRef)[NSURL fileURLWithPath: agentPath], NULL, NULL);
-	}
-	
-	CFRelease(loginItemsRef);
-	return YES;
-}
-
-
-
-BOOL mfcSetStateForMenulingLoginItem(BOOL state)
-{
-	NSString* menulingBundlePath = mfcMenulingBundlePath();
-	LSSharedFileListRef loginItemsRef = LSSharedFileListCreate(NULL, kLSSharedFileListSessionLoginItems, NULL);
-	
-	if (mfcGetStateOfLoginItemWithPath(menulingBundlePath) == state)
-		return NO;
-	
-	UInt32 seedValue;
-	NSArray  *loginItems = (NSArray *)LSSharedFileListCopySnapshot(loginItemsRef, &seedValue);
-	for(id loginItem in loginItems)
-	{
-		LSSharedFileListItemRef itemRef = (LSSharedFileListItemRef)loginItem;
-		NSURL* theURL = [NSURL new];
-		LSSharedFileListItemResolve(itemRef, 0, (CFURLRef*)&theURL, NULL);
-		NSString* checkPath = [[theURL path] lastPathComponent];
-		if ([checkPath isEqualToString: @"MacfusionMenuling.app"])
-		{
-			// MFLogS(self, @"Removing %@", theURL);
-			LSSharedFileListItemRemove(loginItemsRef, itemRef);
-		}
-	}
-	
-	if(state == YES)
-	{
-		LSSharedFileListInsertItemURL(loginItemsRef, kLSSharedFileListItemLast, NULL, NULL, 
-									  (CFURLRef)[NSURL fileURLWithPath: menulingBundlePath], NULL, NULL);
 	}
 	
 	CFRelease(loginItemsRef);
@@ -190,4 +141,80 @@ void mfcLaunchAgent()
 {
 	NSString* path = mfcAgentBundlePath();
 	[NSTask launchedTaskWithLaunchPath:@"/usr/bin/open" arguments:[NSArray arrayWithObject: path]];
+}
+
+void mfcLaunchMenuling()
+{
+	NSString* path = mfcMenulingBundlePath();
+	[NSTask launchedTaskWithLaunchPath:@"/usr/bin/open" arguments:[NSArray arrayWithObject: path]];
+}
+
+// Checks the integrity of Macfusion2's multi-process system
+// Make sure we are all running from the same bundle and speaking the same language
+void mfcCheckIntegrity()
+{
+	ProcessSerialNumber currentPSN = { 0, kNoProcess };
+	CFStringRef processName;
+	FSRef bundleFSRef;
+	OSErr getBundleError;
+	id runningAgentPath, runningMenulingPath;
+	pid_t runningAgentPID, runningMenulingPID;
+	
+	while(GetNextProcess( &currentPSN ) == noErr
+		  && currentPSN.lowLongOfPSN != kNoProcess )
+	{
+		NSString* processPath;
+		CopyProcessName( &currentPSN, &processName );
+		pid_t processPID;
+		
+		if ( [ (NSString*)processName isEqualToString: @"macfusionAgent" ] || 
+			 [ (NSString*)processName isEqualToString: @"macfusionMenuling"] )
+		{
+			getBundleError = GetProcessBundleLocation( &currentPSN, &bundleFSRef);
+			GetProcessPID( &currentPSN , &processPID);
+			
+			if (getBundleError == noErr)
+			{
+				CFURLRef bundleURLRef = CFURLCreateFromFSRef( kCFAllocatorDefault, &bundleFSRef);
+				processPath = [ (NSURL*)bundleURLRef path ];
+				CFRelease( bundleURLRef );
+			}
+			else
+			{
+				processPath = (NSString*)[NSNull null]; 
+				// Set the processPath to NSNull if we failed getting it
+				// This can happen if the process is running from the trash (i.e. it's been deleted)
+			}
+		}
+		
+		if ( [ (NSString*)processName isEqualToString: @"macfusionAgent"] )
+		{
+			runningAgentPath = processPath;
+			runningAgentPID = processPID;
+		}
+			
+		if ( [ (NSString*)processName isEqualToString: @"macfusionMenuling"] )
+		{
+			runningMenulingPath = processPath;
+			runningMenulingPID = processPID;
+		}
+
+		CFRelease( processName );
+	}
+	
+	if (runningAgentPath == [NSNull null] || 
+		( runningAgentPath && ![runningAgentPath isEqualToString: mfcAgentBundlePath()] ) )
+	{
+		// Agent is in the trash or running from the wrong path. Kill it & restart it.
+		kill( runningAgentPID, SIGKILL);
+		mfcLaunchAgent();
+	}
+	
+	if (runningMenulingPath == [NSNull null] ||
+		(runningMenulingPath && ![runningMenulingPath isEqualToString: mfcMenulingBundlePath()] ) )
+	{
+		// Menuling is in the trash or running from the wrong path. Kill it & restart it.
+		kill( runningMenulingPID, SIGKILL );
+		mfcLaunchMenuling();
+	}
 }

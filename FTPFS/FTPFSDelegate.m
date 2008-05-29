@@ -55,7 +55,6 @@ static NSString* advancedViewControllerKey = @"sshfsAdvancedView";
 #pragma mark Mounting
 - (NSArray*)taskArgumentsForParameters:(NSDictionary*)parameters
 {
-	// MFLogS(self, @"Parameters received %@", parameters);
 	NSMutableArray* arguments = [NSMutableArray array];
 	[arguments addObject: [NSString stringWithFormat:@"%@:%@/%@",
 						   [parameters objectForKey: kNetFSHostParameter],
@@ -85,7 +84,6 @@ static NSString* advancedViewControllerKey = @"sshfsAdvancedView";
 			forKey: @"FTPFS_TOKEN"];
 	[env setObject: [self askpassPath] forKey:@"FTPFS_ASKPASS"];
 	
-	// MFLogS(self, @"Returning environment %@", env);
 	return [env copy];
 }
 

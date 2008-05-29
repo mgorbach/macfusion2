@@ -31,13 +31,11 @@ NSString* mfcAgentBundlePath();
 // Launch Services and Login Items Control
 BOOL mfcGetStateForAgentLoginItem();
 BOOL mfcSetStateForAgentLoginItem(BOOL state);
-BOOL mfcGetStateForMenulingLoginItem();
-BOOL mfcSetStateForMenulingLoginItem(BOOL state);
 
 // Clients
 BOOL mfcClientIsUIElement();
 void mfcLaunchAgent();
-
+void mfcLaunchMenuling();
 
 // FUSE versioning
 NSString* mfcGetMacFuseVersion();
