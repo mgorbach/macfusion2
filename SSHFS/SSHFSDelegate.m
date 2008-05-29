@@ -284,6 +284,11 @@ static NSString* advancedViewControllerKey = @"sshfsAdvancedView";
 							   description:@"Remote host has disconnected."];
 	}
 	
+	if ([output rangeOfString: @"Host key verification failed"].location != NSNotFound)
+	{
+		return [MFError errorWithErrorCode:kMFErrorCodeMountFaliure
+							   description:@"Host key verification has failed."];
+	}
 
 	return nil;
 }
