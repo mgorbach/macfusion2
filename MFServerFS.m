@@ -731,16 +731,11 @@
 #pragma mark Accessors and Setters
 - (void)setStatus:(NSString*)newStatus
 {
-	if (newStatus)
+	if (newStatus && ![newStatus isEqualToString: self.status] )
 	{
 		// Hack this a bit so that we can set an error on faliure
 		// Do this only if an error hasn't already been set
 		[statusInfo setObject: newStatus forKey:kMFSTStatusKey ];
-		
-		/*
-		if ([newStatus isEqualToString: kMFStatusFSMounted] )
-			[self tagMountPoint];
-		 */
 			
 		if( [newStatus isEqualToString: kMFStatusFSFailed] )
 		{

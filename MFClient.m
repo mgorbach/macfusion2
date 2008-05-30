@@ -212,8 +212,8 @@ static MFClient* sharedClient = nil;
 - (void)noteStatusChangedForFSWithUUID:(NSString*)uuid
 {
 	MFClientFS* fs = [self filesystemWithUUID: uuid];
-	MFLogSO(self, fs, @"Note status changed for fs %@", fs);
 	[fs noteStatusInfoChanged];
+	MFLogSO(self, fs, @"Note status changed for fs %@ to %@", fs, fs.status);
 }
 
 - (void)noteParametersChangedForFSWithUUID:(NSString*)uuid

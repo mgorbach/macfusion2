@@ -56,7 +56,7 @@ static MFCommunicationServer* sharedServer = nil;
 	[filesystems addObserver:self
 		  toObjectsAtIndexes:indexes
 				  forKeyPath:@"status"
-					 options:NSKeyValueObservingOptionNew
+					 options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld
 					 context:nil];
 	[filesystems addObserver:self
 		  toObjectsAtIndexes:indexes
@@ -110,11 +110,8 @@ static MFCommunicationServer* sharedServer = nil;
 						 change:(NSDictionary *)change
 						context:(void *)context
 {
-	
-	// MFLogS(self, @"Observes: keypath %@ object %@, change %@", keyPath, object, change);
-	// TODO: We need to provide a way to call noteParametersChangedForFSWithUUID: here as well
-	
-	if ([keyPath isEqualToString:@"status"] && [object isKindOfClass: [MFFilesystem class]])
+	if ([keyPath isEqualToString:@"status"] && [object isKindOfClass: [MFFilesystem class]]
+		&& ![[change objectForKey: NSKeyValueChangeOldKey] isEqualToString: [change objectForKey: NSKeyValueChangeNewKey]])
 	{
 		MFFilesystem* fs = (MFFilesystem*)object;
 		[clients makeObjectsPerformSelector:@selector(noteStatusChangedForFSWithUUID:)

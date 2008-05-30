@@ -94,6 +94,7 @@
 
 - (BOOL)setup
 {
+	mfcSetupTrashMonitoring();
 	if ([client establishCommunication])
 	{
 		[client fillInitialStatus];

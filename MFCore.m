@@ -156,8 +156,8 @@ void mfcCheckIntegrity()
 	ProcessSerialNumber currentPSN = { 0, kNoProcess };
 	CFStringRef processName;
 	FSRef bundleFSRef;
-	OSErr getBundleError;
-	id runningAgentPath, runningMenulingPath;
+	OSErr error;
+	id runningAgentPath=nil, runningMenulingPath=nil;
 	pid_t runningAgentPID, runningMenulingPID;
 	
 	while(GetNextProcess( &currentPSN ) == noErr
@@ -170,10 +170,10 @@ void mfcCheckIntegrity()
 		if ( [ (NSString*)processName isEqualToString: @"macfusionAgent" ] || 
 			 [ (NSString*)processName isEqualToString: @"macfusionMenuling"] )
 		{
-			getBundleError = GetProcessBundleLocation( &currentPSN, &bundleFSRef);
+			error = GetProcessBundleLocation( &currentPSN, &bundleFSRef);
 			GetProcessPID( &currentPSN , &processPID);
 			
-			if (getBundleError == noErr)
+			if (error == noErr)
 			{
 				CFURLRef bundleURLRef = CFURLCreateFromFSRef( kCFAllocatorDefault, &bundleFSRef);
 				processPath = [ (NSURL*)bundleURLRef path ];
@@ -206,6 +206,7 @@ void mfcCheckIntegrity()
 		( runningAgentPath && ![runningAgentPath isEqualToString: mfcAgentBundlePath()] ) )
 	{
 		// Agent is in the trash or running from the wrong path. Kill it & restart it.
+		MFLogS( self, @"Killing old or bad agent, and restarting." );
 		kill( runningAgentPID, SIGKILL);
 		mfcLaunchAgent();
 	}
@@ -214,7 +215,36 @@ void mfcCheckIntegrity()
 		(runningMenulingPath && ![runningMenulingPath isEqualToString: mfcMenulingBundlePath()] ) )
 	{
 		// Menuling is in the trash or running from the wrong path. Kill it & restart it.
+		MFLogS( self, @"Killing old or bad menuling, and restarting." );
 		kill( runningMenulingPID, SIGKILL );
 		mfcLaunchMenuling();
 	}
+}
+
+# pragma mark Trashing
+
+void trashFSEventCallBack(ConstFSEventStreamRef streamRef, 
+						  void *clientCallBackInfo, 
+						  size_t numEvents, 
+						  void *eventPaths, 
+						  const FSEventStreamEventFlags eventFlags[], 
+						  const FSEventStreamEventId eventIds[])
+{
+	if (![[NSFileManager defaultManager] fileExistsAtPath: mfcMainBundlePath()])
+	{
+		MFLogS(self, @"I have been deleted. Goodbye!");
+		exit(0);
+	}
+}
+
+void mfcSetupTrashMonitoring()
+{
+	FSEventStreamRef eventStream = FSEventStreamCreate( NULL, trashFSEventCallBack, NULL,
+													   (CFArrayRef)[NSArray arrayWithObject: 
+																	[mfcMainBundlePath() stringByDeletingLastPathComponent]],
+													   kFSEventStreamEventIdSinceNow,
+													   0, kFSEventStreamCreateFlagUseCFTypes );
+	FSEventStreamScheduleWithRunLoop( eventStream,  [[NSRunLoop currentRunLoop] getCFRunLoop],
+									 kCFRunLoopDefaultMode );
+	FSEventStreamStart( eventStream );
 }

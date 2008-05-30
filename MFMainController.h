@@ -15,7 +15,6 @@
 // limitations under the License.
 
 #import <Cocoa/Cocoa.h>
-#define TEMP_SSHFS_PATH @"/Users/mgorbach/Library/Macfusion/Plugins/SSHFS.bundle"
 
 @interface MFMainController : NSObject {
 	
@@ -23,6 +22,4 @@
 
 + (MFMainController*)sharedController;
 - (void)initialize;
-
-// - (void)loadPlugins;
 @end

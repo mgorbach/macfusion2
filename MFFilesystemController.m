@@ -97,7 +97,6 @@ static MFFilesystemController* sharedController = nil;
 		[self loadFilesystems];
 		[self loadRecentFilesystems];
 		[self setUpVolumeMonitoring];
-		MFLogS(self, @"Init complete!");
 
 	}
 	return self;

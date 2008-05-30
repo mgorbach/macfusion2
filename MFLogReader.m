@@ -74,13 +74,10 @@ static MFLogReader* sharedReader;
 	aslresponse_free(r);
 	[self performSelectorOnMainThread:@selector(addASLEntries:)
 						   withObject:logMessagesToAdd waitUntilDone:NO];
-	// NSLog(@"Read entries from ASL Done. Added %d", [logMessagesToAdd count]);
 }
 
 - (void)recordASLMessageDict:(NSDictionary*)messageDict
 {
-	// NSLog(@"Processing %@", messageDict);
-	
 	[[self mutableArrayValueForKey: @"logMessages"] addObject:
 	 messageDict];
 }

@@ -58,6 +58,7 @@ static MFMainController* sharedController = nil;
 
 - (void)initialize
 {
+	mfcSetupTrashMonitoring();
 	MFPluginController* pluginController = [MFPluginController sharedController];
 	[pluginController loadPlugins];
 	

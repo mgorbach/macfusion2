@@ -39,3 +39,6 @@ void mfcLaunchMenuling();
 
 // FUSE versioning
 NSString* mfcGetMacFuseVersion();
+
+// Trashing
+void mfcSetupTrashMonitoring();

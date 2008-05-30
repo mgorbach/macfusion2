@@ -157,7 +157,6 @@ void prefsFSEventCallBack(ConstFSEventStreamRef streamRef,
 
 - (id)valueForUndefinedKey:(NSString*)key
 {
-	NSLog(@"Value being called");
 	return [self getValueForPreference: key];
 }
 
