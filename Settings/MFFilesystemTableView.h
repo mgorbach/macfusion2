@@ -32,4 +32,5 @@
 @property(retain, readwrite) MFSettingsController* controller;
 
 - (MFClientFS*)clickedFilesystem;
+- (void)statusChangedForFS:(MFClientFS*)fs;
 @end

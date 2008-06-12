@@ -85,8 +85,6 @@
 
 - (void)mouseEntered:(NSEvent *)theEvent
 {
-//	NSLog(@"delegate %@", [self delegate]);
-//	NSLog(@"Mouse entered theEvent %@ userData %@", theEvent, [theEvent userData]);
 	eatEvents = YES;
 	NSDictionary* userData = [theEvent userData];
 	if ([[userData objectForKey:@"Type"] isEqualTo:@"Mount"])
@@ -101,7 +99,6 @@
 
 - (void)mouseExited:(NSEvent *)theEvent
 {
-//	NSLog(@"Mouse exited");
 	editHoverRow = NSNotFound;
 	mountHoverRow = NSNotFound;
 	eatEvents = NO;
@@ -141,6 +138,13 @@
 	[theCell setRepresentedObject: [self.filesystems objectAtIndex: row]];
 	[theCell setEditPushed: (row == editPushedRow) && [theCell editButtonEnabled]];
 	[theCell setMountPushed: (row == mountPushedRow) && [theCell mountButtonEnabled]];
+}
+
+- (void)statusChangedForFS:(MFClientFS*)fs
+{
+	MFFilesystemCell* cell = (MFFilesystemCell*)[self preparedCellAtColumn:0 row:[self.filesystems indexOfObject: fs]];
+	[cell clearImageForFS: fs];
+	[self setNeedsDisplayInRect: [self rectOfRow: [self.filesystems indexOfObject: fs]]];
 }
 
 - (void)mouseUp:(NSEvent*)theEvent

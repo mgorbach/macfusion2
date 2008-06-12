@@ -34,6 +34,8 @@
 	{
 		self.editPushed = NO;
 		self.mountPushed = NO;
+		NSPointerFunctionsOptions options = NSPointerFunctionsObjectPointerPersonality;
+		icons = [NSMapTable mapTableWithKeyOptions:options valueOptions:options];
 	}
 	
 	return self;
@@ -104,15 +106,25 @@
 - (NSImage*)iconToDraw
 {
 	MFClientFS* fs = [self representedObject];
-	
-	NSImage* icon = [[NSImage alloc] initWithContentsOfFile: 
-					 fs.imagePath];
-	CIImage* ciImageIcon = [icon ciImageRepresentation];
-	CIImage* scaledImage = [ciImageIcon ciImageByScalingToSize: NSMakeSize(IMAGE_SIZE, IMAGE_SIZE) ];
-	CIImage* coloredImage = [scaledImage ciImageByColoringMonochromeWithColor: [self tintColor]
-																	intenisty: [NSNumber numberWithFloat: 0.4] ];
+	NSImage* iconToDraw = [icons objectForKey: fs];
+	if (!iconToDraw)
+	{
+		NSImage* icon = [[NSImage alloc] initWithContentsOfFile: 
+						 fs.imagePath];
+		CIImage* ciImageIcon = [icon ciImageRepresentation];
+		CIImage* scaledImage = [ciImageIcon ciImageByScalingToSize: NSMakeSize(IMAGE_SIZE, IMAGE_SIZE) ];
+		CIImage* coloredImage = [scaledImage ciImageByColoringMonochromeWithColor: [self tintColor]
+																		intenisty: [NSNumber numberWithFloat: 0.4] ];
+		iconToDraw = [coloredImage nsImageRepresentation];
+		[icons setObject: iconToDraw forKey: fs];
+	}
 
-	return [coloredImage nsImageRepresentation];
+	return iconToDraw;
+}
+
+- (void)clearImageForFS:(MFClientFS*)fs
+{
+	[icons removeObjectForKey: fs];
 }
 
 # pragma mark Enabling

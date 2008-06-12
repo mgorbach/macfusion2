@@ -2,14 +2,14 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.02">
 	<data>
 		<int key="IBDocument.SystemTarget">1050</int>
-		<string key="IBDocument.SystemVersion">9C31</string>
-		<string key="IBDocument.InterfaceBuilderVersion">644</string>
-		<string key="IBDocument.AppKitVersion">949.26</string>
+		<string key="IBDocument.SystemVersion">9D34</string>
+		<string key="IBDocument.InterfaceBuilderVersion">667</string>
+		<string key="IBDocument.AppKitVersion">949.33</string>
 		<string key="IBDocument.HIToolboxVersion">352.00</string>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
 			<integer value="543"/>
-			<integer value="376"/>
+			<integer value="496"/>
 			<integer value="613"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
@@ -798,6 +798,7 @@
 				<string key="NSWindowTitle">Macfusion</string>
 				<string key="NSWindowClass">NSWindow</string>
 				<nil key="NSViewClass"/>
+				<string key="NSWindowContentMaxSize">{3.40282e+38, 3.40282e+38}</string>
 				<object class="NSView" key="NSWindowView" id="486274857">
 					<reference key="NSNextResponder"/>
 					<int key="NSvFlags">256</int>
@@ -971,7 +972,7 @@
 															<reference key="NSColor" ref="610126076"/>
 														</object>
 													</object>
-													<int key="NSResizingMask">3</int>
+													<int key="NSResizingMask">1</int>
 													<bool key="NSIsResizeable">YES</bool>
 													<reference key="NSTableView" ref="257400682"/>
 												</object>
@@ -997,7 +998,7 @@
 												</object>
 											</object>
 											<double key="NSRowHeight">5.000000e+01</double>
-											<int key="NSTvFlags">-624918528</int>
+											<int key="NSTvFlags">448823296</int>
 											<int key="NSColumnAutoresizingStyle">1</int>
 											<int key="NSDraggingSourceMaskForLocal">15</int>
 											<int key="NSDraggingSourceMaskForNonLocal">0</int>
@@ -1121,6 +1122,7 @@
 					<reference key="NSSuperview"/>
 				</object>
 				<string key="NSScreenRect">{{0, 0}, {1920, 1178}}</string>
+				<string key="NSMaxSize">{3.40282e+38, 3.40282e+38}</string>
 			</object>
 			<object class="NSArrayController" id="366746003">
 				<object class="NSMutableArray" key="NSDeclaredKeys">
@@ -2016,10 +2018,10 @@
 								</object>
 								<object class="NSMutableArray" key="dict.values">
 									<bool key="EncodedWithXMLCoder">YES</bool>
-									<integer value="0" id="6"/>
-									<integer value="1" id="5"/>
-									<reference ref="6"/>
-									<reference ref="5"/>
+									<reference ref="8"/>
+									<reference ref="9"/>
+									<reference ref="8"/>
+									<reference ref="9"/>
 									<string>filterLogForFilesystem:</string>
 								</object>
 							</object>
@@ -2653,12 +2655,12 @@
 						<reference key="object" ref="486274857"/>
 						<object class="NSMutableArray" key="children">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="614163620"/>
-							<reference ref="487559712"/>
 							<reference ref="106040721"/>
 							<reference ref="682766785"/>
 							<reference ref="862534352"/>
 							<reference ref="1053818980"/>
+							<reference ref="614163620"/>
+							<reference ref="487559712"/>
 						</object>
 						<reference key="parent" ref="464735280"/>
 					</object>
@@ -3037,7 +3039,6 @@
 					<string>375.IBWindowTemplateEditedContentRect</string>
 					<string>375.NSWindowTemplate.visibleAtLaunch</string>
 					<string>375.editorWindowContentRectSynchronizationRect</string>
-					<string>375.lastResizeAction</string>
 					<string>376.IBPluginDependency</string>
 					<string>376.IBViewIntegration.shadowBlurRadius</string>
 					<string>376.IBViewIntegration.shadowColor</string>
@@ -3226,11 +3227,11 @@
 					<reference ref="9"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="9"/>
-					<string>{{988, 825}, {211, 103}}</string>
+					<string>{{988, 733}, {211, 103}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="9"/>
 					<string>{{525, 802}, {197, 73}}</string>
-					<string>{{682, 928}, {438, 20}}</string>
+					<string>{{682, 836}, {438, 20}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="9"/>
 					<string>{74, 862}</string>
@@ -3259,26 +3260,13 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="9"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{721, 57}, {490, 331}}</string>
+					<string>{{354, 286}, {490, 331}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="9"/>
 					<reference ref="8"/>
-					<string>{{721, 57}, {490, 331}}</string>
+					<string>{{354, 286}, {490, 331}}</string>
 					<reference ref="9"/>
 					<string>{{110, 338}, {483, 286}}</string>
-					<object class="NSDictionary">
-						<bool key="EncodedWithXMLCoder">YES</bool>
-						<object class="NSMutableArray" key="dict.sortedKeys">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>IBResizeActionFinalFrame</string>
-							<string>IBResizeActionInitialFrame</string>
-						</object>
-						<object class="NSMutableArray" key="dict.values">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>{{633, 179}, {490, 331}}</string>
-							<string>{{633, 54}, {835, 456}}</string>
-						</object>
-					</object>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="8"/>
 					<reference ref="610126076"/>

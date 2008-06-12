@@ -20,12 +20,14 @@
 
 @interface MFFilesystemCell : NSActionCell {
 	BOOL editPushed, mountPushed;
+	NSMapTable* icons;
 }
 
 - (void) addTrackingAreasForView: (NSView *) controlView inRect: (NSRect) cellFrame withUserInfo: (NSDictionary *) userInfo
 				   mouseLocation: (NSPoint) mouseLocation;
 - (BOOL)editButtonEnabled;
 - (BOOL)mountButtonEnabled;
+- (void)clearImageForFS:(MFClientFS*)fs;
 
 @property(readwrite) BOOL editPushed;
 @property(readwrite) BOOL mountPushed;

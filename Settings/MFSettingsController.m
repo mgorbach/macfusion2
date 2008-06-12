@@ -157,6 +157,7 @@
 # pragma mark Handling Notifications
 - (void)awakeFromNib
 {
+	//[filesystemTableView setIntercellSpacing: NSMakeSize(0, 0)];
 	NSCell* testCell = [[MFFilesystemCell alloc] init];
 	[[filesystemTableView tableColumnWithIdentifier:@"test"] 
 	 setDataCell: testCell];
@@ -178,12 +179,44 @@
 				  withKeyPath:@"arrangedObjects"
 					  options:nil];
 	[filesystemTableView setController: self];
+
 	fsBeingEdited = nil;
+}
+
+- (void) resizeWindowForContent {
+	// AutoSize the window vertically
+	NSWindow* window = [filesystemTableView window];
+	NSInteger maxRows = 10;
+	NSInteger minRows = 2;
+	NSInteger rows, filesystemCount;
+	filesystemCount = [[filesystemArrayController arrangedObjects] count];
+	
+	rows = filesystemCount < minRows ? minRows : filesystemCount;
+	rows = filesystemCount > maxRows ? maxRows : filesystemCount;
+	
+	NSSize windowContentSize = [(NSView*)[window contentView] frame].size;
+	NSInteger tableViewOldVerticalPixels = [[filesystemTableView superview] frame].size.height;
+	NSInteger tableViewNewVerticalPixels = (rows * [filesystemTableView rowHeight]);
+	tableViewNewVerticalPixels += (rows)*[filesystemTableView intercellSpacing].height;
+	NSRect windowFrame = [NSWindow contentRectForFrameRect:[window frame]
+												 styleMask:[window styleMask]];
+	NSSize size = NSMakeSize( windowContentSize.width, windowContentSize.height - tableViewOldVerticalPixels + tableViewNewVerticalPixels);
+	NSRect newWindowFrame = [NSWindow frameRectForContentRect:
+							 NSMakeRect( NSMinX( windowFrame ), NSMaxY( windowFrame ) - size.height, size.width, size.height )
+													styleMask:[window styleMask]];
+	[window setFrame:newWindowFrame display:YES animate:[window isVisible]];
 }
 
 - (void)applicationWillFinishLaunching:(NSNotification*)note
 {
 	[self setup];
+	[filesystemTableView reloadData];
+	[filesystemTableView noteHeightOfRowsWithIndexesChanged: [NSIndexSet indexSetWithIndexesInRange: NSMakeRange(0, [client.filesystems count])]];
+	[filesystemArrayController addObserver:self
+								forKeyPath:@"arrangedObjects"
+								   options:NSKeyValueObservingOptionNew
+								   context:self];
+	[self resizeWindowForContent];
 }
 
 # pragma mark IBActions
@@ -198,6 +231,7 @@
 	{
 		[filesystemArrayController setSelectionIndex: selectionIndex];
 		creatingNewFS = YES;
+		[self resizeWindowForContent];
 		[self editFilesystem: fs];
 	}
 }
@@ -421,6 +455,7 @@
 # pragma mark Notification
 - (void)filesystemDidChangeStatus:(MFClientFS*)fs
 {
+	[filesystemTableView statusChangedForFS: fs];
 	if ([fs isFailedToMount])
 	{
 		if ([fs error])
@@ -437,6 +472,18 @@
 		}
 	}
 }
+
+- (void) observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if (context == self) {
+		NSLog(@"Observing resize %@", [filesystemArrayController arrangedObjects]);
+		[self resizeWindowForContent];
+	}
+	else {
+		[super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+	}
+}
+
 
 # pragma mark Editing Mechanics
 - (void)filesystemEditOKClicked:(id)sender

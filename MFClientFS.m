@@ -29,7 +29,6 @@
 - (void)registerNotifications;
 - (void)copyParameters;
 - (void)copyStatusInfo;
-- (void)sendNotification:(NSString*)name;
 @end
 
 @implementation MFClientFS
@@ -99,24 +98,9 @@
 {
 	[self copyStatusInfo];
 	[self copyParameters];
-	
-	if ([self isFailedToMount])
-		[self performSelector:@selector(sendNotification:)
-				   withObject:kMFClientFSFailedNotification
-				   afterDelay:0];
 }
 
 #pragma mark Notifications To Clients
-- (void)sendNotification:(NSString*)name
-
-{
-	NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
-	[nc postNotificationName:name
-					  object:self
-					userInfo:nil];
-	if (clientFSDelegate && [clientFSDelegate respondsToSelector:@selector(filesystemDidChangeStatus:)])
-		[clientFSDelegate filesystemDidChangeStatus:self];
-}
 
 - (void)sendNotificationForStatusChangeFrom:(NSString*)previousStatus
 										 to:(NSString*)newStatus
@@ -125,17 +109,10 @@
 	{
 		// Send No Notification
 	}
-	
-	if ([previousStatus isEqualToString: kMFStatusFSWaiting]
-		&& [newStatus isEqualToString: kMFStatusFSMounted])
+	else
 	{
-		[self sendNotification: kMFClientFSMountedNotification];
-	}
-		
-	else if ([previousStatus isEqualToString: kMFStatusFSWaiting]
-			 && [newStatus isEqualToString: kMFStatusFSFailed])
-	{
-		[self sendNotification: kMFClientFSFailedNotification];
+		if (clientFSDelegate && [clientFSDelegate respondsToSelector:@selector(filesystemDidChangeStatus:)])
+			[clientFSDelegate filesystemDidChangeStatus:self];
 	}
 		
 }

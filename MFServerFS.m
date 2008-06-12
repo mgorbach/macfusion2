@@ -481,12 +481,14 @@
 	[t setLaunchPath: taskPath];
 	[t setArguments: [NSArray arrayWithObject: path]];
 	[t launch];
+	/*
 	[t waitUntilExit];
 	if ([t terminationStatus] != 0)
 	{
 		MFLogS(self, @"Unmount failed. Unmount terminated with %d",
 		[t terminationStatus]);
 	}
+	 */
 }
 
 # pragma mark Validation
@@ -551,13 +553,12 @@
 # pragma mark Notification handlers
 - (void)handleMountNotification
 {
-	// MFLogS(self, @"Mount notification received");
 	self.status = kMFStatusFSMounted;
+	[timer invalidate];
 }
 
 - (void)handleTaskDidTerminate:(NSNotification*)note
 {
-	// MFLogS(self, @"Task terminated");
 	if (self.status == kMFStatusFSMounted)
 	{
 		// We are terminating after a mount has been successful
@@ -608,6 +609,7 @@
 - (void)handleUnmountNotification
 {
 	self.status = kMFStatusFSUnmounted;
+	[timer invalidate];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath
