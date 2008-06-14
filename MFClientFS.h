@@ -54,6 +54,7 @@
 - (NSError*)endEditingAndCommitChanges:(BOOL)commit;
 - (void)beginEditing;
 - (NSDictionary*)displayDictionary;
+- (BOOL)canDoEditing;
 
 // UI
 - (void)setIconImage:(NSImage*)image;

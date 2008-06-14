@@ -23,10 +23,7 @@
 	NSMapTable* icons;
 }
 
-- (void) addTrackingAreasForView: (NSView *) controlView inRect: (NSRect) cellFrame withUserInfo: (NSDictionary *) userInfo
-				   mouseLocation: (NSPoint) mouseLocation;
-- (BOOL)editButtonEnabled;
-- (BOOL)mountButtonEnabled;
+- (NSRect) progressIndicatorRectInRect:(NSRect)rect;
 - (void)clearImageForFS:(MFClientFS*)fs;
 
 @property(readwrite) BOOL editPushed;

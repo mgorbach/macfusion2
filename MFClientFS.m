@@ -105,6 +105,7 @@
 - (void)sendNotificationForStatusChangeFrom:(NSString*)previousStatus
 										 to:(NSString*)newStatus
 {
+	// NSLog(@"Sending notification: Previous %@ New %@", previousStatus, newStatus);
 	if ([previousStatus isEqualToString: newStatus])
 	{
 		// Send No Notification
@@ -112,7 +113,9 @@
 	else
 	{
 		if (clientFSDelegate && [clientFSDelegate respondsToSelector:@selector(filesystemDidChangeStatus:)])
+		{
 			[clientFSDelegate filesystemDidChangeStatus:self];
+		}
 	}
 		
 }
@@ -213,6 +216,11 @@
 	}
 	
 	return nil;
+}
+
+- (BOOL)canDoEditing
+{
+	return ([self isUnmounted] || [self isFailedToMount]);
 }
 
 - (NSImage*)iconImage

@@ -38,17 +38,18 @@ MFLogViewerController;
 	BOOL creatingNewFS;
 }
 
-- (IBAction)popupButtonClicked:(id)sender;
+- (IBAction)newFSPopupClicked:(id)sender;
 - (IBAction)showPreferences:(id)sender;
 - (IBAction)startMenuItem:(id)sender;
-- (IBAction)deleteSelectedFilesystem:(id)sender;
 - (IBAction)showLogViewer:(id)sender;
 
-- (void)editFilesystem:(MFClientFS*)fs;
-- (void)deleteFilesystem:(MFClientFS*)fs;
-- (void)toggleMountOnFilesystem:(MFClientFS*)fs;
-- (void)mountFilesystem:(MFClientFS*)fs;
-- (void)unmountFilesystem:(MFClientFS*)fs;
+- (IBAction)editSelectedFS:(id)sender;
+- (IBAction)toggleSelectedFS:(id)sender;
+- (IBAction)revealConfigForSelectedFS:(id)sender;
+- (IBAction)revealSelectedFS:(id)sender;
+- (IBAction)duplicateSelectedFS:(id)sender;
+- (IBAction)deleteSelectedFS:(id)sender;
+- (IBAction)filterLogForSelectedFS:(id)sender;
 
 @property(readonly) MFClient* client;
 @end

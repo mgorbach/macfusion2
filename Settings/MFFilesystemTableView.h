@@ -19,13 +19,9 @@
 
 @interface MFFilesystemTableView : NSTableView
 {
-	NSUInteger mountPushedRow;
-	NSUInteger editPushedRow;
-	NSUInteger editHoverRow;
-	NSUInteger mountHoverRow;
 	NSMutableArray* filesystems;
 	MFSettingsController* controller;
-	BOOL eatEvents;
+	NSMapTable* progressIndicators;
 }
 
 @property(retain, readwrite) NSMutableArray* filesystems;

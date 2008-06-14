@@ -21,6 +21,7 @@
 #import "MFConstants.h"
 #import "MFClientFS.h"
 #import "MGNSImage.h"
+#import "MFMountToggleButtonCell.h"
 
 @implementation MFFilesystemTableView
 
@@ -33,19 +34,17 @@
 {
 	if (self = [super initWithCoder:decoder])
 	{
-		mountPushedRow = NSNotFound;
-		editPushedRow = NSNotFound;
-		editHoverRow = NSNotFound;
-		mountHoverRow = NSNotFound;
 		[self setDelegate: self];
 		self.filesystems = [NSMutableArray array];
 		MFFilesystemCell* cell = [MFFilesystemCell new];
 		[[[self tableColumns] objectAtIndex:0] setDataCell: cell];
 		[self setDataSource: self];
-		eatEvents = NO;
 		[self registerForDraggedTypes: [NSArray arrayWithObjects: kMFFilesystemDragType, NSFilesPromisePboardType, nil ]];
 		[self setDraggingSourceOperationMask:NSDragOperationEvery forLocal:NO];
 		[self setDraggingSourceOperationMask:NSDragOperationEvery forLocal:YES];
+		NSPointerFunctionsOptions options = NSPointerFunctionsObjectPointerPersonality;
+		progressIndicators = [[NSMapTable alloc] initWithKeyOptions:options|NSPointerFunctionsZeroingWeakMemory
+													   valueOptions:options capacity: [self.filesystems count] ];
 	}
 	
 	return self;
@@ -55,70 +54,11 @@
 {
 }
 
-- (void) updateTrackingAreas
-{
-	[super updateTrackingAreas];
-	for(NSTrackingArea* area in [self trackingAreas])
-		[self removeTrackingArea: area];
-	
-	NSRange rows = [self rowsInRect: [self visibleRect]];
-	if (rows.length == 0)
-		return;
-	
-	NSUInteger row;
-	for (row = rows.location; row < NSMaxRange(rows); row++)
-	{
-		NSDictionary* userInfo = [NSDictionary dictionaryWithObject: [NSNumber numberWithInt: row]
-															 forKey: @"Row"];
-		MFFilesystemCell* cell = (MFFilesystemCell*)[self preparedCellAtColumn:0 row:row];
-		[cell addTrackingAreasForView:self 
-							   inRect:[self rectOfRow:row]
-						 withUserInfo:userInfo
-						mouseLocation: [NSEvent mouseLocation]];
-	}
-}
-
 - (void)viewDidEndLiveResize
 {
 	[self setNeedsDisplay];
 }
 
-- (void)mouseEntered:(NSEvent *)theEvent
-{
-	eatEvents = YES;
-	NSDictionary* userData = [theEvent userData];
-	if ([[userData objectForKey:@"Type"] isEqualTo:@"Mount"])
-	{
-		mountHoverRow = [[userData objectForKey:@"Row"] intValue];
-	}
-	else if ([[userData objectForKey:@"Type"] isEqualTo:@"Edit"])
-	{
-		editHoverRow = [[userData objectForKey:@"Row"] intValue];
-	}
-}
-
-- (void)mouseExited:(NSEvent *)theEvent
-{
-	editHoverRow = NSNotFound;
-	mountHoverRow = NSNotFound;
-	eatEvents = NO;
-}
-
-
-- (void)mouseDown:(NSEvent*)theEvent
-{
-	if (!eatEvents)
-	{
-		[super mouseDown: theEvent];
-		return;
-	}
-	NSPoint point = [self convertPoint: [theEvent locationInWindow] fromView: nil];
-	NSInteger row = [self rowAtPoint:point];
-	editPushedRow = editHoverRow;
-	mountPushedRow = mountHoverRow;
-	
-	[self setNeedsDisplayInRect: [self rectOfRow: row]];
-}
 
 - (MFClientFS*)clickedFilesystem
 {
@@ -134,109 +74,82 @@
 	forTableColumn: (NSTableColumn *) tableColumn 
 			   row: (int) row
 {
-	MFFilesystemCell* theCell = (MFFilesystemCell*)cell;
-	[theCell setRepresentedObject: [self.filesystems objectAtIndex: row]];
-	[theCell setEditPushed: (row == editPushedRow) && [theCell editButtonEnabled]];
-	[theCell setMountPushed: (row == mountPushedRow) && [theCell mountButtonEnabled]];
+	MFClientFS* fs = [self.filesystems objectAtIndex: row];
+	if ([[tableColumn identifier] isEqualTo: @"main"])
+	{
+		MFFilesystemCell* theCell = (MFFilesystemCell*)cell;
+		[theCell setRepresentedObject: fs];
+	}
+	if ([[tableColumn identifier] isEqualTo: @"mount"])
+	{
+		MFMountToggleButtonCell* theCell = (MFMountToggleButtonCell*)cell;
+		[theCell setRepresentedObject: fs];
+	}
 }
 
 - (void)statusChangedForFS:(MFClientFS*)fs
 {
+	// NSLog(@"MFFilesystemTableView: Status Changed for FS %@", fs);
 	MFFilesystemCell* cell = (MFFilesystemCell*)[self preparedCellAtColumn:0 row:[self.filesystems indexOfObject: fs]];
 	[cell clearImageForFS: fs];
 	[self setNeedsDisplayInRect: [self rectOfRow: [self.filesystems indexOfObject: fs]]];
-}
-
-- (void)mouseUp:(NSEvent*)theEvent
-{
-	[super mouseUp: theEvent];
-	NSPoint point = [self convertPoint: [theEvent locationInWindow] fromView: nil];
-	NSInteger row = [self rowAtPoint:point];
-	MFFilesystemCell* cell = (MFFilesystemCell*)[self preparedCellAtColumn:0 row:row];
+	NSProgressIndicator* indicator = [progressIndicators objectForKey: fs];
+	NSInteger row = [self.filesystems indexOfObject: fs];
+	if ([fs isWaiting])
+	{
+		if (!indicator)
+		{
+			indicator = [NSProgressIndicator new];
+			[indicator setStyle: NSProgressIndicatorSpinningStyle];
+			[indicator setControlTint: NSClearControlTint ];
+			[progressIndicators setObject: indicator 
+								   forKey: fs ];
+		}
+		NSRect indicatorRect = [ (MFFilesystemCell*)[self preparedCellAtColumn:0 row: row] 
+								progressIndicatorRectInRect: [self rectOfRow: row] ];
+		[indicator setFrame: indicatorRect ];
+		[self addSubview: indicator];
+		[indicator startAnimation: self];
+	}
+	elsefile://localhost/Users/mgorbach/Code/macfusion2/Settings/MFFilesystemTableView.m
+	{
+		if (indicator)
+		{
+			[indicator stopAnimation: self];
+			[indicator removeFromSuperview];
+		}
+	}
 	
-	if (NSPointInRect( point , [self rectOfRow: mountPushedRow] ) && [cell mountButtonEnabled])
-	{
-		[self.controller toggleMountOnFilesystem: [filesystems objectAtIndex: mountPushedRow] ];
-	}
-	if (NSPointInRect( point, [self rectOfRow: editPushedRow] ) && [cell editButtonEnabled])
-	{
-		[self.controller editFilesystem: [filesystems objectAtIndex: editPushedRow] ];
-	}
-	
-	if (editPushedRow != NSNotFound)
-	{
-		NSInteger temp = editPushedRow;
-		editPushedRow = NSNotFound;
-		[self setNeedsDisplayInRect: [self rectOfRow: temp]];
-	}
-	if (mountPushedRow != NSNotFound)
-	{
-		NSInteger temp = mountPushedRow;
-		mountPushedRow = NSNotFound;
-		[self setNeedsDisplayInRect: [self rectOfRow: temp]];
-	}
-
 	[self setNeedsDisplayInRect: [self rectOfRow: row]];
-
 }
+ 
 
 - (void)keyDown:(NSEvent*)event
 {
-//	MFLogS(self, @"keyDown %@", event);
-	if ([self selectedRow] ==  NSNotFound)
+	MFClientFS* fs = [self.filesystems objectAtIndex: [self selectedRow]];
+	if (! ([event modifierFlags] == 1048840))
 	{
 		[super keyDown: event];
 		return;
 	}
 	
-	if (editPushedRow != NSNotFound || mountPushedRow != NSNotFound)
-		return;
-	
-	MFFilesystemCell* cell = (MFFilesystemCell*)[self preparedCellAtColumn: 0 row: [self selectedRow]];
-	
-	if ([event keyCode] == 46 && [cell mountButtonEnabled])
+	if ([event keyCode] == 14 && ([fs isUnmounted] || [fs isFailedToMount]))
 	{
-		mountPushedRow = [self selectedRow];
-		[self setNeedsDisplayInRect: [self rectOfRow: [self selectedRow]]];
-		return;
+		[controller editSelectedFS: self];
 	}
-	if ([event keyCode] == 14 && [cell editButtonEnabled])
+	else if ([event keyCode] == 36 && ([fs isUnmounted] || [fs isFailedToMount]))
 	{
-		editPushedRow = [self selectedRow];
-		[self setNeedsDisplayInRect: [self rectOfRow: [self selectedRow]]];
-		return;
+		[controller toggleSelectedFS: self];
 	}
-	if ([event keyCode] == 117)
+	else if ([event keyCode] == 36 && [fs isMounted])
 	{
-		[controller deleteFilesystem: [self.filesystems objectAtIndex: [self selectedRow]]];
-		return;
+		[controller toggleSelectedFS: self];
 	}
-		
-	[super keyDown: event];
+	else
+	{
+		[super keyDown: event];
+	}
 }
-
-
-- (void)keyUp:(NSEvent*)event
-{
-	MFFilesystemCell* cell = (MFFilesystemCell*)[self preparedCellAtColumn: 0 row: [self selectedRow]];
-	//	MFLogS(self, @"keyUp %@ mountEnabled %d", event, [cell mountButtonEnabled]);
-	if ([event keyCode] == 46 && [cell mountButtonEnabled] && mountPushedRow != NSNotFound)
-	{
-		NSUInteger oldRow = mountPushedRow;
-		[controller toggleMountOnFilesystem: [self.filesystems objectAtIndex: mountPushedRow]];
-		mountPushedRow = NSNotFound;
-		[self setNeedsDisplayInRect: [self rectOfRow: oldRow]];
-	}
-	
-	if ([event keyCode] == 14 && [cell editButtonEnabled])
-	{
-		[controller editFilesystem: [self.filesystems objectAtIndex: editPushedRow]];
-		editPushedRow = NSNotFound;
-	}
-	
-	[super keyUp:event];
-}
- 
 
 # pragma mark D&D
 
@@ -244,7 +157,6 @@
 writeRowsWithIndexes:(NSIndexSet *)rowIndexes 
 	 toPasteboard:(NSPasteboard*)pboard
 {
-	// MFLogS(self, @"Pasteboard writeRows called");
 	NSMutableArray* uuids = [NSMutableArray array];
 	NSUInteger count = [rowIndexes count];
 	
@@ -333,6 +245,7 @@ forDraggedRowsWithIndexes:(NSIndexSet*)indexes
 	NSImage* bla = [[ciRep ciImageByScalingToSize: NSMakeSize(48, 48)] nsImageRepresentation];
 	return bla;
 }
+
  
 @synthesize filesystems, controller;
 @end

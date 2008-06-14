@@ -104,7 +104,6 @@
 	{
 		BOOL agentRunning = NO;
 		NSArray* runingIDs = [[[NSWorkspace sharedWorkspace] launchedApplications] valueForKey:@"NSApplicationBundleIdentifier"];
-		// MFLogS(self, @"Runing ids are %@", runingIDs);
 		for(NSString* id in runingIDs)
 		{
 			if ([id isEqualToString: kMFAgentBundleIdentifier])
@@ -157,7 +156,6 @@
 # pragma mark Handling Notifications
 - (void)awakeFromNib
 {
-	//[filesystemTableView setIntercellSpacing: NSMakeSize(0, 0)];
 	NSCell* testCell = [[MFFilesystemCell alloc] init];
 	[[filesystemTableView tableColumnWithIdentifier:@"test"] 
 	 setDataCell: testCell];
@@ -183,7 +181,8 @@
 	fsBeingEdited = nil;
 }
 
-- (void) resizeWindowForContent {
+- (void) resizeWindowForContent 
+{
 	// AutoSize the window vertically
 	NSWindow* window = [filesystemTableView window];
 	NSInteger maxRows = 10;
@@ -212,6 +211,12 @@
 	[self setup];
 	[filesystemTableView reloadData];
 	[filesystemTableView noteHeightOfRowsWithIndexesChanged: [NSIndexSet indexSetWithIndexesInRange: NSMakeRange(0, [client.filesystems count])]];
+	for(MFClientFS* fs in [filesystemArrayController arrangedObjects])
+	{
+		if ([fs isMounted])
+			[fs setClientFSDelegate: self];
+	}
+	
 	[filesystemArrayController addObserver:self
 								forKeyPath:@"arrangedObjects"
 								   options:NSKeyValueObservingOptionNew
@@ -220,7 +225,7 @@
 }
 
 # pragma mark IBActions
-- (void)popupButtonClicked:(id)sender
+- (void)newFSPopupClicked:(id)sender
 {
 	NSPopUpButton* filesystemAddButton = (NSPopUpButton*)sender;
 	MFClientPlugin* selectedPlugin = [[filesystemAddButton selectedItem]
@@ -256,28 +261,18 @@
 	[[NSWorkspace sharedWorkspace] launchApplication: menuItemBundlePath];
 }
 
-- (IBAction)deleteSelectedFilesystem:(id)sender
+- (IBAction)filterLogForSelectedFS:(id)sender
 {
-	if ([[filesystemArrayController selectedObjects] count] > 0)
+	[self showLogViewer: self];
+	NSArray* selectedFilesystems = [self selectedFilesystems];
+	if ([selectedFilesystems count] == 1)
 	{
-		for(MFClientFS* fs in [filesystemArrayController selectedObjects])
-		{
-			[self deleteFilesystem: fs];
-		}
-	}
-}
-
-- (IBAction)filterLogForFilesystem:(id)sender
-{
-	if ([sender isKindOfClass: [MFClientFS class]])
-	{
-		[self showLogViewer: self];
-		[logViewerController filterForFilesystem: sender];
+		[logViewerController filterForFilesystem: 
+		 [selectedFilesystems objectAtIndex: 0]];
 	}
 }
 
 # pragma mark View Construction
-
 
 - (NSView*)wrapViewInOKCancel:(NSView*)innerView;
 {
@@ -329,6 +324,13 @@
 }
 
 # pragma mark Action Methods
+
+- (NSArray*)selectedFilesystems
+{
+	return [[filesystemArrayController arrangedObjects] objectsAtIndexes:
+			[filesystemTableView selectedRowIndexes]];
+}
+
 - (void)deleteFilesystem:(MFClientFS*)fs
 {
 	if ([fs isUnmounted] || [fs isFailedToMount])
@@ -351,6 +353,62 @@
 	}
 }
 
+- (IBAction)editSelectedFS:(id)sender
+{
+	NSArray* selectedFilesystems = [self selectedFilesystems];
+	if (!selectedFilesystems || [selectedFilesystems count] != 1)
+	{
+		return;
+	}
+	else
+	{
+		[self editFilesystem: [selectedFilesystems objectAtIndex: 0]];
+	}
+}
+
+- (IBAction)toggleSelectedFS:(id)sender
+{
+	NSArray* selectedFilesystems = [self selectedFilesystems];
+	if (!selectedFilesystems || [selectedFilesystems count] != 1)
+	{
+		return;
+	}
+	else
+	{
+		[self toggleFilesystem: [selectedFilesystems objectAtIndex: 0]]; 
+	}
+}
+
+- (IBAction)revealConfigForSelectedFS:(id)sender
+{
+	for(MFClientFS* fs in [self selectedFilesystems])
+	{
+		[[NSWorkspace sharedWorkspace]  selectFile:fs.filePath
+						  inFileViewerRootedAtPath:nil];
+	}
+}
+
+- (IBAction)revealSelectedFS:(id)sender
+{
+	for(MFClientFS* fs in [self selectedFilesystems])
+	{
+		if ([fs isMounted])
+			[[NSWorkspace sharedWorkspace] selectFile: nil
+							 inFileViewerRootedAtPath: fs.mountPath ];
+	}
+}
+
+- (IBAction)duplicateSelectedFS:(id)sender
+{
+	// TODO: Implement
+}
+
+- (IBAction)deleteSelectedFS:(id)sender
+{
+	for(MFClientFS* fs in [self selectedFilesystems])
+		[self deleteFilesystem: fs];
+}
+
 
 - (void)deleteConfirmationAlertDidEnd:(NSAlert*)alert returnCode:(NSInteger)code contextInfo:(void*)context
 {
@@ -366,7 +424,6 @@
 }
 - (void)editFilesystem:(MFClientFS*)fs
 {
-	// MFLogS(self, @"Editing fs %@", fs);
 	if (!fs || [fs isMounted] || [fs isWaiting])
 		return;
 	
@@ -400,6 +457,20 @@
 	}
 }
 
+- (void)toggleFilesystem:(MFClientFS*)fs
+{
+	if ([fs isMounted])
+	{
+		[fs unmount];
+	}
+	else if ([fs isUnmounted] || [fs isFailedToMount])
+	{
+		NSLog(@"Mounting fs %@", fs);
+		[fs setClientFSDelegate: self];
+		[fs mount];
+	}
+}
+
 
 - (void)tabView:(NSTabView *)tabView 
 	didSelectTabViewItem:(NSTabViewItem *)tabViewItem
@@ -419,39 +490,6 @@
 				  animate:YES];
 }
 
-- (void)toggleMountOnFilesystem:(MFClientFS*)fs
-{
-	if ([fs isMounted])
-	{
-		[self unmountFilesystem: fs];
-	}
-	else if ([fs isUnmounted] || [fs isFailedToMount])
-	{
-		[self mountFilesystem: fs];
-	}
-}
-
-- (void)unmountFilesystem:(MFClientFS*)fs
-{
-	if ([fs isMounted])
-		[fs unmount];
-}
-
-- (void)mountFilesystem:(MFClientFS*)fs
-{
-	if ([fs isUnmounted] || [fs isFailedToMount])
-	{
-		[fs setClientFSDelegate: self];
-		[fs mount];
-	}
-}
-
-- (void)revealFilesystem:(MFClientFS*)fs
-{
-	[[NSWorkspace sharedWorkspace] selectFile:[fs filePath]
-					 inFileViewerRootedAtPath:nil];
-}
-
 # pragma mark Notification
 - (void)filesystemDidChangeStatus:(MFClientFS*)fs
 {
@@ -468,7 +506,7 @@
 		}
 		else
 		{
-			MFLogSO(self, fs, @"No error for fs %@", fs);
+			MFLogSO(self, fs, @"No error for failed-to-mount fs %@", fs);
 		}
 	}
 }
@@ -476,7 +514,6 @@
 - (void) observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
     if (context == self) {
-		NSLog(@"Observing resize %@", [filesystemArrayController arrangedObjects]);
 		[self resizeWindowForContent];
 	}
 	else {
@@ -541,7 +578,6 @@
 - (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename
 {
 	NSString* fsLocation = [@"~/Library/Application Support/Macfusion/Filesystems" stringByExpandingTildeInPath];
-	// MFLogS(self, @"Lastpath %@", [filename stringByDeletingLastPathComponent]);
 	if ([[filename stringByDeletingLastPathComponent] isEqualToString: fsLocation])
 	{
 		NSString* uuid = [[filename lastPathComponent] stringByDeletingPathExtension];
@@ -575,9 +611,14 @@
 		[item setEnabled: [self validateFSMenuItem: item]];
 }
 
+- (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)anItem
+{
+	NSLog(@"Called with %@", anItem);
+	return YES;
+}
+
 - (BOOL)validateFSMenuItem:(NSMenuItem*)item
 {
-	// MFLogS(self, @"Validating FS item %@", item );
 	if ([[item title] isEqualToString: @"Mount"])
 	{
 		return ([menuArgumentFS isUnmounted] || [menuArgumentFS isFailedToMount]);

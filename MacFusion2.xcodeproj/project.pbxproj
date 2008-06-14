@@ -118,6 +118,8 @@
 		D4B657990D0DE41300ED34B3 /* MFClient.h in Headers */ = {isa = PBXBuildFile; fileRef = D4B657970D0DE41300ED34B3 /* MFClient.h */; };
 		D4B6579A0D0DE41300ED34B3 /* MFClient.m in Sources */ = {isa = PBXBuildFile; fileRef = D4B657980D0DE41300ED34B3 /* MFClient.m */; };
 		D4C6334D0D7644B300734165 /* MGFadingWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = D4C6334C0D7644B300734165 /* MGFadingWindow.m */; };
+		D4C910180E031A720071C4AF /* MFSettingsController.m in Sources */ = {isa = PBXBuildFile; fileRef = D4C910170E031A720071C4AF /* MFSettingsController.m */; };
+		D4C9109F0E03204E0071C4AF /* MFMountToggleButtonCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D4C9109E0E03204E0071C4AF /* MFMountToggleButtonCell.m */; };
 		D4CEE0F30D3045590064042E /* MFClientFS.h in Headers */ = {isa = PBXBuildFile; fileRef = D4CEE0F10D3045580064042E /* MFClientFS.h */; };
 		D4CEE0F40D3045590064042E /* MFClientFS.m in Sources */ = {isa = PBXBuildFile; fileRef = D4CEE0F20D3045590064042E /* MFClientFS.m */; };
 		D4CF0E460D8C75B30065A2C3 /* MFPreferences.h in Headers */ = {isa = PBXBuildFile; fileRef = D4CF0E440D8C75B30065A2C3 /* MFPreferences.h */; };
@@ -125,7 +127,6 @@
 		D4D0E9FF0D7C887A00797279 /* MFClientFSDelegateProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = D4D0E9FE0D7C887A00797279 /* MFClientFSDelegateProtocol.h */; };
 		D4D6A0D80D025B4A00BC2E2D /* MFConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = D4D6A0D70D025B4A00BC2E2D /* MFConstants.h */; };
 		D4DB420B0D3E867200C99914 /* MFCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D4FC0C980CF128480029B133 /* MFCore.framework */; };
-		D4DB42CE0D3EAC7000C99914 /* MFSettingsController.m in Sources */ = {isa = PBXBuildFile; fileRef = D4DB42CD0D3EAC7000C99914 /* MFSettingsController.m */; };
 		D4DB42EA0D3EAE4C00C99914 /* settingsMain.m in Sources */ = {isa = PBXBuildFile; fileRef = D4DB42E90D3EAE4C00C99914 /* settingsMain.m */; };
 		D4DB43210D3EAEE600C99914 /* MFCore.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = D4FC0C980CF128480029B133 /* MFCore.framework */; };
 		D4DB43750D3EB6A100C99914 /* main.xib in Resources */ = {isa = PBXBuildFile; fileRef = D4DB43740D3EB6A100C99914 /* main.xib */; };
@@ -446,6 +447,10 @@
 		D4B657980D0DE41300ED34B3 /* MFClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MFClient.m; sourceTree = "<group>"; };
 		D4C6334B0D7644B300734165 /* MGFadingWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MGFadingWindow.h; sourceTree = "<group>"; };
 		D4C6334C0D7644B300734165 /* MGFadingWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MGFadingWindow.m; sourceTree = "<group>"; };
+		D4C910170E031A720071C4AF /* MFSettingsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MFSettingsController.m; sourceTree = "<group>"; };
+		D4C9103B0E031B100071C4AF /* MFSettingsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFSettingsController.h; sourceTree = "<group>"; };
+		D4C9109D0E03204E0071C4AF /* MFMountToggleButtonCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFMountToggleButtonCell.h; sourceTree = "<group>"; };
+		D4C9109E0E03204E0071C4AF /* MFMountToggleButtonCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MFMountToggleButtonCell.m; sourceTree = "<group>"; };
 		D4CEE0F10D3045580064042E /* MFClientFS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFClientFS.h; sourceTree = "<group>"; };
 		D4CEE0F20D3045590064042E /* MFClientFS.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MFClientFS.m; sourceTree = "<group>"; };
 		D4CF0E440D8C75B30065A2C3 /* MFPreferences.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFPreferences.h; sourceTree = "<group>"; };
@@ -454,8 +459,6 @@
 		D4D6A0D70D025B4A00BC2E2D /* MFConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFConstants.h; sourceTree = "<group>"; };
 		D4DB42040D3E863100C99914 /* Macfusion2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Macfusion2.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D4DB42060D3E863100C99914 /* MacfusionMain-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "MacfusionMain-Info.plist"; sourceTree = "<group>"; };
-		D4DB42CC0D3EAC7000C99914 /* MFSettingsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFSettingsController.h; sourceTree = "<group>"; };
-		D4DB42CD0D3EAC7000C99914 /* MFSettingsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MFSettingsController.m; sourceTree = "<group>"; };
 		D4DB42E90D3EAE4C00C99914 /* settingsMain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = settingsMain.m; sourceTree = "<group>"; };
 		D4DB43740D3EB6A100C99914 /* main.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = main.xib; sourceTree = "<group>"; };
 		D4DB45D20D3FEBE300C99914 /* MFFilesystemCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFFilesystemCell.h; sourceTree = "<group>"; };
@@ -587,8 +590,6 @@
 				D4E5200E0CE03B9D009B1A30 /* UI */,
 				08FB779DFE84155DC02AAC07 /* External Frameworks and Libraries */,
 				D4B14E620CE1987F003195A3 /* Products */,
-				D41E17440D85CB7100F46F50 /* QuartzCore.framework */,
-				D41E17480D85CB8B00F46F50 /* Security.framework */,
 			);
 			name = macfusiond;
 			sourceTree = "<group>";
@@ -607,6 +608,8 @@
 		08FB779DFE84155DC02AAC07 /* External Frameworks and Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				D41E17440D85CB7100F46F50 /* QuartzCore.framework */,
+				D41E17480D85CB8B00F46F50 /* Security.framework */,
 				D40235AD0D7E0176000B9B64 /* Carbon.framework */,
 				D4656C9E0D6FDBF900DE2208 /* QuartzCore.framework */,
 				D4905BD60D380B6B00E21C1E /* DiskArbitration.framework */,
@@ -672,7 +675,6 @@
 				D46514530D89D6E800F31CBE /* UI */,
 				D4DF34CC0D80FC58005C9402 /* Other Resources */,
 				D4386C080D0B46D90078C19F /* Images */,
-				D4D6A22A0D03686500BC2E2D /* Property Lists */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -813,13 +815,6 @@
 			name = Shared;
 			sourceTree = "<group>";
 		};
-		D4D6A22A0D03686500BC2E2D /* Property Lists */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = "Property Lists";
-			sourceTree = "<group>";
-		};
 		D4D900E40D50F5A800A868F9 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
@@ -837,6 +832,8 @@
 		D4D9FE8D0D4D808D00A868F9 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				D4C9109D0E03204E0071C4AF /* MFMountToggleButtonCell.h */,
+				D4C9109E0E03204E0071C4AF /* MFMountToggleButtonCell.m */,
 				D4DB45D20D3FEBE300C99914 /* MFFilesystemCell.h */,
 				D4DB45D30D3FEBE300C99914 /* MFFilesystemCell.m */,
 				D4FEAF540D835E3000C709C1 /* MFFilesystemTableView.h */,
@@ -854,8 +851,8 @@
 			children = (
 				D4D9FE8D0D4D808D00A868F9 /* Views */,
 				D4DB42DA0D3EAD0100C99914 /* Resources */,
-				D4DB42CC0D3EAC7000C99914 /* MFSettingsController.h */,
-				D4DB42CD0D3EAC7000C99914 /* MFSettingsController.m */,
+				D4C9103B0E031B100071C4AF /* MFSettingsController.h */,
+				D4C910170E031A720071C4AF /* MFSettingsController.m */,
 				D4DB42E90D3EAE4C00C99914 /* settingsMain.m */,
 			);
 			path = Settings;
@@ -1416,12 +1413,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D4DB42CE0D3EAC7000C99914 /* MFSettingsController.m in Sources */,
 				D4DB42EA0D3EAE4C00C99914 /* settingsMain.m in Sources */,
 				D4DB45D40D3FEBE300C99914 /* MFFilesystemCell.m in Sources */,
 				D45579170D40715F00669882 /* MFInertButton.m in Sources */,
 				D4FEAF560D835E3000C709C1 /* MFFilesystemTableView.m in Sources */,
 				D40B04800D8C5EC30005F448 /* MGActionButton.m in Sources */,
+				D4C910180E031A720071C4AF /* MFSettingsController.m in Sources */,
+				D4C9109F0E03204E0071C4AF /* MFMountToggleButtonCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
