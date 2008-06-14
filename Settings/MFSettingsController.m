@@ -30,6 +30,10 @@
 
 @interface MFSettingsController(PrivateAPI)
 - (BOOL)validateFSMenuItem:(NSMenuItem*)item;
+- (NSView*)wrapViewInOKCancel:(NSView*)innerView;
+- (void)editFilesystem:(MFClientFS*)fs;
+- (void)toggleFilesystem:(MFClientFS*)fs;
+- (void)deleteFilesystem:(MFClientFS*)fs;
 @end
 
 @implementation MFSettingsController
@@ -224,6 +228,7 @@
 	[self resizeWindowForContent];
 }
 
+
 # pragma mark IBActions
 - (void)newFSPopupClicked:(id)sender
 {
@@ -261,74 +266,60 @@
 	[[NSWorkspace sharedWorkspace] launchApplication: menuItemBundlePath];
 }
 
-- (IBAction)filterLogForSelectedFS:(id)sender
-{
-	[self showLogViewer: self];
-	NSArray* selectedFilesystems = [self selectedFilesystems];
-	if ([selectedFilesystems count] == 1)
-	{
-		[logViewerController filterForFilesystem: 
-		 [selectedFilesystems objectAtIndex: 0]];
-	}
-}
-
-# pragma mark View Construction
-
-- (NSView*)wrapViewInOKCancel:(NSView*)innerView;
-{
-	NSInteger buttonWidth = 80;
-	NSInteger buttonHeight = 25;
-	NSInteger buttonRightPadding = 5;
-	NSInteger buttonBottomPadding = 5;
-	NSInteger buttonXDistance = 0;
-	NSInteger buttonAreaHeight = 2*buttonBottomPadding + buttonHeight;
-	
-	NSView* outerView = [[NSView alloc] init];
-	
-	[outerView setFrameSize: NSMakeSize([innerView frame].size.width, 
-	[innerView frame].size.height +  buttonAreaHeight)];
-	
-	[outerView addSubview: innerView];
-	[innerView setFrame: NSMakeRect(0, buttonAreaHeight, [innerView frame].size.width, 
-	[innerView frame].size.height)];
-	 
-	NSRect okButtonFrame = NSMakeRect([outerView frame].size.width-buttonRightPadding-buttonWidth, 
-									  buttonBottomPadding, 
-									  buttonWidth, 
-									  buttonHeight);
-	NSButton* okButton = [[NSButton alloc] initWithFrame: okButtonFrame];
-	[okButton setBezelStyle: NSRoundedBezelStyle];
-	[okButton setTitle:@"OK"];
-	[okButton setTarget: self];
-	[okButton setAction:@selector(filesystemEditOKClicked:)];
-	[okButton setKeyEquivalent:@"\r"];
-	[okButton setAutoresizingMask: NSViewMaxYMargin | NSViewMinXMargin];
-	 
-	 
-	NSRect cancelButtonFrame = NSMakeRect(okButtonFrame.origin.x - buttonXDistance- buttonWidth,
-	buttonBottomPadding,
-	buttonWidth, buttonHeight);
-	NSButton* cancelButton = [[NSButton alloc] initWithFrame: cancelButtonFrame];
-	[cancelButton setBezelStyle: NSRoundedBezelStyle];
-	[cancelButton setTitle:@"Cancel"];
-	[cancelButton setTarget: self];
-	[cancelButton setAction:@selector(filesystemEditCancelClicked:)];
-	[cancelButton setKeyEquivalent:@"\e"];
-	[cancelButton setAutoresizingMask: NSViewMaxYMargin | NSViewMinXMargin];
-	 
-	[outerView setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
-	[outerView addSubview:cancelButton];
-	[outerView addSubview: okButton];
-	 
-	return outerView;
-}
-
-# pragma mark Action Methods
-
+# pragma mark Filesystem Methods
 - (NSArray*)selectedFilesystems
 {
 	return [[filesystemArrayController arrangedObjects] objectsAtIndexes:
 			[filesystemTableView selectedRowIndexes]];
+}
+
+- (void)editFilesystem:(MFClientFS*)fs
+{
+	if (!fs || [fs isMounted] || [fs isWaiting])
+		return;
+	
+	NSWindow* parent = [filesystemTableView window];
+	NSWindow* mySheetWindow = [[NSWindow alloc] init];
+	
+	NSView* editingViewForFS = [fs editingView];
+	[(MGTransitioningTabView*)editingViewForFS setDelegate: self];
+	
+	if (!editingViewForFS)
+	{
+		MFLogSO(self, fs, @"Editing view nil");
+		return;
+	}
+	
+	NSView* fullEditView = [self wrapViewInOKCancel: 
+							[fs addTopViewToView: editingViewForFS]];
+	if (fullEditView)
+	{
+		[mySheetWindow setFrame: [fullEditView frame] display:YES];
+		[mySheetWindow setContentSize: [fullEditView frame].size];
+		[mySheetWindow setContentView: fullEditView];
+		[fs beginEditing];
+		fsBeingEdited = fs;
+		
+		[NSApp beginSheet: mySheetWindow
+		   modalForWindow: parent
+			modalDelegate: self 
+		   didEndSelector: @selector(sheetDidEnd:)
+			  contextInfo: fs];
+	}
+}
+
+- (void)toggleFilesystem:(MFClientFS*)fs
+{
+	if ([fs isMounted])
+	{
+		[fs unmount];
+	}
+	else if ([fs isUnmounted] || [fs isFailedToMount])
+	{
+		NSLog(@"Mounting fs %@", fs);
+		[fs setClientFSDelegate: self];
+		[fs mount];
+	}
 }
 
 - (void)deleteFilesystem:(MFClientFS*)fs
@@ -343,13 +334,28 @@
 		[cancelButton setKeyEquivalent:@"\e"];
 		[deleteConfirmation setAlertStyle: NSCriticalAlertStyle];
 		[deleteConfirmation beginSheetModalForWindow: [filesystemTableView window]
-														  modalDelegate:self
-														 didEndSelector:@selector(deleteConfirmationAlertDidEnd:returnCode:contextInfo:)
-															contextInfo:fs];
+									   modalDelegate:self
+									  didEndSelector:@selector(deleteConfirmationAlertDidEnd:returnCode:contextInfo:)
+										 contextInfo:fs];
 	}
 	else
 	{
 		MFLogSO(self, fs, @"Can't delete FS %@", fs);
+	}
+}
+
+
+
+# pragma mark Selected Action Methods
+
+- (IBAction)filterLogForSelectedFS:(id)sender
+{
+	[self showLogViewer: self];
+	NSArray* selectedFilesystems = [self selectedFilesystems];
+	if ([selectedFilesystems count] == 1)
+	{
+		[logViewerController filterForFilesystem: 
+		 [selectedFilesystems objectAtIndex: 0]];
 	}
 }
 
@@ -400,7 +406,6 @@
 
 - (IBAction)duplicateSelectedFS:(id)sender
 {
-	// TODO: Implement
 }
 
 - (IBAction)deleteSelectedFS:(id)sender
@@ -422,73 +427,10 @@
 		[client deleteFilesystem: fs];
 	}
 }
-- (void)editFilesystem:(MFClientFS*)fs
-{
-	if (!fs || [fs isMounted] || [fs isWaiting])
-		return;
-	
-	NSWindow* parent = [filesystemTableView window];
-	NSWindow* mySheetWindow = [[NSWindow alloc] init];
-	
-	NSView* editingViewForFS = [fs editingView];
-	[(MGTransitioningTabView*)editingViewForFS setDelegate: self];
-	
-	if (!editingViewForFS)
-	{
-		MFLogSO(self, fs, @"Editing view nil");
-		return;
-	}
-	
-	NSView* fullEditView = [self wrapViewInOKCancel: 
-							[fs addTopViewToView: editingViewForFS]];
-	if (fullEditView)
-	{
-		[mySheetWindow setFrame: [fullEditView frame] display:YES];
-		[mySheetWindow setContentSize: [fullEditView frame].size];
-		[mySheetWindow setContentView: fullEditView];
-		[fs beginEditing];
-		fsBeingEdited = fs;
-		
-		[NSApp beginSheet: mySheetWindow
-		   modalForWindow: parent
-			modalDelegate: self 
-		   didEndSelector: @selector(sheetDidEnd:)
-			  contextInfo: fs];
-	}
-}
-
-- (void)toggleFilesystem:(MFClientFS*)fs
-{
-	if ([fs isMounted])
-	{
-		[fs unmount];
-	}
-	else if ([fs isUnmounted] || [fs isFailedToMount])
-	{
-		NSLog(@"Mounting fs %@", fs);
-		[fs setClientFSDelegate: self];
-		[fs mount];
-	}
-}
 
 
-- (void)tabView:(NSTabView *)tabView 
-	didSelectTabViewItem:(NSTabViewItem *)tabViewItem
-{
-	MGTransitioningTabView* myTabView = (MGTransitioningTabView*)tabView;
-	NSWindow* sheetWindow = [NSApp keyWindow];
-	NSRect oldSheetFrame = [sheetWindow frame];
-	NSSize oldTabViewSize = [tabView frame].size;
-	CGFloat deltaX = [sheetWindow frame].size.width - oldTabViewSize.width;
-	CGFloat deltaY = [sheetWindow frame].size.height - oldTabViewSize.height;
-	NSSize newtabViewSize = [myTabView sizeWithTabviewItem: tabViewItem];
-	NSSize newSize = NSMakeSize(newtabViewSize.width+deltaX, newtabViewSize.height+deltaY);
-	[sheetWindow setFrame: NSMakeRect(oldSheetFrame.origin.x-0.5*(newSize.width-oldSheetFrame.size.width), 
-									  oldSheetFrame.origin.y-(newSize.height-oldSheetFrame.size.height), 
-									  newSize.width, newSize.height) 
-				  display:YES 
-				  animate:YES];
-}
+
+
 
 # pragma mark Notification
 - (void)filesystemDidChangeStatus:(MFClientFS*)fs
@@ -591,11 +533,79 @@
 	return YES;
 }
 
+- (void)tabView:(NSTabView *)tabView 
+didSelectTabViewItem:(NSTabViewItem *)tabViewItem
+{
+	MGTransitioningTabView* myTabView = (MGTransitioningTabView*)tabView;
+	NSWindow* sheetWindow = [NSApp keyWindow];
+	NSRect oldSheetFrame = [sheetWindow frame];
+	NSSize oldTabViewSize = [tabView frame].size;
+	CGFloat deltaX = [sheetWindow frame].size.width - oldTabViewSize.width;
+	CGFloat deltaY = [sheetWindow frame].size.height - oldTabViewSize.height;
+	NSSize newtabViewSize = [myTabView sizeWithTabviewItem: tabViewItem];
+	NSSize newSize = NSMakeSize(newtabViewSize.width+deltaX, newtabViewSize.height+deltaY);
+	[sheetWindow setFrame: NSMakeRect(oldSheetFrame.origin.x-0.5*(newSize.width-oldSheetFrame.size.width), 
+									  oldSheetFrame.origin.y-(newSize.height-oldSheetFrame.size.height), 
+									  newSize.width, newSize.height) 
+				  display:YES 
+				  animate:YES];
+}
+
+# pragma mark View Construction
+
+- (NSView*)wrapViewInOKCancel:(NSView*)innerView
+{
+	NSInteger buttonWidth = 80;
+	NSInteger buttonHeight = 25;
+	NSInteger buttonRightPadding = 5;
+	NSInteger buttonBottomPadding = 5;
+	NSInteger buttonXDistance = 0;
+	NSInteger buttonAreaHeight = 2*buttonBottomPadding + buttonHeight;
+	
+	NSView* outerView = [[NSView alloc] init];
+	
+	[outerView setFrameSize: NSMakeSize([innerView frame].size.width, 
+										[innerView frame].size.height +  buttonAreaHeight)];
+	
+	[outerView addSubview: innerView];
+	[innerView setFrame: NSMakeRect(0, buttonAreaHeight, [innerView frame].size.width, 
+									[innerView frame].size.height)];
+	
+	NSRect okButtonFrame = NSMakeRect([outerView frame].size.width-buttonRightPadding-buttonWidth, 
+									  buttonBottomPadding, 
+									  buttonWidth, 
+									  buttonHeight);
+	NSButton* okButton = [[NSButton alloc] initWithFrame: okButtonFrame];
+	[okButton setBezelStyle: NSRoundedBezelStyle];
+	[okButton setTitle:@"OK"];
+	[okButton setTarget: self];
+	[okButton setAction:@selector(filesystemEditOKClicked:)];
+	[okButton setKeyEquivalent:@"\r"];
+	[okButton setAutoresizingMask: NSViewMaxYMargin | NSViewMinXMargin];
+	
+	
+	NSRect cancelButtonFrame = NSMakeRect(okButtonFrame.origin.x - buttonXDistance- buttonWidth,
+										  buttonBottomPadding,
+										  buttonWidth, buttonHeight);
+	NSButton* cancelButton = [[NSButton alloc] initWithFrame: cancelButtonFrame];
+	[cancelButton setBezelStyle: NSRoundedBezelStyle];
+	[cancelButton setTitle:@"Cancel"];
+	[cancelButton setTarget: self];
+	[cancelButton setAction:@selector(filesystemEditCancelClicked:)];
+	[cancelButton setKeyEquivalent:@"\e"];
+	[cancelButton setAutoresizingMask: NSViewMaxYMargin | NSViewMinXMargin];
+	
+	[outerView setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
+	[outerView addSubview:cancelButton];
+	[outerView addSubview: okButton];
+	
+	return outerView;
+}
+
 # pragma mark Menu UI Stuff
 - (void)menuNeedsUpdate:(NSMenu*)menu
 {
 	NSInteger clickedRow = [filesystemTableView clickedRow];
-	// MFLogS(self, @"Updating menu clicked row %d", clickedRow);
 	[self willChangeValueForKey: @"menuArgumentFS"];
 	if (clickedRow != -1 && clickedRow != NSNotFound)
 		menuArgumentFS = [[filesystemArrayController arrangedObjects] objectAtIndex: clickedRow];
@@ -613,7 +623,37 @@
 
 - (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)anItem
 {
-	NSLog(@"Called with %@", anItem);
+	SEL action = [anItem action];
+	MFClientFS* fs = menuArgumentFS;
+	if (action == @selector(toggleSelectedFS:))
+	{
+		if ([fs isWaiting])
+			return NO;
+		else if ([fs isMounted])
+			[ (NSMenuItem*)anItem setTitle: @"Unmount" ];
+		else if ([fs isUnmounted] || [fs isFailedToMount] )
+			[ (NSMenuItem*)anItem setTitle: @"Mount" ];
+	}
+	if (action == @selector(revealSelectedFS:))
+	{
+		if (! [fs isMounted] )
+			return NO;
+	}
+	
+	if (action == @selector(deleteSelectedFS:))
+	{
+		if ([fs isMounted] || [fs isWaiting])
+		{
+			return NO;
+		}
+	}
+	
+	if (action == @selector(editSelectedFS:))
+	{
+		if ( [fs isMounted] || [fs isWaiting] )
+			return NO;
+	}
+	
 	return YES;
 }
 

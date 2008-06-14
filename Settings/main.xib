@@ -8,8 +8,8 @@
 		<string key="IBDocument.HIToolboxVersion">352.00</string>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
+			<integer value="543"/>
 			<integer value="376"/>
-			<integer value="615"/>
 			<integer value="56"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
@@ -1258,8 +1258,18 @@
 						<reference key="NSOnImage" ref="691598888"/>
 						<reference key="NSMixedImage" ref="21774477"/>
 					</object>
+					<object class="NSMenuItem" id="148256171">
+						<reference key="NSMenu" ref="513757146"/>
+						<string key="NSTitle">Delete</string>
+						<string type="base64-UTF8" key="NSKeyEquiv">CA</string>
+						<int key="NSKeyEquivModMask">1048576</int>
+						<int key="NSMnemonicLoc">2147483647</int>
+						<reference key="NSOnImage" ref="691598888"/>
+						<reference key="NSMixedImage" ref="21774477"/>
+					</object>
 					<object class="NSMenuItem" id="249965743">
 						<reference key="NSMenu" ref="513757146"/>
+						<bool key="NSIsAlternate">YES</bool>
 						<string key="NSTitle">Duplicate</string>
 						<string key="NSKeyEquiv">d</string>
 						<int key="NSKeyEquivModMask">1048576</int>
@@ -1267,11 +1277,21 @@
 						<reference key="NSOnImage" ref="691598888"/>
 						<reference key="NSMixedImage" ref="21774477"/>
 					</object>
+					<object class="NSMenuItem" id="270943060">
+						<reference key="NSMenu" ref="513757146"/>
+						<string key="NSTitle">Reveal</string>
+						<string key="NSKeyEquiv">r</string>
+						<int key="NSKeyEquivModMask">1048576</int>
+						<int key="NSMnemonicLoc">2147483647</int>
+						<reference key="NSOnImage" ref="691598888"/>
+						<reference key="NSMixedImage" ref="21774477"/>
+					</object>
 					<object class="NSMenuItem" id="635131464">
 						<reference key="NSMenu" ref="513757146"/>
+						<bool key="NSIsAlternate">YES</bool>
 						<string key="NSTitle">Reveal Config</string>
-						<string key="NSKeyEquiv">c</string>
-						<int key="NSKeyEquivModMask">1048576</int>
+						<string key="NSKeyEquiv">r</string>
+						<int key="NSKeyEquivModMask">1572864</int>
 						<int key="NSMnemonicLoc">2147483647</int>
 						<reference key="NSOnImage" ref="691598888"/>
 						<reference key="NSMixedImage" ref="21774477"/>
@@ -1915,8 +1935,8 @@
 								</object>
 								<object class="NSMutableArray" key="dict.values">
 									<bool key="EncodedWithXMLCoder">YES</bool>
-									<integer value="0" id="6"/>
-									<integer value="1"/>
+									<reference ref="8"/>
+									<reference ref="9"/>
 									<string>toggleFilesystem:</string>
 								</object>
 							</object>
@@ -1945,7 +1965,7 @@
 								</object>
 								<object class="NSMutableArray" key="dict.values">
 									<bool key="EncodedWithXMLCoder">YES</bool>
-									<reference ref="6"/>
+									<reference ref="8"/>
 									<string>toggleFilesystem:</string>
 								</object>
 							</object>
@@ -1962,6 +1982,30 @@
 						<reference key="destination" ref="1053818980"/>
 					</object>
 					<int key="connectionID">707</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">filterLogForSelectedFS:</string>
+						<reference key="source" ref="631487427"/>
+						<reference key="destination" ref="992646660"/>
+					</object>
+					<int key="connectionID">710</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">revealSelectedFS:</string>
+						<reference key="source" ref="631487427"/>
+						<reference key="destination" ref="270943060"/>
+					</object>
+					<int key="connectionID">712</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">deleteSelectedFS:</string>
+						<reference key="source" ref="631487427"/>
+						<reference key="destination" ref="148256171"/>
+					</object>
+					<int key="connectionID">714</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -2776,6 +2820,8 @@
 							<reference ref="249965743"/>
 							<reference ref="635131464"/>
 							<reference ref="992646660"/>
+							<reference ref="270943060"/>
+							<reference ref="148256171"/>
 						</object>
 						<reference key="parent" ref="1049"/>
 					</object>
@@ -2841,6 +2887,16 @@
 						<int key="objectID">632</int>
 						<reference key="object" ref="12037826"/>
 						<reference key="parent" ref="979868589"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">711</int>
+						<reference key="object" ref="270943060"/>
+						<reference key="parent" ref="513757146"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">713</int>
+						<reference key="object" ref="148256171"/>
+						<reference key="parent" ref="513757146"/>
 					</object>
 				</object>
 			</object>
@@ -3050,6 +3106,8 @@
 					<string>631.IBPluginDependency</string>
 					<string>632.CustomClassName</string>
 					<string>632.IBPluginDependency</string>
+					<string>711.IBPluginDependency</string>
+					<string>713.IBPluginDependency</string>
 					<string>72.IBPluginDependency</string>
 					<string>72.ImportedFromIB2</string>
 					<string>73.IBPluginDependency</string>
@@ -3218,11 +3276,11 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="9"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{265, 381}, {490, 331}}</string>
+					<string>{{558, 254}, {490, 331}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="9"/>
 					<reference ref="8"/>
-					<string>{{265, 381}, {490, 331}}</string>
+					<string>{{558, 254}, {490, 331}}</string>
 					<reference ref="9"/>
 					<string>{{110, 338}, {483, 286}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -3260,7 +3318,7 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{201, 418}, {197, 103}}</string>
+					<string>{{201, 378}, {213, 143}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -3279,6 +3337,8 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>MFMountToggleButtonCell</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="9"/>
@@ -3327,7 +3387,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">707</int>
+			<int key="maxID">714</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -3364,9 +3424,9 @@
 						<object class="NSMutableArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>deleteSelectedFS:</string>
-							<string>deleteSelectedFilesystem:</string>
 							<string>duplicateSelectedFS:</string>
 							<string>editSelectedFS:</string>
+							<string>filterLogForSelectedFS:</string>
 							<string>newFSPopupClicked:</string>
 							<string>revealConfigForSelectedFS:</string>
 							<string>revealSelectedFS:</string>

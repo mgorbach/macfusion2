@@ -877,8 +877,8 @@
 		D4E5200C0CE03B82009B1A30 /* Server */ = {
 			isa = PBXGroup;
 			children = (
-				D4F49A370D52727300CDA4A9 /* macfusionAgent_Prefix.pch */,
 				08FB7795FE84155DC02AAC07 /* Model */,
+				D4F49A370D52727300CDA4A9 /* macfusionAgent_Prefix.pch */,
 				08FB7796FE84155DC02AAC07 /* macfusionAgent.m */,
 				D42E13E40CDFC69500C81814 /* MFMainController.h */,
 				D42E13E50CDFC69500C81814 /* MFMainController.m */,
