@@ -1,9 +1,9 @@
 //
-//  MGTestView.h
+//  MFEditingController.h
 //  MacFusion2
 //
-//  Created by Michael Gorbach on 3/30/08.
-//  Copyright 2008 Michael Gorbach. All rights reserved.
+//  Created by Michael Gorbach on 6/16/08.
+//  Copyright 2008 __MyCompanyName__. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,10 +19,15 @@
 
 #import <Cocoa/Cocoa.h>
 
+#define kMFEditReturnOK 0
+#define kMFEditReturnCancel 1
 
-@interface MGTestView : NSView {
-	NSColor* color;
+@class MFClientFS;
+
+@interface MFEditingController : NSWindowController {
+	MFClientFS* fsBeingEdited;
 
 }
 
++ (NSInteger)editFilesystem:(MFClientFS*)fs onWindow:(NSWindow*)window;
 @end

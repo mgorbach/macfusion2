@@ -63,7 +63,7 @@
 - (MFClientFS*)clickedFilesystem
 {
 	NSInteger row = [self clickedRow];
-	if (row > 0 && row < [self.filesystems count])
+	if (row >= 0 && row < [self.filesystems count])
 		return [self.filesystems objectAtIndex: row];
 	else
 		return nil;
@@ -89,7 +89,7 @@
 
 - (void)statusChangedForFS:(MFClientFS*)fs
 {
-	// NSLog(@"MFFilesystemTableView: Status Changed for FS %@", fs);
+	NSLog(@"%s: Status Changed for FS %@", __PRETTY_FUNCTION__, fs);
 	MFFilesystemCell* cell = (MFFilesystemCell*)[self preparedCellAtColumn:0 row:[self.filesystems indexOfObject: fs]];
 	[cell clearImageForFS: fs];
 	[self setNeedsDisplayInRect: [self rectOfRow: [self.filesystems indexOfObject: fs]]];
@@ -111,7 +111,7 @@
 		[self addSubview: indicator];
 		[indicator startAnimation: self];
 	}
-	elsefile://localhost/Users/mgorbach/Code/macfusion2/Settings/MFFilesystemTableView.m
+	else
 	{
 		if (indicator)
 		{
@@ -126,29 +126,16 @@
 
 - (void)keyDown:(NSEvent*)event
 {
-	MFClientFS* fs = [self.filesystems objectAtIndex: [self selectedRow]];
-	if (! ([event modifierFlags] == 1048840))
+	BOOL handled = [[self menu] performKeyEquivalent: event];
+	
+	if ([event keyCode] == 53)
 	{
-		[super keyDown: event];
-		return;
+		[self deselectAll: self];
+		handled = YES;
 	}
 	
-	if ([event keyCode] == 14 && ([fs isUnmounted] || [fs isFailedToMount]))
-	{
-		[controller editSelectedFS: self];
-	}
-	else if ([event keyCode] == 36 && ([fs isUnmounted] || [fs isFailedToMount]))
-	{
-		[controller toggleSelectedFS: self];
-	}
-	else if ([event keyCode] == 36 && [fs isMounted])
-	{
-		[controller toggleSelectedFS: self];
-	}
-	else
-	{
-		[super keyDown: event];
-	}
+	if (!handled)
+		[super keyDown: event];		
 }
 
 # pragma mark D&D

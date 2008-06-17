@@ -39,6 +39,8 @@
 /* Begin PBXBuildFile section */
 		D40235AE0D7E0176000B9B64 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D40235AD0D7E0176000B9B64 /* Carbon.framework */; };
 		D402372E0D7E029E000B9B64 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D40235AD0D7E0176000B9B64 /* Carbon.framework */; };
+		D403632F0E0780BF0048BB63 /* MFEditingController.h in Headers */ = {isa = PBXBuildFile; fileRef = D403632D0E0780BF0048BB63 /* MFEditingController.h */; };
+		D40363300E0780BF0048BB63 /* MFEditingController.m in Sources */ = {isa = PBXBuildFile; fileRef = D403632E0E0780BF0048BB63 /* MFEditingController.m */; };
 		D403BC8F0D64C3D00049201D /* MFServerFSProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = D403BC8D0D64C3D00049201D /* MFServerFSProtocol.h */; };
 		D403BD6E0D650D630049201D /* MFError.h in Headers */ = {isa = PBXBuildFile; fileRef = D403BD6C0D650D630049201D /* MFError.h */; };
 		D403BD6F0D650D630049201D /* MFError.m in Sources */ = {isa = PBXBuildFile; fileRef = D403BD6D0D650D630049201D /* MFError.m */; };
@@ -92,8 +94,6 @@
 		D47DEDBD0D9ED74000C0F934 /* MFServerFS.m in Sources */ = {isa = PBXBuildFile; fileRef = D4905C6C0D394A5D00E21C1E /* MFServerFS.m */; };
 		D47DF1790DA034AF00C0F934 /* MFClientFSUI.h in Headers */ = {isa = PBXBuildFile; fileRef = D47DF1770DA034AF00C0F934 /* MFClientFSUI.h */; };
 		D47DF17A0DA034AF00C0F934 /* MFClientFSUI.m in Sources */ = {isa = PBXBuildFile; fileRef = D47DF1780DA034AF00C0F934 /* MFClientFSUI.m */; };
-		D47DF78A0DA0764900C0F934 /* MGTestView.h in Headers */ = {isa = PBXBuildFile; fileRef = D47DF7880DA0764800C0F934 /* MGTestView.h */; };
-		D47DF78B0DA0764900C0F934 /* MGTestView.m in Sources */ = {isa = PBXBuildFile; fileRef = D47DF7890DA0764800C0F934 /* MGTestView.m */; };
 		D47F677E0D983F6C00E91D45 /* MFLogReader.h in Headers */ = {isa = PBXBuildFile; fileRef = D47F677C0D983F6C00E91D45 /* MFLogReader.h */; };
 		D47F677F0D983F6C00E91D45 /* MFLogReader.m in Sources */ = {isa = PBXBuildFile; fileRef = D47F677D0D983F6C00E91D45 /* MFLogReader.m */; };
 		D47F67BA0D98496200E91D45 /* MFLogViewerController.h in Headers */ = {isa = PBXBuildFile; fileRef = D47F67B80D98496200E91D45 /* MFLogViewerController.h */; };
@@ -120,6 +120,10 @@
 		D4C6334D0D7644B300734165 /* MGFadingWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = D4C6334C0D7644B300734165 /* MGFadingWindow.m */; };
 		D4C910180E031A720071C4AF /* MFSettingsController.m in Sources */ = {isa = PBXBuildFile; fileRef = D4C910170E031A720071C4AF /* MFSettingsController.m */; };
 		D4C9109F0E03204E0071C4AF /* MFMountToggleButtonCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D4C9109E0E03204E0071C4AF /* MFMountToggleButtonCell.m */; };
+		D4C9139F0E04EC5F0071C4AF /* ActionGear.png in Resources */ = {isa = PBXBuildFile; fileRef = D4C9139E0E04EC5F0071C4AF /* ActionGear.png */; };
+		D4C913EA0E05E8360071C4AF /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D4C913E90E05E8360071C4AF /* Sparkle.framework */; };
+		D4C9158C0E05E8960071C4AF /* Sparkle.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = D4C913E90E05E8360071C4AF /* Sparkle.framework */; };
+		D4C917050E0626BF0071C4AF /* Plus.tiff in Resources */ = {isa = PBXBuildFile; fileRef = D4C917040E0626BF0071C4AF /* Plus.tiff */; };
 		D4CEE0F30D3045590064042E /* MFClientFS.h in Headers */ = {isa = PBXBuildFile; fileRef = D4CEE0F10D3045580064042E /* MFClientFS.h */; };
 		D4CEE0F40D3045590064042E /* MFClientFS.m in Sources */ = {isa = PBXBuildFile; fileRef = D4CEE0F20D3045590064042E /* MFClientFS.m */; };
 		D4CF0E460D8C75B30065A2C3 /* MFPreferences.h in Headers */ = {isa = PBXBuildFile; fileRef = D4CF0E440D8C75B30065A2C3 /* MFPreferences.h */; };
@@ -338,6 +342,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				D4C9158C0E05E8960071C4AF /* Sparkle.framework in Copy Frameworks */,
 				D4DB43210D3EAEE600C99914 /* MFCore.framework in Copy Frameworks */,
 			);
 			name = "\U0010Copy Frameworks";
@@ -349,6 +354,8 @@
 		08FB7796FE84155DC02AAC07 /* macfusionAgent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = macfusionAgent.m; sourceTree = "<group>"; };
 		08FB779EFE84155DC02AAC07 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		D40235AD0D7E0176000B9B64 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
+		D403632D0E0780BF0048BB63 /* MFEditingController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFEditingController.h; sourceTree = "<group>"; };
+		D403632E0E0780BF0048BB63 /* MFEditingController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MFEditingController.m; sourceTree = "<group>"; };
 		D403BC8D0D64C3D00049201D /* MFServerFSProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFServerFSProtocol.h; sourceTree = "<group>"; };
 		D403BD6C0D650D630049201D /* MFError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFError.h; sourceTree = "<group>"; };
 		D403BD6D0D650D630049201D /* MFError.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MFError.m; sourceTree = "<group>"; };
@@ -407,8 +414,6 @@
 		D47DED800D9ED5C700C0F934 /* SSHServerFS.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSHServerFS.m; sourceTree = "<group>"; };
 		D47DF1770DA034AF00C0F934 /* MFClientFSUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFClientFSUI.h; sourceTree = "<group>"; };
 		D47DF1780DA034AF00C0F934 /* MFClientFSUI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MFClientFSUI.m; sourceTree = "<group>"; };
-		D47DF7880DA0764800C0F934 /* MGTestView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MGTestView.h; sourceTree = "<group>"; };
-		D47DF7890DA0764800C0F934 /* MGTestView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MGTestView.m; sourceTree = "<group>"; };
 		D47F677C0D983F6C00E91D45 /* MFLogReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFLogReader.h; sourceTree = "<group>"; };
 		D47F677D0D983F6C00E91D45 /* MFLogReader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MFLogReader.m; sourceTree = "<group>"; };
 		D47F67B80D98496200E91D45 /* MFLogViewerController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFLogViewerController.h; sourceTree = "<group>"; };
@@ -451,13 +456,16 @@
 		D4C9103B0E031B100071C4AF /* MFSettingsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFSettingsController.h; sourceTree = "<group>"; };
 		D4C9109D0E03204E0071C4AF /* MFMountToggleButtonCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFMountToggleButtonCell.h; sourceTree = "<group>"; };
 		D4C9109E0E03204E0071C4AF /* MFMountToggleButtonCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MFMountToggleButtonCell.m; sourceTree = "<group>"; };
+		D4C9139E0E04EC5F0071C4AF /* ActionGear.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ActionGear.png; sourceTree = "<group>"; };
+		D4C913E90E05E8360071C4AF /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Sparkle.framework; sourceTree = "<group>"; };
+		D4C917040E0626BF0071C4AF /* Plus.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = Plus.tiff; sourceTree = "<group>"; };
 		D4CEE0F10D3045580064042E /* MFClientFS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFClientFS.h; sourceTree = "<group>"; };
 		D4CEE0F20D3045590064042E /* MFClientFS.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MFClientFS.m; sourceTree = "<group>"; };
 		D4CF0E440D8C75B30065A2C3 /* MFPreferences.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFPreferences.h; sourceTree = "<group>"; };
 		D4CF0E450D8C75B30065A2C3 /* MFPreferences.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MFPreferences.m; sourceTree = "<group>"; };
 		D4D0E9FE0D7C887A00797279 /* MFClientFSDelegateProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFClientFSDelegateProtocol.h; sourceTree = "<group>"; };
 		D4D6A0D70D025B4A00BC2E2D /* MFConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFConstants.h; sourceTree = "<group>"; };
-		D4DB42040D3E863100C99914 /* Macfusion2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Macfusion2.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D4DB42040D3E863100C99914 /* Macfusion.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Macfusion.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D4DB42060D3E863100C99914 /* MacfusionMain-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "MacfusionMain-Info.plist"; sourceTree = "<group>"; };
 		D4DB42E90D3EAE4C00C99914 /* settingsMain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = settingsMain.m; sourceTree = "<group>"; };
 		D4DB43740D3EB6A100C99914 /* main.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = main.xib; sourceTree = "<group>"; };
@@ -547,6 +555,7 @@
 			files = (
 				D4DB420B0D3E867200C99914 /* MFCore.framework in Frameworks */,
 				D4656C9F0D6FDBF900DE2208 /* QuartzCore.framework in Frameworks */,
+				D4C913EA0E05E8360071C4AF /* Sparkle.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -588,6 +597,7 @@
 				D4E5200C0CE03B82009B1A30 /* Server */,
 				D4E5200F0CE03C1B009B1A30 /* Plugins */,
 				D4E5200E0CE03B9D009B1A30 /* UI */,
+				D4C913DE0E05E8010071C4AF /* Framework */,
 				08FB779DFE84155DC02AAC07 /* External Frameworks and Libraries */,
 				D4B14E620CE1987F003195A3 /* Products */,
 			);
@@ -783,7 +793,7 @@
 				D4E6D8090D9372640022763F /* ftpfs.mfplugin */,
 				D441521F0CE2933C001EEF36 /* sshfs.mfplugin */,
 				D4FC0C980CF128480029B133 /* MFCore.framework */,
-				D4DB42040D3E863100C99914 /* Macfusion2.app */,
+				D4DB42040D3E863100C99914 /* Macfusion.app */,
 				D48DB97F0D70D7A4008A62BB /* MacfusionMenuling.app */,
 				D41E17D40D8603DC00F46F50 /* new_sshfs_askpass */,
 				D4EA61500D8B30DA006D8885 /* macfusionAgent.app */,
@@ -813,6 +823,14 @@
 				D4CF0E450D8C75B30065A2C3 /* MFPreferences.m */,
 			);
 			name = Shared;
+			sourceTree = "<group>";
+		};
+		D4C913DE0E05E8010071C4AF /* Framework */ = {
+			isa = PBXGroup;
+			children = (
+				D4C913E90E05E8360071C4AF /* Sparkle.framework */,
+			);
+			name = Framework;
 			sourceTree = "<group>";
 		};
 		D4D900E40D50F5A800A868F9 /* Resources */ = {
@@ -861,7 +879,9 @@
 		D4DB42DA0D3EAD0100C99914 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				D4C917040E0626BF0071C4AF /* Plus.tiff */,
 				D4DB43740D3EB6A100C99914 /* main.xib */,
+				D4C9139E0E04EC5F0071C4AF /* ActionGear.png */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -938,8 +958,6 @@
 				D47F68560D984FF600E91D45 /* MFLogViewerTableView.m */,
 				D47F688C0D98524B00E91D45 /* MFLogViewerTableCell.h */,
 				D47F688D0D98524B00E91D45 /* MFLogViewerTableCell.m */,
-				D47DF7880DA0764800C0F934 /* MGTestView.h */,
-				D47DF7890DA0764800C0F934 /* MGTestView.m */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -953,6 +971,8 @@
 				D4E6CF3D0D9224DB0022763F /* MFAdvancedViewController.m */,
 				D47F67B80D98496200E91D45 /* MFLogViewerController.h */,
 				D47F67B90D98496200E91D45 /* MFLogViewerController.m */,
+				D403632D0E0780BF0048BB63 /* MFEditingController.h */,
+				D403632E0E0780BF0048BB63 /* MFEditingController.m */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -1030,7 +1050,7 @@
 				D47F688E0D98524B00E91D45 /* MFLogViewerTableCell.h in Headers */,
 				D441DB630D995C2B009F869A /* MFClientProtocol.h in Headers */,
 				D47DF1790DA034AF00C0F934 /* MFClientFSUI.h in Headers */,
-				D47DF78A0DA0764900C0F934 /* MGTestView.h in Headers */,
+				D403632F0E0780BF0048BB63 /* MFEditingController.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1149,7 +1169,7 @@
 			);
 			name = MacfusionMain;
 			productName = MacfusionSettings;
-			productReference = D4DB42040D3E863100C99914 /* Macfusion2.app */;
+			productReference = D4DB42040D3E863100C99914 /* Macfusion.app */;
 			productType = "com.apple.product-type.application";
 		};
 		D4E6D8080D9372640022763F /* ftpfs */ = {
@@ -1281,6 +1301,8 @@
 				D4DB438B0D3EB9A400C99914 /* macfusionIcon.icns in Resources */,
 				D4DB43750D3EB6A100C99914 /* main.xib in Resources */,
 				D41E25640D89B17C00F46F50 /* Credits.rtf in Resources */,
+				D4C9139F0E04EC5F0071C4AF /* ActionGear.png in Resources */,
+				D4C917050E0626BF0071C4AF /* Plus.tiff in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1376,7 +1398,7 @@
 				D47F68580D984FF600E91D45 /* MFLogViewerTableView.m in Sources */,
 				D47F688F0D98524B00E91D45 /* MFLogViewerTableCell.m in Sources */,
 				D47DF17A0DA034AF00C0F934 /* MFClientFSUI.m in Sources */,
-				D47DF78B0DA0764900C0F934 /* MGTestView.m in Sources */,
+				D40363300E0780BF0048BB63 /* MFEditingController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1776,6 +1798,10 @@
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)\"",
+				);
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_ENABLE_OBJC_GC = required;
 				GCC_MODEL_TUNING = G5;
@@ -1791,7 +1817,7 @@
 					AppKit,
 				);
 				PREBINDING = NO;
-				PRODUCT_NAME = Macfusion2;
+				PRODUCT_NAME = Macfusion;
 				WRAPPER_EXTENSION = app;
 				ZERO_LINK = NO;
 			};
@@ -1801,6 +1827,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)\"",
+				);
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_ENABLE_OBJC_GC = required;
@@ -1818,7 +1848,7 @@
 					AppKit,
 				);
 				PREBINDING = NO;
-				PRODUCT_NAME = Macfusion2;
+				PRODUCT_NAME = Macfusion;
 				WRAPPER_EXTENSION = app;
 				ZERO_LINK = YES;
 			};

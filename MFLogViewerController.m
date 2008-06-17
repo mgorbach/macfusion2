@@ -61,6 +61,7 @@ static NSString* kAutoscrollToolbarItemIdentifier = @"autoscroll";
 
 - (void)windowDidLoad
 {
+	[logTableView setIntercellSpacing: NSMakeSize(0, 0)];
 	[logTableView bind:@"logMessages"
 			  toObject:logArrayController
 		   withKeyPath:@"arrangedObjects"
@@ -74,10 +75,6 @@ static NSString* kAutoscrollToolbarItemIdentifier = @"autoscroll";
 				 withKeyPath:@"fullLogPredicate"
 					 options:nil];
 	
-//	NSSortDescriptor* timeSort = [[NSSortDescriptor alloc] initWithKey:kMFLogKeyTime ascending:NO];
-//	[logArrayController setSortDescriptors: 
-//	 [NSArray arrayWithObject: timeSort]];
-	
 	[logTableView scrollRowToVisible: [logTableView numberOfRows] - 1];
 	NSMenu* fsMenu = [[NSMenu alloc] initWithTitle:@"Filesystems"];
 	[fsMenu setDelegate: self];
@@ -87,7 +84,7 @@ static NSString* kAutoscrollToolbarItemIdentifier = @"autoscroll";
 	
 	autoScrollButton = [[NSButton alloc] initWithFrame: NSMakeRect(0, 0, 200, 30)];
 	[[autoScrollButton cell] setButtonType: NSSwitchButton];
-	[autoScrollButton setTitle:@"AutoScroll"];
+	[autoScrollButton setTitle:@"Auto-scroll"];
 	[autoScrollButton setAction: @selector(setAutoScroll:)];
 	[autoScrollButton setState: [[MFPreferences sharedPreferences] getBoolForPreference: kMFPrefsAutoScrollLog]];
 	
@@ -255,8 +252,8 @@ static NSString* kAutoscrollToolbarItemIdentifier = @"autoscroll";
 - (NSArray *) toolbarDefaultItemIdentifiers: (NSToolbar *)toolbar 
 {
     return [NSArray arrayWithObjects: kFSFilterToolbarItemIdentifier,
-			kAutoscrollToolbarItemIdentifier, kSearchToolbarItemIdentifier, 
-			NSToolbarFlexibleSpaceItemIdentifier, nil];
+			kAutoscrollToolbarItemIdentifier, NSToolbarFlexibleSpaceItemIdentifier, kSearchToolbarItemIdentifier ,
+			nil];
 }
 
 - (NSToolbarItem *)toolbar:(NSToolbar *)toolbar
@@ -277,6 +274,7 @@ willBeInsertedIntoToolbar:(BOOL)flag
 		[toolbarItem setLabel: @""];
 		[toolbarItem setPaletteLabel: [toolbarItem label]];
 		[toolbarItem setView: autoScrollButton];
+		[toolbarItem setMinSize: NSMakeSize(100, 20)];
 	}
 	if ([itemIdentifier isEqualTo: kSearchToolbarItemIdentifier])
 	{
@@ -285,7 +283,7 @@ willBeInsertedIntoToolbar:(BOOL)flag
 		[toolbarItem setPaletteLabel: [toolbarItem label]];
 		[toolbarItem setView: logSearchField];
 		[toolbarItem setMinSize: NSMakeSize(75, 20)];
-		[toolbarItem setMaxSize: NSMakeSize(300, 20)];
+		[toolbarItem setMaxSize: NSMakeSize(150, 20)];
 	}
 	
 	return toolbarItem;

@@ -431,6 +431,7 @@ OSStatus myKeychainCallback (
 {
 	NSMutableArray* filesystemsToInsert = [NSMutableArray array];
 	NSMutableIndexSet* indexesToDelete = [NSMutableIndexSet indexSet];
+	
 	for(NSString* uuid in uuids)
 	{
 		MFClientFS* fs = [self filesystemWithUUID: uuid];
@@ -444,24 +445,28 @@ OSStatus myKeychainCallback (
 	NSIndexSet* indexesToAdd = [NSIndexSet indexSetWithIndexesInRange: 
 						  NSMakeRange(row, [filesystemsToInsert count])];
 	BOOL lastRow = (row == [persistentFilesystems count]);
+	NSMutableArray* updatedFilesystems = [self.persistentFilesystems mutableCopy];
 	
 	if (lastRow)
 	{
-		[[self mutableArrayValueForKey:@"persistentFilesystems"] addObjectsFromArray: filesystemsToInsert];
-		[[self mutableArrayValueForKey:@"persistentFilesystems"] removeObjectsAtIndexes:indexesToDelete];
+		[updatedFilesystems addObjectsFromArray: filesystemsToInsert];
+		[updatedFilesystems removeObjectsAtIndexes:indexesToDelete];
 	}
 	else if ([indexesToAdd firstIndex] < [indexesToDelete firstIndex])
 	{
-		[[self mutableArrayValueForKey:@"persistentFilesystems"] removeObjectsAtIndexes:indexesToDelete];
-		[[self mutableArrayValueForKey:@"persistentFilesystems"] insertObjects:filesystemsToInsert
-																		 atIndexes:indexesToAdd];
+		[updatedFilesystems removeObjectsAtIndexes:indexesToDelete];
+		[updatedFilesystems insertObjects:filesystemsToInsert 
+								atIndexes:indexesToAdd];
 	}
 	else
 	{
-		[[self mutableArrayValueForKey:@"persistentFilesystems"] insertObjects:filesystemsToInsert
-																		 atIndexes:indexesToAdd];
-		[[self mutableArrayValueForKey:@"persistentFilesystems"] removeObjectsAtIndexes:indexesToDelete];
+		[updatedFilesystems insertObjects:filesystemsToInsert atIndexes:indexesToAdd];
+		[updatedFilesystems removeObjectsAtIndexes:indexesToDelete];
 	}
+	
+	[self willChangeValueForKey: @"persistentFilesystems"];
+	persistentFilesystems = updatedFilesystems;
+	[self didChangeValueForKey: @"persistentFilesystems"];
 
 	// Set the ordering correctly now
 	for(MFClientFS* fs in persistentFilesystems)
@@ -496,8 +501,10 @@ OSStatus myKeychainCallback (
 				 [uuidOrdering indexOfObject: uuid]];
 	}
 	
+	[self willChangeValueForKey: @"persistentFilesystems"];
 	[persistentFilesystems sortUsingDescriptors: 
 	 [NSArray arrayWithObject: [[NSSortDescriptor alloc] initWithKey:@"displayOrder" ascending:YES]]];
+	[self didChangeValueForKey: @"persistentFilesystems"];
 }
 
 - (void)handleApplicationTerminatingNotification:(NSNotification*)note

@@ -33,7 +33,6 @@
 {
 	if (self = [super initWithCoder:decoder])
 	{
-		// NSLog(@"Init with coder");
 		[self setDelegate: self];
 		[self setDataSource: self];
 		[[[self tableColumns] objectAtIndex: 0] setDataCell:
@@ -84,7 +83,6 @@ objectValueForTableColumn: (NSTableColumn *) tableColumn
 
 - (void) observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
-	// NSLog(@"Change observed in tableView");
     if (context == self) {
 		[self reloadData];
 		[self noteHeightOfRowsWithIndexesChanged: 
@@ -98,7 +96,6 @@ objectValueForTableColumn: (NSTableColumn *) tableColumn
 # pragma markr C&P
 - (void)copy:(id)sender
 {
-//	MFLogS(self, @"Copy");
 	NSPasteboard* pb = [NSPasteboard generalPasteboard];
 	[pb declareTypes: [NSArray arrayWithObject: NSStringPboardType] owner:self];
 	NSMutableString* stringData = [NSMutableString new];
@@ -106,9 +103,12 @@ objectValueForTableColumn: (NSTableColumn *) tableColumn
 	NSInteger index = [indexes firstIndex];
 	NSInteger i;
 	for(i=0; i < [indexes count]; i++)
+	{
 		[stringData appendString:
 		 [NSString stringWithFormat: @"%@ %@\n", headerStringForASLMessageDict([self.logMessages objectAtIndex: index]),
-		  [[self.logMessages objectAtIndex: i] objectForKey: kMFLogKeyMessage]]];
+		  [[self.logMessages objectAtIndex: index] objectForKey: kMFLogKeyMessage]]];
+		index = [indexes indexGreaterThanIndex: index];
+	}
 	[pb setData: [stringData dataUsingEncoding: NSUTF8StringEncoding] forType: NSStringPboardType];
 	return;
 }

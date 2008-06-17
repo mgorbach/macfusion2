@@ -18,24 +18,19 @@
 #import "MFClientFSDelegateProtocol.h"
 
 @class MFClient, MFClientFS, MFFilesystemTableView, MFPreferencesController,
-MFLogViewerController;
+MFLogViewerController, MGActionButton;
 
 
-@interface MFSettingsController : NSObject <MFClientFSDelegateProtocol> {
+@interface MFSettingsController : NSObject <MFClientFSDelegateProtocol> 
+{
 	IBOutlet NSArrayController* filesystemArrayController;
 	IBOutlet NSArrayController* pluginArrayController;
 	IBOutlet MFFilesystemTableView* filesystemTableView;
-	IBOutlet NSBox* configurationViewBox;
-	IBOutlet NSPopUpButton* button;
-	IBOutlet NSButton* mountButton;
+	IBOutlet MGActionButton* newFSActionButton;
 	
 	MFClient* client;
-	MFClientFS* fsBeingEdited;
 	MFPreferencesController* preferencesController;
 	MFLogViewerController* logViewerController;
-	MFClientFS* menuArgumentFS;
-
-	BOOL creatingNewFS;
 }
 
 - (IBAction)newFSPopupClicked:(id)sender;

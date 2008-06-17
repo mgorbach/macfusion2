@@ -26,8 +26,8 @@
 	[self highlight: YES];
 	
 	NSPoint point = [self convertPoint:[self bounds].origin toView:nil];
-	point.y -= NSHeight([self frame]) + 4;
-	point.x -= 1;
+	point.y -= NSHeight([self frame]) - 1;
+	point.x += 3;
 	
 	NSEvent *event = [NSEvent mouseEventWithType:[theEvent type]
 										location:point
