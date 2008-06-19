@@ -36,6 +36,7 @@ BOOL mfcSetStateForAgentLoginItem(BOOL state);
 BOOL mfcClientIsUIElement();
 void mfcLaunchAgent();
 void mfcLaunchMenuling();
+void mfcKaboomMacfusion();
 
 // FUSE versioning
 NSString* mfcGetMacFuseVersion();

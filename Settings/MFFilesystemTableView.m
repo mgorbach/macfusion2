@@ -89,7 +89,6 @@
 
 - (void)statusChangedForFS:(MFClientFS*)fs
 {
-	NSLog(@"%s: Status Changed for FS %@", __PRETTY_FUNCTION__, fs);
 	MFFilesystemCell* cell = (MFFilesystemCell*)[self preparedCellAtColumn:0 row:[self.filesystems indexOfObject: fs]];
 	[cell clearImageForFS: fs];
 	[self setNeedsDisplayInRect: [self rectOfRow: [self.filesystems indexOfObject: fs]]];
@@ -107,6 +106,7 @@
 		}
 		NSRect indicatorRect = [ (MFFilesystemCell*)[self preparedCellAtColumn:0 row: row] 
 								progressIndicatorRectInRect: [self rectOfRow: row] ];
+		indicatorRect.origin.x += [self intercellSpacing].width/2;
 		[indicator setFrame: indicatorRect ];
 		[self addSubview: indicator];
 		[indicator startAnimation: self];
@@ -224,13 +224,12 @@ forDraggedRowsWithIndexes:(NSIndexSet*)indexes
 								   event:(NSEvent *)theEvent
 								  offset:(NSPointPointer)theOffset
 {
-	NSInteger myIndex = [theRowIndexes firstIndex];
-	MFClientFS* fs = [self.filesystems objectAtIndex: myIndex];
-	NSImage* image = [[NSImage alloc] initWithContentsOfFile: [fs imagePath]];
-	CIImage* ciRep = [image ciImageRepresentation];
-	ciRep = [ciRep flippedImage];
-	NSImage* bla = [[ciRep ciImageByScalingToSize: NSMakeSize(48, 48)] nsImageRepresentation];
-	return bla;
+	// We're going to be stupid and take on the first selected filesystem's icon
+	NSInteger fsRowIndex = [theRowIndexes firstIndex];
+	MFFilesystemCell* cell = (MFFilesystemCell*)[self preparedCellAtColumn:0 row: fsRowIndex];
+	NSImage* icon = [cell iconToDraw];
+	[icon setFlipped: NO];
+	return icon;
 }
 
  

@@ -26,7 +26,6 @@
 #import "MFLogReader.h"
 #import "MFLogViewerController.h"
 #import "MFClientFSUI.h"
-#import "MGTestView.h"
 #import "MFEditingController.h"
 
 
@@ -180,6 +179,7 @@
 							 action:@selector(editSelectedFilesystem:)
 					  keyEquivalent:@""];
 	
+	[filesystemTableView setIntercellSpacing: NSMakeSize(10, 0)];
 	[[filesystemTableView window] center];
 
 	[filesystemTableView bind:@"filesystems"
@@ -627,6 +627,13 @@
 								  didEndSelector:@selector(connectionDidDieAlertDidEnd:returnCode:contextInfo:)
 									 contextInfo:nil]; 
 	
+}
+
+#pragma mark Sparkle
+- (void)updaterWillRelaunchApplication
+{
+	MFLogS(@"Sparkle updating in progress");
+	mfcKaboomMacfusion();
 }
 
 - (void)finalize

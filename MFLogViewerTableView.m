@@ -39,7 +39,8 @@
 		 [MFLogViewerTableCell new]];
 		[self addObserver:self
 			   forKeyPath:@"logMessages"
-				  options:(NSKeyValueObservingOptions)0 context:self];
+				  options:(NSKeyValueObservingOptions)0
+				  context:self];
 	}
 	
 	return self;

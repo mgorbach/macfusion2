@@ -59,6 +59,7 @@
 
 - (NSRect)insetRectWithFrame:(NSRect)frame
 {
+	return frame;
 	NSRect insetRect = NSInsetRect(frame, 10, 0);
 	return insetRect;
 }
@@ -121,7 +122,7 @@
 											   nil];
 	NSMutableDictionary* secondaryTextAttributes = [NSMutableDictionary dictionaryWithObjectsAndKeys:
 													[NSColor grayColor], NSForegroundColorAttributeName,
-													[NSFont systemFontOfSize:14], NSFontAttributeName,
+													[NSFont systemFontOfSize:12], NSFontAttributeName,
 													style, NSParagraphStyleAttributeName,
 													nil];
 	NSString* mainText = [NSString stringWithFormat: @"%@ (%@)", fs.name, fs.status];

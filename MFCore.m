@@ -221,6 +221,27 @@ void mfcCheckIntegrity()
 	}
 }
 
+# pragma mark Process Killing
+
+// Kill all Macfusion Processes other than me
+void mfcKaboomMacfusion()
+{
+	NSPredicate* macfusionAppsPredicate = [NSPredicate
+										   predicateWithFormat: 
+										   @"self.NSApplicationBundleIdentifier CONTAINS \
+										   org.mgorbach.macfusion2 AND self.NSApplicationPath != %@", 
+										   mfcMainBundlePath()];
+	
+	NSArray* macfusionApps = [[[NSWorkspace sharedWorkspace] launchedApplications] filteredArrayUsingPredicate:
+							  macfusionAppsPredicate];
+	NSArray* macfusionAppsPIDs = [macfusionApps valueForKey: @"NSApplicationProcessIdentifier"];
+	NSLog(@"Killing pids %@", macfusionAppsPIDs);
+	for(NSNumber* pid in macfusionAppsPIDs)
+	{
+		kill( [pid intValue], SIGKILL );
+	}
+}
+
 # pragma mark Trashing
 
 void trashFSEventCallBack(ConstFSEventStreamRef streamRef, 

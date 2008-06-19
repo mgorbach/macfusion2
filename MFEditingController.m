@@ -125,19 +125,21 @@
 - (NSView*)wrapViewInOKCancel:(NSView*)innerView
 {
 	NSInteger buttonWidth = 80;
-	NSInteger buttonHeight = 25;
-	NSInteger buttonRightPadding = 5;
+	NSInteger buttonHeight = 32;
+	NSInteger buttonRightPadding = 10;
 	NSInteger buttonBottomPadding = 5;
 	NSInteger buttonXDistance = 0;
+	NSInteger ySpacingShift = 8;
 	NSInteger buttonAreaHeight = 2*buttonBottomPadding + buttonHeight;
+	NSInteger margin = 20;
 	
 	NSView* outerView = [[NSView alloc] init];
 	
-	[outerView setFrameSize: NSMakeSize([innerView frame].size.width, 
+	[outerView setFrameSize: NSMakeSize([innerView frame].size.width + margin, 
 										[innerView frame].size.height +  buttonAreaHeight)];
 	
 	[outerView addSubview: innerView];
-	[innerView setFrame: NSMakeRect(0, buttonAreaHeight, [innerView frame].size.width, 
+	[innerView setFrame: NSMakeRect(margin/2, buttonAreaHeight - ySpacingShift, [innerView frame].size.width, 
 									[innerView frame].size.height)];
 	
 	NSRect okButtonFrame = NSMakeRect([outerView frame].size.width-buttonRightPadding-buttonWidth, 

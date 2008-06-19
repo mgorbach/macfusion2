@@ -20,7 +20,6 @@
 #import "MFClientFSUI.h"
 #import "MFAdvancedViewController.h"
 #import "MGTransitioningTabView.h"
-#import "MGTestView.h"
 
 NSString* kMFUIMainViewKey=@"main";
 NSString* kMFUIAdvancedViewKey=@"advanced";
@@ -102,7 +101,7 @@ NSString* kMFUIMacfusionAdvancedViewKey=@"macfusion";
 	[newView setFrameSize: newViewSize];
 	[newView addSubview: [topViewController view]];
 	[newView addSubview: originalView];
-	[[topViewController view] setFrameOrigin: NSMakePoint( 0,  originalViewFrame.size.height)];
+	[[topViewController view] setFrameOrigin: NSMakePoint( -11,  originalViewFrame.size.height)];
 	[newView setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
 	return newView;
 }

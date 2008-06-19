@@ -23,8 +23,9 @@
 	NSMapTable* icons;
 }
 
-- (NSRect) progressIndicatorRectInRect:(NSRect)rect;
+- (NSRect)progressIndicatorRectInRect:(NSRect)rect;
 - (void)clearImageForFS:(MFClientFS*)fs;
+- (NSImage*)iconToDraw;
 
 @property(readwrite) BOOL editPushed;
 @property(readwrite) BOOL mountPushed;
