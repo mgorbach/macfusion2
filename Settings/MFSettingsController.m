@@ -27,7 +27,7 @@
 #import "MFLogViewerController.h"
 #import "MFClientFSUI.h"
 #import "MFEditingController.h"
-
+#import "MFPreferences.h"
 
 @interface MFSettingsController(PrivateAPI)
 - (void)editFilesystem:(MFClientFS*)fs;
@@ -179,6 +179,7 @@
 							 action:@selector(editSelectedFilesystem:)
 					  keyEquivalent:@""];
 	
+	[[MFPreferences sharedPreferences] addObserver: self forKeyPath: kMFPrefsAutosize options:0 context:self];
 	[filesystemTableView setIntercellSpacing: NSMakeSize(10, 0)];
 	[[filesystemTableView window] center];
 
@@ -191,28 +192,36 @@
 
 - (void) resizeWindowForContent 
 {
-	// AutoSize the window vertically
-	NSWindow* window = [filesystemTableView window];
-	NSInteger maxRows = 10;
-	NSInteger minRows = 2;
-	NSInteger rows, filesystemCount;
-	filesystemCount = [[filesystemArrayController arrangedObjects] count];
-	
-	if (filesystemCount < minRows) rows = minRows;
-	else if (filesystemCount > maxRows) rows = maxRows;
-	else rows = filesystemCount;
-	
-	NSSize windowContentSize = [(NSView*)[window contentView] frame].size;
-	NSInteger tableViewOldVerticalPixels = [[filesystemTableView superview] frame].size.height;
-	NSInteger tableViewNewVerticalPixels = (rows * [filesystemTableView rowHeight]);
-	tableViewNewVerticalPixels += (rows)*[filesystemTableView intercellSpacing].height;
-	NSRect windowFrame = [NSWindow contentRectForFrameRect:[window frame]
-												 styleMask:[window styleMask]];
-	NSSize size = NSMakeSize( windowContentSize.width, windowContentSize.height - tableViewOldVerticalPixels + tableViewNewVerticalPixels);
-	NSRect newWindowFrame = [NSWindow frameRectForContentRect:
-							 NSMakeRect( NSMinX( windowFrame ), NSMaxY( windowFrame ) - size.height, size.width, size.height )
-													styleMask:[window styleMask]];
-	[window setFrame:newWindowFrame display:YES animate:[window isVisible]];
+	if ([[MFPreferences sharedPreferences] getBoolForPreference: kMFPrefsAutosize])
+	{
+		[[filesystemTableView window] setShowsResizeIndicator: NO];
+		// AutoSize the window vertically
+		NSWindow* window = [filesystemTableView window];
+		NSInteger maxRows = 10;
+		NSInteger minRows = 2;
+		NSInteger rows, filesystemCount;
+		filesystemCount = [[filesystemArrayController arrangedObjects] count];
+		
+		if (filesystemCount < minRows) rows = minRows;
+		else if (filesystemCount > maxRows) rows = maxRows;
+		else rows = filesystemCount;
+		
+		NSSize windowContentSize = [(NSView*)[window contentView] frame].size;
+		NSInteger tableViewOldVerticalPixels = [[filesystemTableView superview] frame].size.height;
+		NSInteger tableViewNewVerticalPixels = (rows * [filesystemTableView rowHeight]);
+		tableViewNewVerticalPixels += (rows)*[filesystemTableView intercellSpacing].height;
+		NSRect windowFrame = [NSWindow contentRectForFrameRect:[window frame]
+													 styleMask:[window styleMask]];
+		NSSize size = NSMakeSize( windowContentSize.width, windowContentSize.height - tableViewOldVerticalPixels + tableViewNewVerticalPixels);
+		NSRect newWindowFrame = [NSWindow frameRectForContentRect:
+								 NSMakeRect( NSMinX( windowFrame ), NSMaxY( windowFrame ) - size.height, size.width, size.height )
+														styleMask:[window styleMask]];
+		[window setFrame:newWindowFrame display:YES animate:[window isVisible]];
+	}
+	else
+	{
+		[[filesystemTableView window] setShowsResizeIndicator: YES];
+	}
 }
 
 - (void)connectionOK

@@ -21,10 +21,16 @@
 	IBOutlet NSButton* agentLoginItemButton;
 	IBOutlet NSButton* menuLoginItemButton;
 	MFClient* client;
-	IBOutlet NSTextField* fuseVersionTextField;
 	MFPreferences* sharedPreferences;
+	NSMapTable* prefsViewSizes;
+	NSView* emptyView;
+	
+	IBOutlet NSTextField* fuseVersionTextField;
+	IBOutlet NSView* pluginPrefsView;
+	IBOutlet NSView* generalPrefsView;
 }
 
 - (IBAction)loginItemCheckboxChanged:(id)sender;
+- (IBAction)toolbarItemChanged:(id)sender;
 
 @end

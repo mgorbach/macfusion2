@@ -35,7 +35,8 @@
 - (void)awakeFromNib
 {
 	[[self window] center];
-	[qmTabView selectTabViewItemAtIndex: 0];
+	[recentsTableView setDoubleAction: @selector(recentClicked:)];
+	[recentsTableView setTarget: self];
 }
 
 - (void)handleMountAttemptForFS:(MFClientFS*)myFS
@@ -52,7 +53,12 @@
 	else
 	{
 		// Wait for mount here
+
+		[[[recentsTableView window] contentView] addSubview: indicator];
 		[fs setClientFSDelegate: self];
+		[indicator setHidden: NO];
+		[indicator startAnimation: self];
+		[connectButton setHidden: YES];
 	}
 }
 
@@ -92,13 +98,8 @@
 
 - (IBAction)recentClicked:(id)sender
 {
-	if ([sender count] == 0)
-		return;
-	
-	MFClientRecent* recent = (MFClientRecent*)[sender objectAtIndex:0];
-	if (![recent isKindOfClass: [MFClientRecent class]])
-		return;
-	
+	MFClientRecent* recent = [[[MFClient sharedClient] recents] objectAtIndex:
+							  [recentsTableView selectedRow]];
 	NSError* error;
 	MFClientFS* tempFS = [client mountRecent: recent error:&error];
 	[self handleMountAttemptForFS: tempFS error:error];
@@ -109,8 +110,9 @@
 	if ([fs isMounted])
 	{
 		[qmTextField setStringValue: @""];
-		[qmTabView selectTabViewItemAtIndex:0];
-		[qmProgress stopAnimation:self];
+		[indicator stopAnimation: self];
+		[indicator setHidden: YES];
+		[connectButton setHidden: NO];
 		[[self window] close];
 	}
 		
@@ -125,6 +127,7 @@
 				   contextInfo:nil];
 		}
 		
+		[indicator stopAnimation: self];
 		NSAlert* alert = [NSAlert alertWithMessageText:@"Failed to Mount Filesystem"
 								   defaultButton:@"OK"
 								 alternateButton:@""
@@ -135,7 +138,6 @@
 						  modalDelegate:self 
 						 didEndSelector:@selector(alertDidEnd:returnCode:contextInfo:)
 							contextInfo:self];
-		[qmProgress stopAnimation:self];
 	}
 }
 
@@ -144,11 +146,11 @@
 	if ([error code] == kMFErrorCodeMountFaliure ||
 		[error code] == kMFErrorCodeNoPluginFound)
 	{
-		NSString* description = [NSString stringWithFormat:
-								 @"Could not mount this URL: %@",
-								 [error localizedDescription]];
-		return [MFError errorWithErrorCode:kMFErrorCodeCustomizedFaliure
-							   description:description];
+		NSString* detailedDescription = [error localizedDescription];
+		NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys: @"Could not mount this URL", NSLocalizedDescriptionKey,
+								  detailedDescription, NSLocalizedRecoverySuggestionErrorKey,
+								  nil];
+		return [NSError errorWithDomain: kMFErrorDomain code:kMFErrorCodeCustomizedFaliure userInfo:userInfo];
 	}
 	
 	return error;
@@ -156,7 +158,9 @@
 
 - (void) alertDidEnd:(NSAlert *)alert returnCode:(int)returnCode contextInfo:(void *)contextInfo
 {
-	[qmTabView selectTabViewItemAtIndex: 0];
+	[indicator stopAnimation: self];
+	[indicator setHidden: YES];
+	[connectButton setHidden: NO];
 }
 
 

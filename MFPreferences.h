@@ -22,6 +22,7 @@
 #define kMFPrefsAutoloadMenuling @"Autoload Menuling"
 #define kMFPrefsAutoScrollLog @"AutoScroll Log"
 #define kMFPrefsTimeout @"timeout"
+#define kMFPrefsAutosize @"autosize"
 
 @interface MFPreferences : NSObject {
 	NSMutableDictionary* prefsDict;

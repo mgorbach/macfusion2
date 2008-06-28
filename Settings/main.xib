@@ -8,9 +8,9 @@
 		<string key="IBDocument.HIToolboxVersion">352.00</string>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="543"/>
-			<integer value="731"/>
+			<integer value="540"/>
 			<integer value="496"/>
+			<integer value="543"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -165,7 +165,7 @@
 								</object>
 								<object class="NSMenuItem" id="297489830">
 									<reference key="NSMenu" ref="110575045"/>
-									<string key="NSTitle">Start Menu Item</string>
+									<string key="NSTitle">Start Macfusion Menuitem ...</string>
 									<string key="NSKeyEquiv"/>
 									<int key="NSMnemonicLoc">2147483647</int>
 									<reference key="NSOnImage" ref="691598888"/>
@@ -2703,7 +2703,7 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="9"/>
-					<string>{{445, 603}, {229, 233}}</string>
+					<string>{{445, 603}, {288, 233}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="9"/>
 					<string>{{23, 794}, {245, 183}}</string>

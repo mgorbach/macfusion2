@@ -23,10 +23,11 @@
 {
 	
 	IBOutlet NSTextField* qmTextField;
-	IBOutlet NSTabView* qmTabView;
-	IBOutlet NSProgressIndicator* qmProgress;
 	IBOutlet NSTableView* recentsTableView;
 	IBOutlet NSArrayController* recentsArrayController;
+	IBOutlet NSProgressIndicator* indicator;
+	IBOutlet NSButton* connectButton;
+	
 	MFClientFS* fs;
 	MFClient* client;
 }
