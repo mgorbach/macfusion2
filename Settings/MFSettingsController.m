@@ -295,9 +295,14 @@
 - (NSArray*)selectedFilesystems
 {
 	MFClientFS* clickedFS = [filesystemTableView clickedFilesystem];
+	NSArray* selectedFilesystems = [[filesystemArrayController arrangedObjects] objectsAtIndexes:
+						   [filesystemTableView selectedRowIndexes]];
 	if (clickedFS)
 	{
-		return [NSArray arrayWithObject: clickedFS];
+		if ([selectedFilesystems containsObject: clickedFS])
+			return selectedFilesystems;
+		else
+			return [NSArray arrayWithObject: clickedFS];
 	}
 	else
 	{
@@ -329,11 +334,24 @@
 	}
 }
 
-- (void)deleteFilesystem:(MFClientFS*)fs
+
+- (void)deleteFilesystems:(NSArray*)filesystems
 {
-	if ([fs isUnmounted] || [fs isFailedToMount])
+	NSMutableArray* filesystemsToDelete = [filesystems mutableCopy];
+	for(MFClientFS* fs in filesystems)
 	{
-		NSString* messageText = [NSString stringWithFormat: @"Are you sure you want to delete the filesystem %@?", fs.name];
+		if( ! ([fs isUnmounted] || [fs isFailedToMount]) )
+		{
+			[filesystemsToDelete removeObject: fs];
+			MFLogS(self, @"Can't delete filesystem %@", fs);
+		}
+	}
+
+	if ([filesystemsToDelete count] > 0)
+	{
+		NSString* fsWord = [filesystemsToDelete count] == 1 ? @"filesystem" : @"filesystems";
+		NSString* messageText = [NSString stringWithFormat: @"Are you sure you want to delete the %@ %@?", fsWord,
+								 [[filesystemsToDelete valueForKey: kMFFSNameParameter] componentsJoinedByString: @", "]];
 		NSAlert* deleteConfirmation = [NSAlert new];
 		[deleteConfirmation setMessageText: messageText];
 		[deleteConfirmation addButtonWithTitle:@"OK"];
@@ -343,15 +361,15 @@
 		[deleteConfirmation beginSheetModalForWindow: [filesystemTableView window]
 									   modalDelegate:self
 									  didEndSelector:@selector(deleteConfirmationAlertDidEnd:returnCode:contextInfo:)
-										 contextInfo:fs];
-	}
-	else
-	{
-		MFLogSO(self, fs, @"Can't delete FS %@", fs);
+										 contextInfo:filesystemsToDelete];
 	}
 }
 
-
+- (void)deleteFilesystem:(MFClientFS*)fs
+{
+	[self deleteFilesystems: [NSArray arrayWithObject: fs]];
+}
+	
 
 # pragma mark Selected Action Methods
 
@@ -411,21 +429,22 @@
 
 - (IBAction)deleteSelectedFS:(id)sender
 {
-	for(MFClientFS* fs in [self selectedFilesystems])
-		[self deleteFilesystem: fs];
+	NSLog(@"DSFS %@", [self selectedFilesystems]);
+	[self deleteFilesystems: [self selectedFilesystems]];
 }
 
 
 - (void)deleteConfirmationAlertDidEnd:(NSAlert*)alert returnCode:(NSInteger)code contextInfo:(void*)context
 {
-	MFClientFS* fs = (MFClientFS*)context;
+	NSArray* filesystemsToDelete = (NSArray*)context;
 	if (code == NSAlertSecondButtonReturn)
 	{
 		
 	}
 	else if (code == NSAlertFirstButtonReturn)
 	{
-		[client deleteFilesystem: fs];
+		for(MFClientFS* fs in filesystemsToDelete)
+			[client deleteFilesystem: fs];
 	}
 }
 
