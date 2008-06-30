@@ -430,9 +430,6 @@
 }
 
 
-
-
-
 # pragma mark Notification
 - (void)filesystemDidChangeStatus:(MFClientFS*)fs
 {
@@ -516,6 +513,7 @@
 		[menu addItem: item];
 	}
 	
+	[menu setAutoenablesItems: NO];
 	return menu;
 }
 
@@ -524,7 +522,9 @@
 	SEL action = [anItem action];
 	NSArray* selectedFilesystems = [self selectedFilesystems];
 	if ( [selectedFilesystems count] == 0 )
+	{
 		return NO;
+	}
 	else
 	{
 		MFClientFS* fs;
@@ -639,9 +639,20 @@
 }
 
 #pragma mark Sparkle
+
+- (BOOL)shouldPromptForPermissionToCheckForUpdates
+{
+	return NO;
+}
+
+- (BOOL)shouldPromptForPermissionToCheckForUpdatesToHostBundle:(NSBundle *)bundle
+{
+	return NO;
+}
+
 - (void)updaterWillRelaunchApplication
 {
-	MFLogS(@"Sparkle updating in progress");
+	MFLogS(self, @"Sparkle updating in progress");
 	mfcKaboomMacfusion();
 }
 

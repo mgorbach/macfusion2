@@ -235,7 +235,6 @@ void mfcKaboomMacfusion()
 	NSArray* macfusionApps = [[[NSWorkspace sharedWorkspace] launchedApplications] filteredArrayUsingPredicate:
 							  macfusionAppsPredicate];
 	NSArray* macfusionAppsPIDs = [macfusionApps valueForKey: @"NSApplicationProcessIdentifier"];
-	NSLog(@"Killing pids %@", macfusionAppsPIDs);
 	for(NSNumber* pid in macfusionAppsPIDs)
 	{
 		kill( [pid intValue], SIGKILL );

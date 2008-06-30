@@ -597,7 +597,7 @@
 				D4E5200C0CE03B82009B1A30 /* Server */,
 				D4E5200F0CE03C1B009B1A30 /* Plugins */,
 				D4E5200E0CE03B9D009B1A30 /* UI */,
-				D4C913DE0E05E8010071C4AF /* Framework */,
+				D4C913DE0E05E8010071C4AF /* Frameworks */,
 				08FB779DFE84155DC02AAC07 /* External Frameworks and Libraries */,
 				D4B14E620CE1987F003195A3 /* Products */,
 			);
@@ -825,12 +825,12 @@
 			name = Shared;
 			sourceTree = "<group>";
 		};
-		D4C913DE0E05E8010071C4AF /* Framework */ = {
+		D4C913DE0E05E8010071C4AF /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
 				D4C913E90E05E8360071C4AF /* Sparkle.framework */,
 			);
-			name = Framework;
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		D4D900E40D50F5A800A868F9 /* Resources */ = {

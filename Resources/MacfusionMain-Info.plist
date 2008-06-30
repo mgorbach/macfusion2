@@ -42,7 +42,7 @@
 	<key>SUCheckForUpdates</key>
 	<true/>
 	<key>CFBundleVersion</key>
-	<string>2.0 Beta 5</string>
+	<string>2.0 Beta 6</string>
 	<key>NSMainNibFile</key>
 	<string>main</string>
 	<key>NSPrincipalClass</key>
