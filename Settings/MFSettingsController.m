@@ -355,6 +355,7 @@
 		NSAlert* deleteConfirmation = [NSAlert new];
 		[deleteConfirmation setMessageText: messageText];
 		[deleteConfirmation addButtonWithTitle:@"OK"];
+		[deleteConfirmation setInformativeText: @"This action can not be undone."];
 		NSButton* cancelButton = [deleteConfirmation addButtonWithTitle:@"Cancel"];
 		[cancelButton setKeyEquivalent:@"\e"];
 		[deleteConfirmation setAlertStyle: NSCriticalAlertStyle];
@@ -540,7 +541,10 @@
 {
 	SEL action = [anItem action];
 	NSArray* selectedFilesystems = [self selectedFilesystems];
-	if ( [selectedFilesystems count] == 0 )
+	
+	// If action has to do with filesystems, and none are selected, disable it
+	if ( [selectedFilesystems count] == 0 && 
+		[ NSStringFromSelector( [anItem action] ) rangeOfString: @"FS"].location != NSNotFound )
 	{
 		return NO;
 	}

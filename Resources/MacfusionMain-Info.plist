@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>LSMinimumSystemVersion</key>
+	<string>10.5.0</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>CFBundleDocumentTypes</key>
@@ -25,6 +27,8 @@
 			<string>Binary</string>
 		</dict>
 	</array>
+	<key>CFBundleShortVersionString</key>
+	<string>2.0 Beta 7</string>
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
 	<key>CFBundleIconFile</key>
@@ -42,7 +46,7 @@
 	<key>SUCheckForUpdates</key>
 	<true/>
 	<key>CFBundleVersion</key>
-	<string>2.0 Beta 6</string>
+	<string>2.0.0</string>
 	<key>NSMainNibFile</key>
 	<string>main</string>
 	<key>NSPrincipalClass</key>
