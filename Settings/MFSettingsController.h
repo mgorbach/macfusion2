@@ -46,5 +46,8 @@ MFLogViewerController, MGActionButton;
 - (IBAction)deleteSelectedFS:(id)sender;
 - (IBAction)filterLogForSelectedFS:(id)sender;
 
+- (IBAction)openMainSite:(id)sender;
+- (IBAction)openSupportSite:(id)sender;
+
 @property(readonly) MFClient* client;
 @end

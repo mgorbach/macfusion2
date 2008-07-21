@@ -157,8 +157,10 @@ void mfcCheckIntegrity()
 	CFStringRef processName;
 	FSRef bundleFSRef;
 	OSErr error;
-	id runningAgentPath=nil, runningMenulingPath=nil;
-	pid_t runningAgentPID, runningMenulingPID;
+	id runningAgentPath=nil;
+	id runningMenulingPath=nil;
+	
+	pid_t runningAgentPID=0, runningMenulingPID=0;
 	
 	while(GetNextProcess( &currentPSN ) == noErr
 		  && currentPSN.lowLongOfPSN != kNoProcess )
@@ -202,8 +204,8 @@ void mfcCheckIntegrity()
 		CFRelease( processName );
 	}
 	
-	if (runningAgentPath == [NSNull null] || 
-		( runningAgentPath && ![runningAgentPath isEqualToString: mfcAgentBundlePath()] ) )
+	if ( ( runningAgentPath == [NSNull null] || (runningAgentPath && ![runningAgentPath isEqualToString: mfcAgentBundlePath()]) )
+		&& runningAgentPID != 0)
 	{
 		// Agent is in the trash or running from the wrong path. Kill it & restart it.
 		MFLogS( self, @"Killing old or bad agent, and restarting." );
@@ -211,8 +213,8 @@ void mfcCheckIntegrity()
 		mfcLaunchAgent();
 	}
 	
-	if (runningMenulingPath == [NSNull null] ||
-		(runningMenulingPath && ![runningMenulingPath isEqualToString: mfcMenulingBundlePath()] ) )
+	if ( ( runningMenulingPath == [NSNull null] || (runningMenulingPath && ![runningMenulingPath isEqualToString: mfcMenulingBundlePath()]) )
+		&& runningMenulingPID != 0)
 	{
 		// Menuling is in the trash or running from the wrong path. Kill it & restart it.
 		MFLogS( self, @"Killing old or bad menuling, and restarting." );

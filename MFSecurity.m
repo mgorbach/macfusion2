@@ -50,7 +50,6 @@ NSDictionary* getGenericSecretsForFilesystemAndReturnItem( MFFilesystem* fs, Sec
 	if (error == noErr)
 	{
 		// MFLogS( self, @"Found generic keychain entry" );
-		NSString* serializationErrorString;
 		NSData* secretsData = [NSData dataWithBytes:passwordData length:passwordLength];
 		// MFLogS( self, @"NSData from keycahin %@", secretsData);
 		NSDictionary* loadedDataDict = [NSPropertyListSerialization propertyListFromData:secretsData 
@@ -65,8 +64,8 @@ NSDictionary* getGenericSecretsForFilesystemAndReturnItem( MFFilesystem* fs, Sec
 		}
 		else
 		{
-			MFLogS( self, @"Failed to parse data in generic entry. data: %@ errorString: %@", 
-				   loadedDataDict, serializationErrorString );
+			MFLogS( self, @"Failed to parse data in generic entry. data: %@", 
+				   loadedDataDict );
 			return nil;
 		}
 	}
@@ -469,6 +468,8 @@ SInt32 showDialogForPasswordQuery( MFFilesystem* fs, BOOL* savePassword, NSStrin
 	if (error)
 		MFLogSO(self, fs, @"Dialog error received after received fs %@ response %d", fs, error);
 	
+	CFRelease(dialogTemplate);
+	CFRelease(passwordDialog);
 	int button = responseFlags & 0x3;
 	if (button == kCFUserNotificationAlternateResponse)
 	{
@@ -485,6 +486,7 @@ SInt32 showDialogForPasswordQuery( MFFilesystem* fs, BOOL* savePassword, NSStrin
 																 0);
 	*password = (NSString*)passwordRef;
 	CFRelease(passwordRef);
+
 	
 	return 0;
 		

@@ -147,7 +147,7 @@
 	BOOL ok = [fs validateParametersWithError: &validationError];
 	if (!ok)
 	{
-		error = &validationError;
+		*error = validationError;
 		return nil;
 	}
 	else
@@ -404,7 +404,7 @@
 		errorDescription = @"Mount path is a file, not a directory.";
 		returnValue = NO;
 	}
-	else if (!pathExists)
+	else
 	{
 		if ([fm createDirectoryAtPath:mountPath attributes:nil])
 			returnValue = YES;
@@ -662,8 +662,8 @@
 	if (![self isUnmounted] && ![self isMounted])
 		if (![self isFailedToMount])
 		{
-			// MFLogS(self, @"Mount time out detected. Killing task %@ pid %d",
-			//	   task, [task processIdentifier]);
+			 MFLogS(self, @"Mount time out detected. Killing task %@ pid %d",
+				   task, [task processIdentifier]);
 			kill([task processIdentifier], SIGKILL);
 			NSDictionary* dictionary = [NSDictionary dictionaryWithObjectsAndKeys: 
 										self.uuid, kMFErrorFilesystemKey,

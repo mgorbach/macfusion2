@@ -81,7 +81,7 @@
       itemForItemIdentifier:(NSString *)itemIdentifier
   willBeInsertedIntoToolbar:(BOOL)flag
 {
-	NSToolbarItem* item;
+	NSToolbarItem* item = nil;
 
 	if (itemIdentifier == kMFPrefsPluginToolbarIdentifier)
 	{

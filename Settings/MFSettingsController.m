@@ -181,8 +181,10 @@
 	
 	[[MFPreferences sharedPreferences] addObserver: self forKeyPath: kMFPrefsAutosize options:0 context:self];
 	[filesystemTableView setIntercellSpacing: NSMakeSize(10, 0)];
-	[[filesystemTableView window] center];
-
+	
+	NSWindow* window = [filesystemTableView window];
+	[window center];
+	
 	[filesystemTableView bind:@"filesystems"
 					 toObject:filesystemArrayController
 				  withKeyPath:@"arrangedObjects"
@@ -194,8 +196,7 @@
 {
 	if ([[MFPreferences sharedPreferences] getBoolForPreference: kMFPrefsAutosize])
 	{
-		[[filesystemTableView window] setShowsResizeIndicator: NO];
-		// AutoSize the window vertically
+		// Autosize the window vertically
 		NSWindow* window = [filesystemTableView window];
 		NSInteger maxRows = 10;
 		NSInteger minRows = 2;
@@ -206,21 +207,28 @@
 		else if (filesystemCount > maxRows) rows = maxRows;
 		else rows = filesystemCount;
 		
+
 		NSSize windowContentSize = [(NSView*)[window contentView] frame].size;
 		NSInteger tableViewOldVerticalPixels = [[filesystemTableView superview] frame].size.height;
 		NSInteger tableViewNewVerticalPixels = (rows * [filesystemTableView rowHeight]);
 		tableViewNewVerticalPixels += (rows)*[filesystemTableView intercellSpacing].height;
 		NSRect windowFrame = [NSWindow contentRectForFrameRect:[window frame]
 													 styleMask:[window styleMask]];
-		NSSize size = NSMakeSize( windowContentSize.width, windowContentSize.height - tableViewOldVerticalPixels + tableViewNewVerticalPixels);
+		NSSize size = NSMakeSize( windowContentSize.width, windowContentSize.height 
+								 - tableViewOldVerticalPixels + tableViewNewVerticalPixels);
 		NSRect newWindowFrame = [NSWindow frameRectForContentRect:
-								 NSMakeRect( NSMinX( windowFrame ), NSMaxY( windowFrame ) - size.height, size.width, size.height )
-														styleMask:[window styleMask]];
+								 NSMakeRect( NSMinX( windowFrame ), NSMaxY( windowFrame ) 
+											- size.height, size.width, size.height )
+														  styleMask:[window styleMask]];
 		[window setFrame:newWindowFrame display:YES animate:[window isVisible]];
+		[window setMinSize: NSMakeSize(300, newWindowFrame.size.height) ];
+		[window setMaxSize: NSMakeSize( FLT_MAX, newWindowFrame.size.height )];
 	}
 	else
 	{
-		[[filesystemTableView window] setShowsResizeIndicator: YES];
+		NSWindow* window = [filesystemTableView window];
+		[window setMinSize: NSMakeSize(300, 100)];
+		[window setMaxSize: NSMakeSize( FLT_MAX, FLT_MAX)];
 	}
 }
 
@@ -532,8 +540,7 @@
 		[item setAction: @selector(newFSPopupClicked:)];
 		[menu addItem: item];
 	}
-	
-	[menu setAutoenablesItems: NO];
+
 	return menu;
 }
 
@@ -602,6 +609,18 @@
 - (void)windowWillClose:(NSWindow*)window
 {
 	[NSApp terminate:self];
+}
+
+- (IBAction)openMainSite:(id)sender
+{
+	[[NSWorkspace sharedWorkspace] openURL: 
+	 [NSURL URLWithString: @"http://www.macfusionapp.org"]];
+}
+
+- (IBAction)openSupportSite:(id)sender
+{
+	[[NSWorkspace sharedWorkspace] openURL: 
+	 [NSURL URLWithString: @"http://www.macfusionapp.org/support.html"]];
 }
 
 # pragma mark Error Recovery

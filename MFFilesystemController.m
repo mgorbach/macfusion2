@@ -315,6 +315,8 @@ static void diskMounted(DADiskRef disk, void* mySelf)
 	{
 		CFStringRef tempPath = CFURLCopyFileSystemPath(pathURL,kCFURLPOSIXPathStyle);
 		NSString* path = [(NSString*)tempPath stringByStandardizingPath];
+		CFRelease(tempPath);
+		
 		[[MFFilesystemController sharedController] addMountedPath: path];
 	}
 	
@@ -331,6 +333,8 @@ static void diskUnMounted(DADiskRef disk, void* mySelf)
 	{
 		CFStringRef tempPath = CFURLCopyFileSystemPath(pathURL,kCFURLPOSIXPathStyle);
 		NSString* path = [(NSString*)tempPath stringByStandardizingPath];
+		CFRelease(tempPath);
+		
 		[[MFFilesystemController sharedController] removeMountedPath: path];
 	}
 	
