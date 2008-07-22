@@ -541,6 +541,7 @@
 		[menu addItem: item];
 	}
 
+	[menu setAutoenablesItems: NO];
 	return menu;
 }
 
