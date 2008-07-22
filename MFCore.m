@@ -15,11 +15,25 @@
 // limitations under the License.
 
 #import "MFCore.h"
+#import "MFConstants.h"
+#import "MFServerProtocol.h"
+
 #define self @"MFCORE"
 
 NSString* mfcMainBundlePath()
 {
 	NSString* mybundleID = [[NSBundle mainBundle] bundleIdentifier];
+	NSBundle* bundle = [NSBundle mainBundle];
+	if (!bundle)
+	{
+		// Try to connect to server and use the agent's bundle path
+		id <MFServerProtocol> server = 
+		(id<MFServerProtocol>)[NSConnection rootProxyForConnectionWithRegisteredName:kMFDistributedObjectName
+																				host:nil];
+		if (server)
+			bundle = [NSBundle bundleWithPath: [server agentBundlePath]];
+	}
+		
 	NSString* pathToReturn = nil;
 	
 	if ( [mybundleID isEqualToString: kMFMainBundleIdentifier] )
@@ -31,7 +45,7 @@ NSString* mfcMainBundlePath()
 		NSString* fullPath = [[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent: relativePath];
 		pathToReturn = [fullPath stringByStandardizingPath];
 	}
-	
+		
 	return pathToReturn;
 }
 
@@ -58,10 +72,11 @@ NSArray* mfcSecretClientsForFileystem( MFFilesystem* fs )
 	}
 	
 	NSBundle* mainUIBundle = [NSBundle bundleWithPath: mfcMainBundlePath()];
-	[clientList addObject: [mainUIBundle executablePath]];
+	// [clientList addObject: [mainUIBundle executablePath]];
 	NSBundle* menulingUIBundle = [NSBundle bundleWithPath: mfcMenulingBundlePath()];
-	[clientList addObject: [menulingUIBundle executablePath]];
-	[clientList addObject: mfcAgentBundlePath()];
+	//[clientList addObject: [menulingUIBundle executablePath]];
+	// [clientList addObject: mfcAgentBundlePath()];
+	NSLog(@"mainUI %@ menuling %@ agent %@", mainUIBundle, menulingUIBundle, mfcAgentBundlePath()); 
 	return [clientList copy];
 }
 

@@ -26,8 +26,6 @@ int main(int argc, char *argv[])
 	NSString* token = [[[NSProcessInfo processInfo] environment] objectForKey: @"FTPFS_TOKEN"];
 	NSString* password;
 	
-	MFLogS(self, @"FTP Password get Runing");
-	
 	if (!token)
 	{
 		MFLogS(self, @"Could not find token");
@@ -45,28 +43,22 @@ int main(int argc, char *argv[])
 		NSDictionary* secrets = mfsecGetSecretsDictionaryForFilesystem( fs );
 		if (!secrets)
 		{
-			// MFLogS(self, @"Could not get secrets for token. Querying.");
 			password = mfsecQueryForFSNetworkPassword( fs );
-			// MFLogS(self, @"Query result %@", password);
-			
 		}
 		else
 		{
 			password = [secrets objectForKey: kNetFSPasswordParameter];
 		}
 		
-		if (password)
+		if (!password)
 		{
-			// MFLogS(self, @"Password confirmed from secrets: %@", password);
-		}
-		else
-		{
-			// MFLogS(self, @"Token secrets found, but no password. Querying.");
 			password = mfsecQueryForFSNetworkPassword( fs );
-			// MFLogS(self, @"Query result %@", password);
 		}
 		
-		printf("%s\n", [password UTF8String]);
+		if (password && [password length] > 0)
+		{
+			printf("%s\n", [password UTF8String]);
+		}
 	}
 	
 	return 0;

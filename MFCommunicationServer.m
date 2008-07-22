@@ -302,6 +302,11 @@ static MFCommunicationServer* sharedServer = nil;
 	}
 }
 
+- (NSString*)agentBundlePath
+{
+	return [[NSBundle mainBundle] bundlePath];
+}
+
 # pragma mark Logging
 - (void)sendASLMessageDict:(NSDictionary*)messageDict
 {

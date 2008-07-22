@@ -49,11 +49,9 @@
 	normalImage = [[[imageToDraw ciImageRepresentation] ciImageByScalingToSize:
 							 NSMakeSize(rect.size.width, rect.size.height)] flippedImage];
 	CIFilter* bloomFilter = [CIFilter filterWithName:@"CIBloom"];
-	// [bloomFilter setDefaults];
 	[bloomFilter setValue:[NSNumber numberWithFloat:2.5] forKey:@"inputRadius"];
 	[bloomFilter setValue:[NSNumber numberWithFloat:0.7] forKey:@"inputIntensity"];
 	[bloomFilter setValue: normalImage forKey: @"inputImage"];
-	// ciRep = [bloomFilter valueForKey: @"outputImage"];
 	selectedImage = [bloomFilter valueForKey:@"outputImage"];
 	[self setNeedsDisplay: YES];
 }

@@ -71,7 +71,6 @@ NSDictionary* getGenericSecretsForFilesystemAndReturnItem( MFFilesystem* fs, Sec
 	}
 	else 
 	{
-		// MFLogS( self, @"Generic keychain entry not found for fs %@ error %d", fs, error );
 		return nil;
 	}
 }
@@ -200,12 +199,28 @@ void setNetworkSecretsForFilesystem (NSDictionary* secretsDictionary, MFFilesyst
 	NSString* password = [secretsDictionary objectForKey: kNetFSPasswordParameter];
 	SecProtocolType protocol = [[[fs parameters] objectForKey: kNetFSProtocolParameter] intValue];
 	
-	if (userName && hostName && port && password)
+	if (userName && hostName && port)
 	{
 		SecKeychainItemRef itemRef = NULL;
 		if ( getNetworkSecretsForFilesystemAndReturnItem(fs, &itemRef) )
 		{
-			// Modify (Check delete?)
+			if ([secretsDictionary count] == 0)
+			{
+				// Delete
+				OSErr result = SecKeychainItemDelete( itemRef );
+				if (result == noErr)
+				{
+					// MFLogS(self, @"Network keychain item deleted OK");
+				}
+				else
+				{
+					MFLogSO(self, fs, @"Network keychain item deleted failed: %d", result);
+				}
+				
+				return;				
+			}
+				
+			// Modify
 			OSStatus error = SecKeychainItemModifyContent(itemRef,
 														  NULL,
 														  [password lengthOfBytesUsingEncoding: NSUTF8StringEncoding],
@@ -215,7 +230,9 @@ void setNetworkSecretsForFilesystem (NSDictionary* secretsDictionary, MFFilesyst
 				// MFLogS(self, @"Successfully modified network secrets for fs %@", fs );
 			}
 			else
+			{
 				MFLogSO(self, fs, @"Failed to modify network secrets for fs %@. Error %d", fs, error);
+			}
 			
 		}
 		else
@@ -293,7 +310,7 @@ void setGenericSecretsForFilesystem (NSDictionary* secretsDictionary, MFFilesyst
 			OSErr result = SecKeychainItemDelete( itemRef );
 			if (result == noErr)
 			{
-				// MFLogS(self, @"Generic keychain item deleted OK");
+				MFLogS(self, @"Generic keychain item deleted OK");
 			}
 			else
 			{
@@ -364,7 +381,7 @@ void setGenericSecretsForFilesystem (NSDictionary* secretsDictionary, MFFilesyst
 
 void mfsecSetSecretsDictionaryForFilesystem( NSDictionary* secretsDictionary, MFFilesystem* fs )
 {
-	// MFLogS(self, @"Setting secrets dict %@ for fs %@", secretsDictionary, fs);
+	MFLogS(self, @"Setting secrets dict %@ for fs %@", secretsDictionary, fs);
 	if (! secretsDictionary )
 	{
 		MFLogSO(self, fs, @"Secrets dictionary nil for fs %@. Northing to store to keychain", fs);
@@ -378,14 +395,12 @@ void mfsecSetSecretsDictionaryForFilesystem( NSDictionary* secretsDictionary, MF
 # pragma mark Token authentication
 MFClientFS* mfsecGetFilesystemForToken( NSString* token )
 {
-	// MFLogS(self, @"Getting fs for token %@", token);
 	id <MFServerProtocol> server = 
 	(id<MFServerProtocol>)[NSConnection rootProxyForConnectionWithRegisteredName:kMFDistributedObjectName
 																			  host:nil];
 	if (server)
 	{
 		id <MFServerFSProtocol> remoteFS = (id <MFServerFSProtocol>)[server filesystemForToken: token];
-		// MFLogS(self, @"Received remote FS %@ isProxy %d", remoteFS, [remoteFS isProxy]);
 		if (remoteFS)
 		{
 			MFClientPlugin* clientPlugin = [[MFClientPlugin alloc] initWithRemotePlugin: [remoteFS plugin]];
@@ -394,7 +409,6 @@ MFClientFS* mfsecGetFilesystemForToken( NSString* token )
 		}
 		else
 		{
-			// MFLogS(self, @"Remote filesystem not found for the token");
 			return nil;
 		}
 	}
@@ -480,7 +494,7 @@ SInt32 showDialogForPasswordQuery( MFFilesystem* fs, BOOL* savePassword, NSStrin
 	// This is a hack, checking responseFlags with and correctly wasn't working for some reason
 	*savePassword = (responseFlags == 256); 
 
-	MFLogSO(self, fs, @"Save password is %d Flags %d fs %@", savePassword, responseFlags, fs);
+	// MFLogSO(self, fs, @"Save password is %d Flags %d fs %@", savePassword, responseFlags, fs);
 	CFStringRef passwordRef = CFUserNotificationGetResponseValue(passwordDialog,
 																 kCFUserNotificationTextFieldValuesKey,
 																 0);
@@ -501,7 +515,7 @@ NSString* mfsecQueryForFSNetworkPassword( MFClientFS* fs )
 		return nil;
 	}
 	
-	NSString* password;
+	NSString* password = nil;
 	BOOL save;
 	[fs setPauseTimeout: YES];
 	SInt32 result = showDialogForPasswordQuery(fs, &save, &password);
@@ -512,7 +526,7 @@ NSString* mfsecQueryForFSNetworkPassword( MFClientFS* fs )
 		return nil;
 	}
 	
-	if (save)
+	if (save && [password length] > 0)
 	{
 		MFLogSO(self, fs, @"Updating secrets fs %@", fs);
 		NSMutableDictionary* updatedSecrets = secrets ? [secrets mutableCopy] : [NSMutableDictionary dictionary];

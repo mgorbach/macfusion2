@@ -41,6 +41,7 @@
 // Client Control
 - (void)registerClient:(id <MFClientProtocol>) client;
 - (void)unregisterClient:(id <MFClientProtocol>) client;
+- (NSString*)agentBundlePath;
 
 // Logging
 - (void)sendASLMessageDict:(NSDictionary*)dict;
