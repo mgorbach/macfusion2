@@ -22,6 +22,10 @@
 #import <QuartzCore/QuartzCore.h>
 #import "MGNSImage.h"
 
+@interface MFIconSettingImageView(PrivateAPI)
+- (void)recalcImages;
+@end
+
 @implementation MFIconSettingImageView
 + (void)initialize
 {
@@ -32,7 +36,6 @@
 {
 	if (self = [super initWithFrame: frame])
 	{
-		// MFLogS(self, @"Registering for types");
 		[self registerForDraggedTypes:
 		 [NSArray arrayWithObjects: NSFilenamesPboardType, (NSString*)kUTTypeAppleICNS,
 		  nil] ];
@@ -49,6 +52,7 @@
 	normalImage = [[[imageToDraw ciImageRepresentation] ciImageByScalingToSize:
 							 NSMakeSize(rect.size.width, rect.size.height)] flippedImage];
 	CIFilter* bloomFilter = [CIFilter filterWithName:@"CIBloom"];
+	[bloomFilter setDefaults];
 	[bloomFilter setValue:[NSNumber numberWithFloat:2.5] forKey:@"inputRadius"];
 	[bloomFilter setValue:[NSNumber numberWithFloat:0.7] forKey:@"inputIntensity"];
 	[bloomFilter setValue: normalImage forKey: @"inputImage"];
@@ -222,7 +226,6 @@
 - (void) observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object 
 						 change:(NSDictionary *)change context:(void *)context
 {
-	// MFLogS(self, @"Observe triggered");
     if (context == self) {
 		[self recalcImages];
 	}
