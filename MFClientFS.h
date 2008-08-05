@@ -58,6 +58,7 @@
 
 // UI
 - (void)setIconImage:(NSImage*)image;
+- (NSImage*)coloredImage;
 
 @property(readwrite, assign) NSInteger displayOrder;
 @property(readwrite, retain) id<MFClientFSDelegateProtocol> clientFSDelegate; 

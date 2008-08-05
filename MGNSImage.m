@@ -18,6 +18,18 @@
 #import "MGNSImage.h"
 #import <QuartzCore/QuartzCore.h>
 
+static CGColorRef CGColorCreateFromNSColor (CGColorSpaceRef  colorSpace, NSColor *color)
+{
+	NSColor *deviceColor = [color colorUsingColorSpaceName:  
+							NSDeviceRGBColorSpace];
+	
+	float components[4];
+	[deviceColor getRed: &components[0] green: &components[1] blue:  
+	 &components[2] alpha: &components[3]];
+	
+	return CGColorCreate (colorSpace, components);
+}
+
 
 @implementation NSImage (MGNSImage)
 - (CIImage*)ciImageRepresentation
@@ -35,9 +47,19 @@
 	return [transformFilter valueForKey:@"outputImage"];
 }
 
-- (NSImage*)imageScaledToSize:(NSSize)size
+- (NSImage*)imageScaledToSize:(NSSize)newSize
 {
-	return [[[self ciImageRepresentation] ciImageByScalingToSize: size] nsImageRepresentation];
+	NSSize oldSize = [self size];
+	NSImage* newImage = [[NSImage alloc] initWithSize: newSize];
+	[NSGraphicsContext saveGraphicsState];
+	[newImage lockFocus];
+	[[NSGraphicsContext currentContext] setImageInterpolation: NSImageInterpolationHigh];
+	[self drawInRect: NSMakeRect(0, 0, newSize.width, newSize.height)
+			fromRect: NSMakeRect(0, 0, oldSize.width, oldSize.height)
+		   operation:NSCompositeSourceOver fraction:1.0];
+	[newImage unlockFocus];
+	[NSGraphicsContext restoreGraphicsState];
+	return newImage;
 }
 
 - (NSImage*)flippedImage
@@ -47,20 +69,8 @@
 
 @end
 
+
 @implementation CIImage (MGCIImage)
-
-static CGColorRef CGColorCreateFromNSColor (CGColorSpaceRef  colorSpace, NSColor *color)
-{
-	NSColor *deviceColor = [color colorUsingColorSpaceName:  
-							NSDeviceRGBColorSpace];
-	
-	float components[4];
-	[deviceColor getRed: &components[0] green: &components[1] blue:  
-	 &components[2] alpha: &components[3]];
-	
-	return CGColorCreate (colorSpace, components);
-}
-
 
 - (CIImage*)ciImageByScalingToSize:(NSSize)targetSize
 {

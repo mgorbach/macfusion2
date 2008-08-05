@@ -21,8 +21,6 @@
 @interface MFFilesystemCell : NSActionCell {
 	BOOL editPushed, mountPushed;
 	NSMapTable* icons;
-	
-	
 }
 
 - (NSRect)progressIndicatorRectInRect:(NSRect)rect;

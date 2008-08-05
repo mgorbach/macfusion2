@@ -47,16 +47,6 @@
 
 - (void)recalcImages
 {
-	NSRect rect = [self bounds];
-	NSImage* imageToDraw = [fs iconImage];
-	normalImage = [[[imageToDraw ciImageRepresentation] ciImageByScalingToSize:
-							 NSMakeSize(rect.size.width, rect.size.height)] flippedImage];
-	CIFilter* bloomFilter = [CIFilter filterWithName:@"CIBloom"];
-	[bloomFilter setDefaults];
-	[bloomFilter setValue:[NSNumber numberWithFloat:2.5] forKey:@"inputRadius"];
-	[bloomFilter setValue:[NSNumber numberWithFloat:0.7] forKey:@"inputIntensity"];
-	[bloomFilter setValue: normalImage forKey: @"inputImage"];
-	selectedImage = [bloomFilter valueForKey:@"outputImage"];
 	[self setNeedsDisplay: YES];
 }
 
@@ -70,11 +60,12 @@
 
 - (void)drawRect:(NSRect)rect 
 {
-	// MFLogS(self, @"Image is %@", image);
 	[[NSGraphicsContext currentContext] setImageInterpolation: NSImageInterpolationHigh];
-	CIImage* imageToDraw = ([[self window] firstResponder] == self) ? selectedImage : normalImage;
+	NSImage* imageToDraw = [[fs coloredImage] imageScaledToSize: 
+							NSMakeSize(rect.size.width, rect.size.height)];
+	BOOL highlight = ([[self window] firstResponder] == self);
 	
-	if (dragHighlight)
+	if (dragHighlight || highlight)
 	{
 		[[NSColor darkGrayColor] set];
 		[NSBezierPath setDefaultLineWidth: 3.0];

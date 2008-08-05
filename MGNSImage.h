@@ -15,6 +15,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#import <QuartzCore/QuartzCore.h>
+
+static CGColorRef CGColorCreateFromNSColor (CGColorSpaceRef  colorSpace, NSColor *color);
+
 @class CIImage;
 
 @interface NSImage (MGNSImage)

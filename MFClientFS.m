@@ -23,6 +23,7 @@
 #import "MFAdvancedViewController.h"
 #import "MGNSImage.h"
 #import <QuartzCore/QuartzCore.h>
+#import "MGNSImage.h"
 
 @interface MFClientFS (PrivateAPI)
 - (void)fillInitialData;
@@ -227,6 +228,65 @@
 {
 	return [[NSImage alloc] initWithContentsOfFile: 
 			self.iconPath];
+}
+
+- (NSColor*)tintColor
+{
+	MFClientFS* fs = self;
+	if ([fs isMounted])
+		return [NSColor greenColor];
+	if ([fs isFailedToMount])
+		return [NSColor redColor];
+	if ([fs isWaiting])
+		return [NSColor yellowColor];
+	if ([fs isUnmounted])
+		return [NSColor grayColor];
+	
+	return nil;
+}
+
+static CGColorRef CGColorCreateFromNSColor (CGColorSpaceRef  colorSpace, NSColor *color)
+{
+	NSColor *deviceColor = [color colorUsingColorSpaceName:  
+							NSDeviceRGBColorSpace];
+	
+	float components[4];
+	[deviceColor getRed: &components[0] green: &components[1] blue:  
+	 &components[2] alpha: &components[3]];
+	
+	return CGColorCreate (colorSpace, components);
+}
+
+// TODO: Cache this image instead of regenerating. Don't think this affects performance much right now.
+- (NSImage*)coloredImage
+{
+	CGFloat tint_alpha = 0.3;
+	
+	CGImageSourceRef imageSource = CGImageSourceCreateWithURL( (CFURLRef)[NSURL fileURLWithPath: self.imagePath], NULL );
+	CGImageRef cgImageOriginalRep = CGImageSourceCreateImageAtIndex( imageSource, 0, NULL );
+	NSSize oldSize = NSMakeSize( CGImageGetWidth(cgImageOriginalRep), CGImageGetHeight(cgImageOriginalRep) );
+	CGRect fullContext = CGRectMake( 0, 0, oldSize.width, oldSize.height );
+	CGContextRef context = CGBitmapContextCreate( NULL, oldSize.width, oldSize.height, 
+												 CGImageGetBitsPerComponent( cgImageOriginalRep ),
+												 CGImageGetBytesPerRow( cgImageOriginalRep ),
+												 CGImageGetColorSpace( cgImageOriginalRep ),
+												 kCGImageAlphaPremultipliedLast );
+	
+	CGContextSetInterpolationQuality( context, kCGInterpolationHigh );
+	
+	CGContextDrawImage( context, fullContext, cgImageOriginalRep );
+	CGContextClipToMask( context, fullContext, cgImageOriginalRep );
+	CGContextSetBlendMode( context, kCGBlendModeColor ) ;
+	CGColorRef tintColor = CGColorCreateFromNSColor( CGBitmapContextGetColorSpace( context ), 
+													[[self tintColor] colorWithAlphaComponent: tint_alpha ] );
+	CGContextSetFillColorWithColor( context , tintColor );
+	CGContextFillRect( context, fullContext );
+	CGImageRef newCGImage = CGBitmapContextCreateImage( context );
+	
+	NSBitmapImageRep* newImageRep = [[NSBitmapImageRep alloc] initWithCGImage: newCGImage ];
+	NSImage* newImage = [[NSImage alloc] initWithSize: oldSize];
+	[newImage addRepresentation: newImageRep];
+	return newImage;
 }
 
 - (void)setPauseTimeout:(BOOL)p

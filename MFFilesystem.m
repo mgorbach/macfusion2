@@ -212,7 +212,6 @@
 
 - (NSString*)imagePath
 {
-	// NSLog(@"Calc imagePath parammeter %@  implied %@", parameters, [self parametersWithImpliedValues]);
 	return [self valueForParameterNamed: kMFFSVolumeImagePathParameter ];
 }
 

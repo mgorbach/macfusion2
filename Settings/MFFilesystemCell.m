@@ -40,21 +40,6 @@
 	return self;
 }
 
-- (NSColor*)tintColor
-{
-	MFClientFS* fs = [self representedObject];
-	if ([fs isMounted])
-		return [NSColor greenColor];
-	if ([fs isFailedToMount])
-		return [NSColor redColor];
-	if ([fs isWaiting])
-		return [NSColor yellowColor];
-	if ([fs isUnmounted])
-		return [NSColor grayColor];
-	
-	return nil;
-}
-
 # pragma mark Geometry
 
 - (NSRect)insetRectWithFrame:(NSRect)frame
@@ -85,20 +70,8 @@
 - (NSImage*)iconToDraw
 {
 	MFClientFS* fs = [self representedObject];
-	NSImage* iconToDraw = [icons objectForKey: fs];
-	if (!iconToDraw)
-	{
-		NSImage* icon = [[NSImage alloc] initWithContentsOfFile: 
-						 fs.imagePath];
-		CIImage* ciImageIcon = [icon ciImageRepresentation];
-		CIImage* scaledImage = [ciImageIcon ciImageByScalingToSize: NSMakeSize(IMAGE_SIZE, IMAGE_SIZE) ];
-		CIImage* coloredImage = [scaledImage ciImageByColoringMonochromeWithColor: [self tintColor]
-																		intenisty: [NSNumber numberWithFloat: 0.4] ];
-		iconToDraw = [coloredImage nsImageRepresentation];
-		[icons setObject: iconToDraw forKey: fs];
-	}
-
-	return iconToDraw;
+	NSImage* iconToDraw = [fs coloredImage];
+	return [iconToDraw imageScaledToSize: NSMakeSize(IMAGE_SIZE, IMAGE_SIZE)];
 }
 
 - (void)clearImageForFS:(MFClientFS*)fs
