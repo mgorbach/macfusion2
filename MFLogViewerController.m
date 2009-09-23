@@ -260,7 +260,7 @@ static NSString* kAutoscrollToolbarItemIdentifier = @"autoscroll";
 itemForItemIdentifier:(NSString *)itemIdentifier
 willBeInsertedIntoToolbar:(BOOL)flag
 {
-	NSToolbarItem* toolbarItem;
+	NSToolbarItem* toolbarItem = nil;
 	if ([itemIdentifier isEqualTo: kFSFilterToolbarItemIdentifier])
 	{
 		toolbarItem = [[NSToolbarItem alloc] initWithItemIdentifier: kFSFilterToolbarItemIdentifier];

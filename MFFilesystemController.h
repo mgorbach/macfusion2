@@ -18,38 +18,37 @@
 @class MFServerFS, MFServerPlugin;
 
 @interface MFFilesystemController : NSObject {
-	NSMutableDictionary* filesystemsDictionary;
-	NSMutableArray* filesystems;
-	NSMutableArray* recents;
-	NSMutableArray* mountedPaths;
-	NSMutableDictionary* tokens;
-	NSMutableDictionary* mountPathPersistenceCache;
+	NSMutableDictionary *filesystemsDictionary;
+	NSMutableArray *filesystems;
+	NSMutableArray *recents;
+	NSMutableArray *mountedPaths;
+	NSMutableDictionary *tokens;
+	NSMutableDictionary *mountPathPersistenceCache;
 	
 	DASessionRef appearSession;
 	DASessionRef disappearSession;
 }
 
 // Init
-+ (MFFilesystemController*)sharedController;
++ (MFFilesystemController *)sharedController;
 - (void)loadFilesystems;
 
 
 // Action methods
-- (MFServerFS*)newFilesystemWithPlugin:(MFServerPlugin*)plugin;
-- (MFServerFS*)quickMountWithURL:(NSURL*)url 
-						   error:(NSError**)error;
-- (void)deleteFilesystem:(MFServerFS*)fs;
+- (MFServerFS *)newFilesystemWithPlugin:(MFServerPlugin *)plugin;
+- (MFServerFS *)quickMountWithURL:(NSURL*)url error:(NSError **)error;
+- (void)deleteFilesystem:(MFServerFS *)fs;
 
 - (MFServerFS*)filesystemWithUUID:(NSString*)uuid;
 
 // Security Tokens
-- (NSString*)tokenForFilesystem:(MFServerFS*)fs;
-- (void)invalidateToken:(NSString*)token;
-- (MFServerFS*)filesystemForToken:(NSString*)token;
+- (NSString *)tokenForFilesystem:(MFServerFS *)fs;
+- (void)invalidateToken:(NSString *)token;
+- (MFServerFS *)filesystemForToken:(NSString *)token;
 
 // Accessors
-- (NSDictionary*)filesystemsDictionary;
-@property(readonly, retain) NSMutableArray* filesystems;
-@property(readonly, retain) NSMutableArray* recents;
+- (NSDictionary *)filesystemsDictionary;
+@property(readonly, retain) NSMutableArray *filesystems;
+@property(readonly, retain) NSMutableArray *recents;
 @end
 

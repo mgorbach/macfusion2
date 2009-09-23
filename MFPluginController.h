@@ -24,9 +24,9 @@
 
 + (MFPluginController*)sharedController;
 
-- (MFServerPlugin*)pluginWithID:(NSString*)ID;
+- (MFServerPlugin *)pluginWithID:(NSString*)ID;
 - (void)loadPlugins;
 - (NSArray*)plugins;
-- (NSDictionary*)pluginsDictionary;
+- (NSDictionary *)pluginsDictionary;
 
 @end

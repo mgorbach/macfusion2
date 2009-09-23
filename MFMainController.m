@@ -28,36 +28,21 @@
 static MFMainController* sharedController = nil;
 
 #pragma mark Singleton Methods
-+ (MFMainController*)sharedController
-{
-	if (sharedController == nil)
-	{
-		[[self alloc] init];
++ (MFMainController*)sharedController {
+	if (sharedController == nil) {
+		sharedController = [[self alloc] init];
 	}
 	
 	return sharedController;
 }
 
-+ (id)allocWithZone:(NSZone*) zone
-{
-	if (sharedController == nil)
-	{
-		sharedController = [super allocWithZone:zone];
-		return sharedController;
-	}
-	
-	return nil;
-}
-
-- (id)copyWithZone:(NSZone*)zone
-{
+- (id)copyWithZone:(NSZone*)zone {
 	return self;
 }
 
 #pragma mark Runloop and initialization methods
 
-- (void)initialize
-{
+- (void)initialize {
 	mfcSetupTrashMonitoring();
 	MFPluginController* pluginController = [MFPluginController sharedController];
 	[pluginController loadPlugins];
@@ -66,43 +51,33 @@ static MFMainController* sharedController = nil;
 	[[MFCommunicationServer sharedServer] startServing];
 }
 
-- (void)applicationDidFinishLaunching:(NSNotification *)aNotification
-{
+- (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
 	[self initialize];
 }
 
 # pragma mark Opening Files
-- (BOOL)application:(NSApplication *)theApplication 
-		   openFile:(NSString *)filePath
-{
+- (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filePath {
 	NSDictionary* fileDict = [NSDictionary dictionaryWithContentsOfFile: filePath];
 	NSString* uuid = [fileDict objectForKey: KMFFSUUIDParameter];
-	if (!uuid)
-	{
+	if (!uuid) {
 		MFLogS(self, @"Asked to open bad file at pah %@", filePath);
 		return NO;
 	}
 	
 	MFServerFS* fs = [[MFFilesystemController sharedController] filesystemWithUUID: uuid];
-	if (!fs)
-	{
+	if (!fs) {
 		MFLogS(self, @"Can not find filesystem references at by file with uuid %@", uuid);
 		return NO;
 	}
 
-	if ([fs isMounted])
-	{
+	if ([fs isMounted]) {
 		[[NSWorkspace sharedWorkspace] selectFile:nil
 						 inFileViewerRootedAtPath:[fs mountPath]];
-	}
-	else if ([fs isUnmounted] || [fs isFailedToMount])
-	{
+	} else if ([fs isUnmounted] || [fs isFailedToMount]) {
 		[fs mount];
 	}
 	
 	return YES;
 }
-
-
 
 @end

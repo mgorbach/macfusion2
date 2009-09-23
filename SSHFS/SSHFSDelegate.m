@@ -72,13 +72,16 @@ static NSString* advancedViewControllerKey = @"sshfsAdvancedView";
 	[arguments addObject: @"-oCheckHostIP=no"];
 	[arguments addObject: @"-oStrictHostKeyChecking=no"];
 	[arguments addObject: @"-oNumberOfPasswordPrompts=1"];
-	[arguments addObject: @"-ofollow_symlinks"];
+	if ([[parameters objectForKey: kSSHFSFollowSymlinksParameter] boolValue] == YES)
+	{
+		[arguments addObject: @"-ofollow_symlinks"];	
+	}
+	
 	[arguments addObject: [NSString stringWithFormat: @"-ovolname=%@", 
 						   [parameters objectForKey: kMFFSVolumeNameParameter]]];
 	[arguments addObject: @"-ologlevel=debug1"];
 	[arguments addObject: @"-f"];
-	[arguments addObject: [NSString stringWithFormat: @"-ovolicon=%@", 
-						   [parameters objectForKey: kMFFSVolumeIconPathParameter]]];
+	[arguments addObject: [NSString stringWithFormat: @"-ovolicon=%@", [parameters objectForKey: kMFFSVolumeIconPathParameter]]];
 	// MFLogS(self, @"Arguments are %@", arguments);
 	return [arguments copy];
 }
@@ -88,8 +91,7 @@ static NSString* advancedViewControllerKey = @"sshfsAdvancedView";
 	NSMutableDictionary* env = [NSMutableDictionary dictionaryWithDictionary: 
 								[[NSProcessInfo processInfo] environment]];
 	[env setObject: [self askpassPath] forKey:@"SSH_ASKPASS"];
-	[env setObject: mfsecTokenForFilesystemWithUUID([params objectForKey: KMFFSUUIDParameter])
-			forKey: @"SSHFS_TOKEN"];
+	[env setObject: mfsecTokenForFilesystemWithUUID([params objectForKey: KMFFSUUIDParameter]) forKey: @"SSHFS_TOKEN"];
 
 	// MFLogS(self, @"Returning environment %@", env);
 	return [env copy];

@@ -64,8 +64,7 @@ NSDictionary* getGenericSecretsForFilesystemAndReturnItem( MFFilesystem* fs, Sec
 		}
 		else
 		{
-			MFLogS( self, @"Failed to parse data in generic entry. data: %@", 
-				   loadedDataDict );
+			// MFLogS( self, @"Failed to parse data in generic entry. data: %@", 				   loadedDataDict );
 			return nil;
 		}
 	}
@@ -104,7 +103,7 @@ NSDictionary* getNetworkSecretsForFilesystemAndReturnItem( MFFilesystem* fs, Sec
 		if (error == noErr)
 		{
 			// MFLogS(self, @"Successfully found internet password for fs %@", fs);
-			NSString* password = [NSString stringWithCString:passwordData length:passwordLength];
+			NSString* password = [NSString stringWithCString:passwordData encoding:NSUTF8StringEncoding];
 			SecKeychainItemFreeContent( NULL,  passwordData );
 			return [NSDictionary dictionaryWithObject: password forKey: kNetFSPasswordParameter];
 		}
@@ -231,7 +230,7 @@ void setNetworkSecretsForFilesystem (NSDictionary* secretsDictionary, MFFilesyst
 			}
 			else
 			{
-				MFLogSO(self, fs, @"Failed to modify network secrets for fs %@. Error %d", fs, error);
+				// MFLogSO(self, fs, @"Failed to modify network secrets for fs %@. Error %d", fs, error);
 			}
 			
 		}
@@ -381,10 +380,10 @@ void setGenericSecretsForFilesystem (NSDictionary* secretsDictionary, MFFilesyst
 
 void mfsecSetSecretsDictionaryForFilesystem( NSDictionary* secretsDictionary, MFFilesystem* fs )
 {
-	MFLogS(self, @"Setting secrets dict %@ for fs %@", secretsDictionary, fs);
+	// MFLogS(self, @"Setting secrets dict %@ for fs %@", secretsDictionary, fs);
 	if (! secretsDictionary )
 	{
-		MFLogSO(self, fs, @"Secrets dictionary nil for fs %@. Northing to store to keychain", fs);
+		MFLogSO(self, fs, @"Secrets dictionary nil for fs %@. Nothing to store to keychain", fs);
 		return;
 	}
 	
@@ -554,7 +553,7 @@ NSString* mfsecUUIDForKeychainItemRef(SecKeychainItemRef itemRef)
 	SecKeychainItemCopyAttributesAndData(itemRef, &attrInfo, NULL, &attrList, NULL, NULL);
 	// MFLogS(self, @"Loaded %d attrs", attrList->count);
 	attr = attrList -> attr;
-	NSString* uuid = [NSString stringWithCString:attr->data length:attr->length];
+	NSString *uuid = [NSString stringWithCString:attr->data encoding:NSUTF8StringEncoding];
 	SecKeychainItemFreeAttributesAndData(attrList, NULL);
 	return uuid;
 }

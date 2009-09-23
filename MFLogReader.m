@@ -82,14 +82,17 @@ static MFLogReader* sharedReader;
 	 messageDict];
 }
 
-- (void)init
+- (id)init
 {
-	logMessages = [NSMutableArray array];
-	[NSThread detachNewThreadSelector: @selector(readEntriesFromASL)
-							 toTarget: self
-						   withObject:nil ];
-	isRunning = NO;
+	if (self = [super init]) {
+		logMessages = [NSMutableArray array];
+		[NSThread detachNewThreadSelector: @selector(readEntriesFromASL)
+								 toTarget: self
+							   withObject:nil ];
+		isRunning = NO;
+	}
 	
+	return self;
 }
 
 - (BOOL)isRunning

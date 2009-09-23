@@ -268,7 +268,7 @@ static MFClient* sharedClient = nil;
 	if (!remoteFS)
 	{
 		NSError* serverError = [server recentError];
-		if (serverError)
+		if (serverError && error)
 			*error = serverError;
 		return nil;
 	}

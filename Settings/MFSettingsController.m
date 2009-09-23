@@ -607,7 +607,7 @@
 }
 
 # pragma mark Misc
-- (void)windowWillClose:(NSWindow*)window
+- (void)windowWillClose:(NSNotification *)note
 {
 	[NSApp terminate:self];
 }

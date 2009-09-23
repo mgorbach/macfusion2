@@ -20,6 +20,6 @@
 	
 }
 
-+ (MFMainController*)sharedController;
++ (MFMainController *)sharedController;
 - (void)initialize;
 @end

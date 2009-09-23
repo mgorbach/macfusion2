@@ -19,8 +19,7 @@
 
 @class MFFilesystemController, MFPluginController;
 
-@interface MFCommunicationServer : NSObject <MFServerProtocol>
-{
+@interface MFCommunicationServer : NSObject <MFServerProtocol> {
 	NSError* recentError;
 	NSMutableArray* clients;
 }

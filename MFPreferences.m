@@ -51,19 +51,23 @@ void prefsFSEventCallBack(ConstFSEventStreamRef streamRef,
 	[[MFPreferences sharedPreferences] readPrefsFromDisk];
 }
 
-- (void)init
+- (id)init
 {
-	NSString* fullPrefsFilePath = [PREFS_FILE_PATH stringByExpandingTildeInPath];
-	NSDictionary* readFromDisk = [NSDictionary dictionaryWithContentsOfFile: fullPrefsFilePath];
-	if (!readFromDisk)
-		firstTimeRun = YES;
-	prefsDict = readFromDisk ? [readFromDisk mutableCopy] : [NSMutableDictionary dictionary];
-	FSEventStreamRef eventStream = FSEventStreamCreate(NULL, prefsFSEventCallBack, NULL, 
-													   (CFArrayRef)[NSArray arrayWithObject: [fullPrefsFilePath stringByDeletingLastPathComponent]],
-													   kFSEventStreamEventIdSinceNow, 0, kFSEventStreamCreateFlagUseCFTypes);
-	FSEventStreamScheduleWithRunLoop(eventStream, [[NSRunLoop currentRunLoop] getCFRunLoop],
-									 kCFRunLoopDefaultMode);
-	FSEventStreamStart(eventStream);
+	if (self = [super init]) {
+		NSString* fullPrefsFilePath = [PREFS_FILE_PATH stringByExpandingTildeInPath];
+		NSDictionary* readFromDisk = [NSDictionary dictionaryWithContentsOfFile: fullPrefsFilePath];
+		if (!readFromDisk)
+			firstTimeRun = YES;
+		prefsDict = readFromDisk ? [readFromDisk mutableCopy] : [NSMutableDictionary dictionary];
+		FSEventStreamRef eventStream = FSEventStreamCreate(NULL, prefsFSEventCallBack, NULL, 
+														   (CFArrayRef)[NSArray arrayWithObject: [fullPrefsFilePath stringByDeletingLastPathComponent]],
+														   kFSEventStreamEventIdSinceNow, 0, kFSEventStreamCreateFlagUseCFTypes);
+		FSEventStreamScheduleWithRunLoop(eventStream, [[NSRunLoop currentRunLoop] getCFRunLoop],
+										 kCFRunLoopDefaultMode);
+		FSEventStreamStart(eventStream);
+	}
+	
+	return self;
 }
 
 - (BOOL)firstTimeRun

@@ -148,13 +148,16 @@ static MFLogging* sharedLogging = nil;
 	return nil;
 }
 
-- (void)init
+- (id)init
 {
-	fd = -1;
-	stdOut = YES;
-	formatter = [NSDateFormatter new];
-	[formatter  setDateStyle:NSDateFormatterShortStyle];
-	[formatter setTimeStyle: NSDateFormatterShortStyle];
+	if (self = [super init]) {
+		fd = -1;
+		stdOut = YES;
+		formatter = [NSDateFormatter new];
+		[formatter setDateStyle:NSDateFormatterShortStyle];
+		[formatter setTimeStyle: NSDateFormatterShortStyle];
+	}
+	return self;
 }
 
 - (void)setupLogFile
@@ -244,7 +247,7 @@ NSString* headerStringForASLMessageDict(NSDictionary* messageDict)
 		asl_set(m, ASL_KEY_UUID, [[(MFFilesystem*)object uuid] UTF8String]);
 	asl_set(m, ASL_KEY_SUBSYSTEM, [[[sender class] description] UTF8String]);
 	asl_set(m, ASL_KEY_MSG, [message UTF8String]);
-	asl_log(aslClient, m, ASL_LEVEL_ERR, [message UTF8String]);
+	asl_log(aslClient, m, ASL_LEVEL_ERR, "%s", [message UTF8String]);
 	
 	// Send to other macfusion system processes over DO
 	NSDictionary* messageDict = dictFromASLMessage(m);
@@ -256,7 +259,7 @@ NSString* headerStringForASLMessageDict(NSDictionary* messageDict)
 							 message];
 	if (stdOut)
 	{
-		printf([printstring UTF8String]);
+		printf("%s", [printstring UTF8String]);
 	}
 	
 	

@@ -93,6 +93,9 @@ static CGColorRef CGColorCreateFromNSColor (CGColorSpaceRef  colorSpace, NSColor
 	[coloringFilter setValue: intensity forKey:@"inputIntensity"];
 	[coloringFilter setValue: [CIColor colorWithCGColor: cgColor] forKey: @"inputColor"];
 	CIImage* out  = [coloringFilter valueForKey:@"outputImage"];
+	
+	CGColorRelease(cgColor);
+	CGColorSpaceRelease(colorSpace);
 	return out;
 }
 

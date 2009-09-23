@@ -286,6 +286,13 @@ static CGColorRef CGColorCreateFromNSColor (CGColorSpaceRef  colorSpace, NSColor
 	NSBitmapImageRep* newImageRep = [[NSBitmapImageRep alloc] initWithCGImage: newCGImage ];
 	NSImage* newImage = [[NSImage alloc] initWithSize: oldSize];
 	[newImage addRepresentation: newImageRep];
+	
+	CGColorRelease( tintColor );
+	CGImageRelease( cgImageOriginalRep );
+	CGImageRelease( newCGImage );
+	CGContextRelease( context );
+	CFRelease( imageSource );
+	
 	return newImage;
 }
 

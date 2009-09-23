@@ -128,9 +128,10 @@
 	return YES;
 }
 
-- (void)resignFirstResponder
+- (BOOL)resignFirstResponder
 {
 	[self setNeedsDisplay: YES];
+	return YES;
 }
 
 - (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)item
