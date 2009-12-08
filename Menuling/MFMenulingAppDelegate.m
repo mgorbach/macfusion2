@@ -21,6 +21,7 @@
 #import "MFQuickMountController.h"
 #import "MFConstants.h"
 #import "MFError.h"
+#import "MFCore.h"
 #import <Carbon/Carbon.h>
 
 #define MENU_ICON_SIZE 24
@@ -230,8 +231,7 @@ OSStatus MyHotKeyHandler(EventHandlerCallRef nextHandler,EventRef theEvent,
 
 - (void)openConfiguration:(id)sender
 {
-	[[NSWorkspace sharedWorkspace] launchApplication: 
-	 (NSString*)mfcMainBundlePath()];
+	[[NSWorkspace sharedWorkspace] launchApplication: mfcMainBundlePath()];
 }
 
 - (void)applicationWillTerminate:(NSNotification*)note

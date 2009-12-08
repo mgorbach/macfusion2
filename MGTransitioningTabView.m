@@ -129,7 +129,7 @@ static void ClearBitmapImageRep(NSBitmapImageRep *bitmap) {
 // Override NSAnimation's -setCurrentProgress: method, and use it as our point to hook in and advance our Core Image transition effect to the next time slice.
 - (void)setCurrentProgress:(NSAnimationProgress)progress {
     [super setCurrentProgress:progress];
-    [[self delegate] display];
+//    [[self delegate] set];
 }
 
 @end

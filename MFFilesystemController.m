@@ -28,11 +28,9 @@
 
 @interface MFFilesystemController ()
 - (void)setUpVolumeMonitoring;
-- (void)storeFilesystem:(MFServerFS *)fs withUUID:(NSString*)uuid;
 - (void)removeFilesystem:(MFServerFS *)fs;
 - (void)loadRecentFilesystems;
 - (void)recordRecentFilesystem:(MFServerFS *)fs;
-- (NSString*)getUUIDXattrAtPath:(NSString *)path;
 - (void)addMountedPath:(NSString *)path;
 - (void)removeMountedPath:(NSString *)path;
 - (void)storeFilesystem:(MFServerFS *)fs;
@@ -60,7 +58,7 @@ static MFFilesystemController* sharedController = nil;
 }
 
 - (id) init {
-	if (super = [super init]) {
+	if (self = [super init]) {
 		filesystemsDictionary = [NSMutableDictionary dictionary];
 		filesystems = [NSMutableArray array];
 		mountedPaths = [NSMutableArray array];

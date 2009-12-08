@@ -23,7 +23,7 @@ static CGColorRef CGColorCreateFromNSColor (CGColorSpaceRef  colorSpace, NSColor
 	NSColor *deviceColor = [color colorUsingColorSpaceName:  
 							NSDeviceRGBColorSpace];
 	
-	float components[4];
+	CGFloat components[4];
 	[deviceColor getRed: &components[0] green: &components[1] blue:  
 	 &components[2] alpha: &components[3]];
 	

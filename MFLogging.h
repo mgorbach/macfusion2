@@ -51,10 +51,7 @@ void MFLogSO(id sender, id object, NSString* format, ...);
 }
 
 + (MFLogging*)sharedLogging;
-- (void)logMessage:(NSString*)message 
-			ofType:(NSInteger)type 
-			object:(id)object 
-			sender:(id)sender;
+- (void)logMessage:(NSString*)message ofType:(NSInteger)type object:(id)object sender:(id)sender;
 - (void)setPrintToStandardOut:(BOOL)b;
 
 NSDictionary* dictFromASLMessage(aslmsg m);

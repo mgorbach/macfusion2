@@ -21,14 +21,14 @@
 #import "MFFilesystem.h"
 #import "MFClientFS.h"
 
-NSDictionary* mfsecGetSecretsDictionaryForFilesystem( MFFilesystem* fs );
+NSDictionary *mfsecGetSecretsDictionaryForFilesystem( MFFilesystem *fs );
 
-MFClientFS* mfsecGetFilesystemForToken( NSString* token );
+MFClientFS *mfsecGetFilesystemForToken( NSString *token );
 
-NSString* mfsecQueryForFSNetworkPassword( MFClientFS* fs );
+NSString *mfsecQueryForFSNetworkPassword( MFClientFS *fs );
 
-void mfsecSetSecretsDictionaryForFilesystem( NSDictionary* secretsDictionary, MFFilesystem* fs );
+void mfsecSetSecretsDictionaryForFilesystem( NSDictionary *secretsDictionary, MFFilesystem *fs );
 
-NSString* mfsecTokenForFilesystemWithUUID (NSString* uuid );
+NSString* mfsecTokenForFilesystemWithUUID ( NSString *uuid );
 
-NSString* mfsecUUIDForKeychainItemRef(SecKeychainItemRef itemRef);
+NSString *mfsecUUIDForKeychainItemRef( SecKeychainItemRef itemRef );

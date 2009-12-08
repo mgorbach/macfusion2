@@ -540,7 +540,7 @@ NSString* mfsecQueryForFSNetworkPassword( MFClientFS* fs )
 	return password;
 }
 
-NSString* mfsecUUIDForKeychainItemRef(SecKeychainItemRef itemRef)
+NSString *mfsecUUIDForKeychainItemRef(SecKeychainItemRef itemRef)
 {
 	SecKeychainAttributeInfo attrInfo;
 	UInt32 tag = kSecAccountItemAttr;
