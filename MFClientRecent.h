@@ -18,12 +18,12 @@
 
 
 @interface MFClientRecent : NSObject {
-	NSDictionary* parameters;
+	NSDictionary *parameters;
 }
 
-- (id)initWithParameterDictionary:(NSDictionary*)params;
+- (id)initWithParameterDictionary:(NSDictionary *)params;
 
-@property(readonly, retain) NSDictionary* parameterDictionary;
-@property(readonly) NSString* descriptionString;
+@property(readonly, retain) NSDictionary *parameterDictionary;
+@property(readonly) NSString *descriptionString;
 
 @end

@@ -20,16 +20,16 @@
 
 @protocol MFClientProtocol <NSObject>
 // Updates
-- (void)noteStatusChangedForFSWithUUID:(NSString*)uuid;
-- (void)noteParametersChangedForFSWithUUID:(NSString*)uuid;
+- (void)noteStatusChangedForFSWithUUID:(NSString *)uuid;
+- (void)noteParametersChangedForFSWithUUID:(NSString *)uuid;
 
 // Filesystems Array
-- (void)noteFilesystemAddedWithUUID:(NSString*)uuid;
-- (void)noteFilesystemRemovedWithUUID:(NSString*)uuid;
+- (void)noteFilesystemAddedWithUUID:(NSString *)uuid;
+- (void)noteFilesystemRemovedWithUUID:(NSString *)uuid;
 
 // Recents
-- (void)noteRecentAdded:(NSDictionary*)recentParameters;
+- (void)noteRecentAdded:(NSDictionary *)recentParameters;
 
 // Logging
-- (void)recordASLMessageDict:(NSDictionary*)messageDict;
+- (void)recordASLMessageDict:(NSDictionary *)messageDict;
 @end

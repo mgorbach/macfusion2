@@ -18,43 +18,37 @@
 @protocol MFFSDelegateProtocol <NSObject>
 
 // Task arguments
-- (NSArray*)taskArgumentsForParameters:(NSDictionary*)parameters;
+- (NSArray *)taskArgumentsForParameters:(NSDictionary *)parameters;
 
 // Parameters
-- (NSArray*)parameterList;
-- (NSDictionary*)defaultParameterDictionary;
+- (NSArray *)parameterList;
+- (NSDictionary *)defaultParameterDictionary;
 
-- (id)impliedValueParameterNamed:(NSString*)name 
-				 otherParameters:(NSDictionary*)parameters;
-- (NSString*)descriptionForParameters:(NSDictionary*)parameters;
+- (id)impliedValueParameterNamed:(NSString*)name otherParameters:(NSDictionary*)parameters;
+- (NSString *)descriptionForParameters:(NSDictionary *)parameters;
 
 // Validation
-- (BOOL)validateValue:(id)value 
-	 forParameterName:(NSString*)paramName 
-				error:(NSError**)error;
+- (BOOL)validateValue:(id)value forParameterName:(NSString*)paramName error:(NSError**)error;
 
-- (BOOL)validateParameters:(NSDictionary*)parameters
-					 error:(NSError**)error;
+- (BOOL)validateParameters:(NSDictionary *)parameters error:(NSError **)error;
 
 
 // Plugin Wide Stuff
-- (NSString*)executablePath;
-- (NSArray*)urlSchemesHandled;
+- (NSString *)executablePath;
+- (NSArray *)urlSchemesHandled;
 
 // UI
-- (NSArray*)viewControllerKeys;
-- (NSViewController*)viewControllerForKey:(NSString*)key;
+- (NSArray *)viewControllerKeys;
+- (NSViewController *)viewControllerForKey:(NSString *)key;
  
 @optional
-- (NSDictionary*)taskEnvironmentForParameters:(NSDictionary*)parameters;
-- (NSDictionary*)parameterDictionaryForURL:(NSURL*)url
-									 error:(NSError**)error;
-- (NSError*)errorForParameters:(NSDictionary*)parameters 
-						output:(NSString*)output;
+- (NSDictionary *)taskEnvironmentForParameters:(NSDictionary *)parameters;
+- (NSDictionary *)parameterDictionaryForURL:(NSURL *)url error:(NSError**)error;
+- (NSError *)errorForParameters:(NSDictionary *)parameters output:(NSString*)output;
 
 // Security
-- (NSArray*)secretsList;
-- (NSArray*)secretsClientsList;
+- (NSArray *)secretsList;
+- (NSArray *)secretsClientsList;
 
 // Subclassing
 - (Class)subclassForClass:(Class)superclass;

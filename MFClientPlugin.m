@@ -22,16 +22,13 @@
 @end
 
 @implementation MFClientPlugin
-- (id)initWithRemotePlugin:(id)remote
-{
+- (id)initWithRemotePlugin:(id)remote {
 	self = [super init];
-	if (self != nil)
-	{
+	if (self) {
 		remotePlugin = remote;
 		[self fillInitialData];
 		delegate = [self setupDelegate];
-		if(!delegate)
-		{
+		if (!delegate) {
 			return nil;
 		}
 	}
@@ -39,10 +36,8 @@
 	return self;
 }
 
-- (void)fillInitialData
-{
+- (void)fillInitialData {
 	bundle = [NSBundle bundleWithPath: [remotePlugin bundlePath]];
 }
-
 
 @end

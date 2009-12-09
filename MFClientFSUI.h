@@ -21,14 +21,14 @@
 #import "MFClientFS.h"
 
 // UI Keys
-extern NSString* kMFUIMainViewKey;
-extern NSString* kMFUIAdvancedViewKey;
-extern NSString* kMFUIMacfusionAdvancedViewKey;
+extern NSString *kMFUIMainViewKey;
+extern NSString *kMFUIAdvancedViewKey;
+extern NSString *kMFUIMacfusionAdvancedViewKey;
 
 @interface MFClientFS (MFClientFSUI)
 
-- (NSArray*)configurationViewControllers;
-- (NSView*)editingView;
-- (NSView*)addTopViewToView:(NSView*)originalView;
+- (NSArray *)configurationViewControllers;
+- (NSView *)editingView;
+- (NSView *)addTopViewToView:(NSView *)originalView;
 
 @end

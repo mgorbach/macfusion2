@@ -18,77 +18,62 @@
 #import "MFConstants.h"
 
 @interface MFPlugin(PrivateAPI)
-
 @end
 
 @implementation MFPlugin
 
-- (id) init
-{
+- (id) init {
 	self = [super init];
 	if (self != nil) {
 	}
+	
 	return self;
 }
 
 
-- (NSString*)nibName
-{
+- (NSString *)nibName {
 	return [self.bundle objectForInfoDictionaryKey:@"MFPluginNibName"];
 }
 
-- (NSString*)ID
-{
+- (NSString *)ID {
 	return [[self bundle] bundleIdentifier];
 }
 
-- (NSString*)bundlePath
-{
+- (NSString *)bundlePath {
 	return [bundle bundlePath];
 }
 
-- (NSString*)shortName
-{
-	return [bundle objectForInfoDictionaryKey: kMFPluginShortNameKey];
+- (NSString *)shortName {
+	return [bundle objectForInfoDictionaryKey:kMFPluginShortNameKey];
 }
 
-- (NSString*)longName
-{
-	return [bundle objectForInfoDictionaryKey: kMFPluginLongNameKey];
+- (NSString *)longName {
+	return [bundle objectForInfoDictionaryKey:kMFPluginLongNameKey];
 }
 
-- (NSString*)urlSchemesString
-{
-	NSArray* urlSchemes = [delegate urlSchemesHandled];
-	if ( !urlSchemes || [urlSchemes count] == 0 )
+- (NSString *)urlSchemesString {
+	NSArray *urlSchemes = [delegate urlSchemesHandled];
+	if (!urlSchemes || [urlSchemes count] == 0) {
 		return @"None";
-	else
+	} else {
 		return [urlSchemes componentsJoinedByString: @", "];
+	}
 }
 
-- (id <MFFSDelegateProtocol>)setupDelegate
-{
+- (id <MFFSDelegateProtocol>)setupDelegate {
 	id thisDelegate = nil;
-	NSString* fsDelegateClassName = [bundle objectForInfoDictionaryKey:@"MFFSDelegateClassName"];
-	if (fsDelegateClassName == nil)
-	{
+	NSString *fsDelegateClassName = [bundle objectForInfoDictionaryKey:@"MFFSDelegateClassName"];
+	if (fsDelegateClassName == nil) {
 		MFLogS(self, @"Failed to create delegate for plugin at path %@. No delegate class name specified.",
 			   [bundle bundlePath]);
-	}
-	else 
-	{
+	} else {
 		BOOL success = [bundle load];
-		if (success)
-		{
+		if (success) {
 			Class FSDelegateClass = NSClassFromString(fsDelegateClassName);
 			thisDelegate = [[FSDelegateClass alloc] init];
 			
-			if (!thisDelegate)
-			{
-				
-				MFLogS(self, @"Failed to create delegate for plugin at path %@. Specified delegate class could not \
-					   be instantiated");
-
+			if (!thisDelegate) {
+				MFLogS(self, @"Failed to create delegate for plugin at path %@. Specified delegate class could not be instantiated");
 			}
 		}
 	}
@@ -96,53 +81,41 @@
 	return thisDelegate;
 }
 
-- (id <MFFSDelegateProtocol>)delegate
-{
+- (id <MFFSDelegateProtocol>)delegate {
 	return delegate;
 }
 
 # pragma mark Subclassing API
-- (NSString*)subclassNameForClass:(Class)superclass
-{
-	if ([delegate respondsToSelector: @selector(subclassForClass:)] )
-	{
+- (NSString *)subclassNameForClass:(Class)superclass {
+	if ([delegate respondsToSelector: @selector(subclassForClass:)]) {
 		Class subclass = [delegate subclassForClass: superclass];
-		if (subclass == nil)
-		{
-//			MFLogS(self, @"Failed to get plugins requested subclass for superclass %@", NSStringFromClass(superclass));
+		if (!subclass) {
 			return NSStringFromClass(superclass);
 		}
-		if (![subclass isSubclassOfClass: superclass])
-		{
+		if (![subclass isSubclassOfClass: superclass]) {
 			MFLogS(self, @"Plugins requested subclass %@ for superclass %@. Is not a subclass of the superclass",
 				   NSStringFromClass(subclass), NSStringFromClass(superclass));
 			return NSStringFromClass(superclass);
 		}
 		
-		return NSStringFromClass( subclass );
-	}
-	else
-	{
-//		MFLogS(self, @"Delegate %@ doesn't respond to subclassing selector.", delegate);
-		return NSStringFromClass( superclass );
+		return NSStringFromClass(subclass);
+	} else {
+		return NSStringFromClass(superclass);
 	}
 }
 
-- (Class)subclassForClass:(Class)superclass
-{
-	return NSClassFromString( [self subclassNameForClass: superclass] );
+- (Class)subclassForClass:(Class)superclass {
+	return NSClassFromString( [self subclassNameForClass:superclass] );
 }
 
-- (NSString*)subclassNameForClassName:(NSString*)superClassName
-{
-	Class superClass = NSClassFromString( superClassName );
-	if (!superClass)
-	{
+- (NSString *)subclassNameForClassName:(NSString *)superClassName {
+	Class superClass = NSClassFromString(superClassName);
+	if (!superClass) {
 		MFLogS(self, @"Bad superclass given in subclassNameForClassName %@", superClassName);
 		return nil;
 	}
 	
-	return [self subclassNameForClass: superClass];
+	return [self subclassNameForClass:superClass];
 }
 
 @synthesize bundle;

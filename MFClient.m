@@ -27,27 +27,26 @@
 #define ORDERING_FILE_PATH @"~/Library/Application Support/Macfusion/Ordering.plist"
 
 @interface MFClient(PrivateAPI)
-- (void)storeFilesystem:(MFClientFS*)fs;
-- (void)storePlugin:(MFClientPlugin*)plugin;
-- (void)removeFilesystem:(MFClientFS*)fs;
+- (void)storeFilesystem:(MFClientFS *)fs;
+- (void)storePlugin:(MFClientPlugin *)plugin;
+- (void)removeFilesystem:(MFClientFS *)fs;
 - (void)loadOrdering;
 - (void)setupKeychainMonitoring;
 - (void)writeOrdering;
 - (void)initializeIvars;
-// Security monitoring
 
-@property(readwrite, retain) NSMutableArray* persistentFilesystems;
-@property(readwrite, retain) NSMutableArray* temporaryFilesystems;
-@property(readwrite, retain) NSMutableArray* plugins;
-@property(readwrite, retain) NSMutableArray* recents;
+@property(readwrite, retain) NSMutableArray *persistentFilesystems;
+@property(readwrite, retain) NSMutableArray *temporaryFilesystems;
+@property(readwrite, retain) NSMutableArray *plugins;
+@property(readwrite, retain) NSMutableArray *recents;
 @end
 
 @implementation MFClient
 
-static MFClient* sharedClient = nil;
+static MFClient *sharedClient = nil;
 
 #pragma mark Singleton methods
-+ (MFClient*)sharedClient {
++ (MFClient *)sharedClient {
 	if (sharedClient == nil) {
 		[[self alloc] init];
 	}
@@ -55,7 +54,7 @@ static MFClient* sharedClient = nil;
 	return sharedClient;
 }
 
-+ (NSSet*)keyPathsForValuesAffectingValueForKey:(NSString *)key {
++ (NSSet *)keyPathsForValuesAffectingValueForKey:(NSString *)key {
 	if ([key isEqualToString:@"filesystems"] || [key isEqualToString:@"mountedFilesystems"]) {
 		return [NSSet setWithObjects:@"persistentFilesystems", @"temporaryFilesystems", nil];
 	} else {
@@ -74,18 +73,17 @@ static MFClient* sharedClient = nil;
 }
 
 - (void)registerForGeneralNotifications {
-	NSDistributedNotificationCenter* dnc = [NSDistributedNotificationCenter defaultCenter];
+	NSDistributedNotificationCenter *dnc = [NSDistributedNotificationCenter defaultCenter];
 	[dnc addObserver:self selector:@selector(handleRecentsUpdatedNotification:) name:kMFRecentsUpdatedNotification object:kMFDNCObject];
 	
-	NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
+	NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
 	[nc addObserver:self selector:@selector(handleApplicationTerminatingNotification:) name:NSApplicationWillTerminateNotification object:nil];
-
 }
 
 - (id)init {
 	self = [super init];
 	if (self != nil) {
-		[[MFLogging sharedLogging] setDelegate: self];
+		[[MFLogging sharedLogging] setDelegate:self];
 		[self registerForGeneralNotifications];
 		[self initializeIvars];
 		[self setupKeychainMonitoring];
@@ -121,8 +119,7 @@ static MFClient* sharedClient = nil;
 		MFClientPlugin *plugin = [[PluginClientClass alloc] initWithRemotePlugin:remotePlugin];
 		if (plugin) {
 			[self storePlugin: plugin];
-		}
-		else {
+		} else {
 			MFLogS(self, @"Could not init client plugin from server plugin %@", remotePlugin);
 		}
 	}
@@ -130,7 +127,7 @@ static MFClient* sharedClient = nil;
 	// Fill filesystems
 	filesystemsDictionary = [NSMutableDictionary dictionaryWithCapacity:10];
 	for(id remoteFS in remoteFilesystems) {
-		Class FSClientClass = NSClassFromString( [[remoteFS plugin] subclassNameForClassName: NSStringFromClass([MFClientFS class])]);
+		Class FSClientClass = NSClassFromString([[remoteFS plugin] subclassNameForClassName:NSStringFromClass([MFClientFS class])]);
 		if (!FSClientClass) {
 			MFLogS(self, @"Problem getting client fs class for fs %@", remoteFS);
 			FSClientClass = [MFClientFS class];
@@ -195,7 +192,7 @@ static MFClient* sharedClient = nil;
 	[fs noteParametersChanged];
 }
 
-- (void)noteFilesystemAddedWithUUID:(NSString*)uuid {
+- (void)noteFilesystemAddedWithUUID:(NSString *)uuid {
 	MFLogS(self, @"Note fs added with uuid %@", uuid);
 	id remoteFilesystem = [server filesystemWithUUID: uuid];
 	if (![self filesystemWithUUID:uuid]) {
@@ -206,13 +203,13 @@ static MFClient* sharedClient = nil;
 	}
 }
 
-- (void)noteFilesystemRemovedWithUUID:(NSString*)uuid {
+- (void)noteFilesystemRemovedWithUUID:(NSString *)uuid {
 	MFLogS(self, @"Note fs removed with uuid %@", uuid);
-	MFClientFS* fs = [self filesystemWithUUID: uuid];
+	MFClientFS *fs = [self filesystemWithUUID: uuid];
 	[self removeFilesystem: fs];
 }
 
-- (void)noteRecentAdded:(NSDictionary*)recentParameters {
+- (void)noteRecentAdded:(NSDictionary *)recentParameters {
 	[[self mutableArrayValueForKey:@"recents"] addObject:[[MFClientRecent alloc] initWithParameterDictionary: recentParameters ]];
 	
 	if ([[self recents] count] > 10) {
@@ -221,13 +218,13 @@ static MFClient* sharedClient = nil;
 }
 
 #pragma mark Action methods
-- (MFClientFS*)newFilesystemWithPlugin:(MFClientPlugin*)plugin {
+- (MFClientFS *)newFilesystemWithPlugin:(MFClientPlugin *)plugin {
 	NSAssert(plugin, @"MFClient asked to make new filesystem with nil plugin");
 	id newRemoteFS = [server newFilesystemWithPluginName: plugin.ID];
 	return [self filesystemWithUUID: [newRemoteFS uuid]];
 }
 
-- (MFClientFS*)quickMountFilesystemWithURL:(NSURL*)url error:(NSError**)error {
+- (MFClientFS *)quickMountFilesystemWithURL:(NSURL *)url error:(NSError **)error {
 	id remoteFS = [server quickMountWithURL:url];
 	if (!remoteFS) {
 		NSError *serverError = [server recentError];
@@ -261,13 +258,13 @@ static MFClient* sharedClient = nil;
 #pragma mark Recents
 
 
-- (MFClientFS*)mountRecent:(MFClientRecent*)recent error:(NSError**)error {
+- (MFClientFS *)mountRecent:(MFClientRecent *)recent error:(NSError **)error {
 	NSURL* url = [NSURL URLWithString: recent.descriptionString];
 	if (url) {
-		MFClientFS* fs = [self quickMountFilesystemWithURL: url
-									error: error ];
-		if (fs)
+		MFClientFS* fs = [self quickMountFilesystemWithURL:url error:error];
+		if (fs) {
 			return fs;
+		}
 	}
 	
 	return nil;
@@ -328,7 +325,7 @@ OSStatus myKeychainCallback ( SecKeychainEvent keychainEvent,
 	NSAssert(fs && fs.uuid, @"FS or fs.uuid is nil when storing fs in MFClient");
 	[filesystemsDictionary setObject: fs forKey: fs.uuid];
 	if ([fs isPersistent] && [persistentFilesystems indexOfObject: fs] == NSNotFound) {
-		[[self mutableArrayValueForKey:@"persistentFilesystems"] addObject: fs];
+		[[self mutableArrayValueForKey:@"persistentFilesystems"] addObject:fs];
 	} else if ( (![fs isPersistent]) && [temporaryFilesystems indexOfObject: fs] == NSNotFound) {
 		[[self mutableArrayValueForKey:@"temporaryFilesystems"] addObject: fs];
 	}
@@ -406,13 +403,13 @@ OSStatus myKeychainCallback ( SecKeychainEvent keychainEvent,
 }
 
 - (void)loadOrdering {
-	NSString* fullPath = [ORDERING_FILE_PATH stringByExpandingTildeInPath];
-	NSArray* uuidOrdering = [NSArray arrayWithContentsOfFile: fullPath];
+	NSString *fullPath = [ORDERING_FILE_PATH stringByExpandingTildeInPath];
+	NSArray *uuidOrdering = [NSArray arrayWithContentsOfFile:fullPath];
 	if (uuidOrdering) {
-		for(NSString* uuid in uuidOrdering)
-			if ([self filesystemWithUUID: uuid])
-				[[self filesystemWithUUID: uuid] setDisplayOrder: 
-				 [uuidOrdering indexOfObject: uuid]];
+		for(NSString *uuid in uuidOrdering)
+			if ([self filesystemWithUUID: uuid]) {
+				[[self filesystemWithUUID: uuid] setDisplayOrder:[uuidOrdering indexOfObject: uuid]];	
+			}
 	}
 	
 	[self willChangeValueForKey: @"persistentFilesystems"];
@@ -424,20 +421,19 @@ OSStatus myKeychainCallback ( SecKeychainEvent keychainEvent,
 	[server unregisterClient: self];
 }
 
-- (NSString*)createMountIconForFilesystem:(MFClientFS *)fs atPath:(NSURL*)dirPathURL {
+- (NSString *)createMountIconForFilesystem:(MFClientFS *)fs atPath:(NSURL *)dirPathURL {
 	if (![fs isPersistent]) {
 		// We shouldn't be creating a mount icon for a non-persistent fs
 		return nil;	
 	}
 	
-	NSString* dirPath = [dirPathURL path];
-	NSString* filename = [NSString stringWithFormat: @"%@.fusion", [fs name]];
-	NSString* fullPath = [dirPath stringByAppendingPathComponent: filename];
-	NSDictionary* dict = [NSDictionary dictionaryWithObjectsAndKeys:
-						  [fs uuid], KMFFSUUIDParameter, nil];
+	NSString *dirPath = [dirPathURL path];
+	NSString *filename = [NSString stringWithFormat: @"%@.fusion", [fs name]];
+	NSString *fullPath = [dirPath stringByAppendingPathComponent: filename];
+	NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:[fs uuid], KMFFSUUIDParameter, nil];
 	[dict writeToFile: fullPath atomically: YES];
-	NSImage* iconImage = [NSImage imageNamed:@"macfusionIcon.icns"];
-	[[NSWorkspace sharedWorkspace] setIcon: iconImage forFile:fullPath options:0];
+	NSImage *iconImage = [NSImage imageNamed:@"macfusionIcon.icns"];
+	[[NSWorkspace sharedWorkspace] setIcon:iconImage forFile:fullPath options:0];
 	return filename;
 }
 

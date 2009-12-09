@@ -18,23 +18,19 @@
 #import "MFConstants.h"
 
 @implementation MFClientRecent
-- (id)initWithParameterDictionary:(NSDictionary*)params
-{
-	if (self = [super init])
-	{
+- (id)initWithParameterDictionary:(NSDictionary *)params {
+	if (self = [super init]) {
 		parameters = params;
 	}
 	
 	return self;
 }
 
-- (NSDictionary*)parameterDictionary
-{
+- (NSDictionary *)parameterDictionary {
 	return parameters;
 }
 
-- (NSString*)descriptionString
-{
+- (NSString *)descriptionString {
 	return [parameters objectForKey: kMFFSDescriptionParameter ];
 }
 

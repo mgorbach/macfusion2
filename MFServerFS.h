@@ -21,22 +21,20 @@
 #import "MFServerFSProtocol.h"
 
 @interface MFServerFS : MFFilesystem <MFServerFSProtocol> {
-	NSTask* task;
-	MFServerPlugin* plugin;
-	BOOL pauseTimeout;
-	NSTimer* timer;
+	NSTask *_task;
+	MFServerPlugin *_plugin;
+	BOOL _pauseTimeout;
+	NSTimer *_timer;
 }
 
 
 // Server-specific initialization
-+ (MFServerFS*)loadFilesystemAtPath:(NSString*)path 
++ (MFServerFS *)loadFilesystemAtPath:(NSString*)path 
 							  error:(NSError**)error;
 
-+ (MFServerFS*)newFilesystemWithPlugin:(MFServerPlugin*)plugin;
++ (MFServerFS *)newFilesystemWithPlugin:(MFServerPlugin*)plugin;
 
-+ (MFServerFS*)filesystemFromURL:(NSURL*)url
-						  plugin:(MFServerPlugin*)p
-						   error:(NSError**)error;
++ (MFServerFS *)filesystemFromURL:(NSURL*)url plugin:(MFServerPlugin*)p error:(NSError **)error;
 
 
 // Notification handling
@@ -48,6 +46,6 @@
 // validate
 - (BOOL)validateParametersWithError:(NSError**)error;
 
-@property(retain) MFServerPlugin* plugin;
+@property(retain) MFServerPlugin *plugin;
 @property(assign, readwrite) BOOL pauseTimeout;
 @end

@@ -20,14 +20,14 @@
 #import <Cocoa/Cocoa.h>
 
 @interface MFLogReader : NSObject {
-	NSMutableArray* logMessages;
+	NSMutableArray *logMessages;
 	BOOL isRunning;
 }
 
-+ (MFLogReader*)sharedReader;
-- (void)recordASLMessageDict:(NSDictionary*)messageDict;
++ (MFLogReader *)sharedReader;
+- (void)recordASLMessageDict:(NSDictionary *)messageDict;
 - (void)start;
 - (BOOL)isRunning;
 
-@property(readonly) NSArray* logMessages;
+@property(readonly) NSArray *logMessages;
 @end

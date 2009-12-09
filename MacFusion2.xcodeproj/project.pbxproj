@@ -41,7 +41,6 @@
 		D402372E0D7E029E000B9B64 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D40235AD0D7E0176000B9B64 /* Carbon.framework */; };
 		D403632F0E0780BF0048BB63 /* MFEditingController.h in Headers */ = {isa = PBXBuildFile; fileRef = D403632D0E0780BF0048BB63 /* MFEditingController.h */; };
 		D40363300E0780BF0048BB63 /* MFEditingController.m in Sources */ = {isa = PBXBuildFile; fileRef = D403632E0E0780BF0048BB63 /* MFEditingController.m */; };
-		D403BC8F0D64C3D00049201D /* MFServerFSProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = D403BC8D0D64C3D00049201D /* MFServerFSProtocol.h */; };
 		D403BD6E0D650D630049201D /* MFError.h in Headers */ = {isa = PBXBuildFile; fileRef = D403BD6C0D650D630049201D /* MFError.h */; };
 		D403BD6F0D650D630049201D /* MFError.m in Sources */ = {isa = PBXBuildFile; fileRef = D403BD6D0D650D630049201D /* MFError.m */; };
 		D40B04800D8C5EC30005F448 /* MGActionButton.m in Sources */ = {isa = PBXBuildFile; fileRef = D40B047F0D8C5EC30005F448 /* MGActionButton.m */; };
@@ -356,7 +355,6 @@
 		D40235AD0D7E0176000B9B64 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
 		D403632D0E0780BF0048BB63 /* MFEditingController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFEditingController.h; sourceTree = "<group>"; };
 		D403632E0E0780BF0048BB63 /* MFEditingController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MFEditingController.m; sourceTree = "<group>"; };
-		D403BC8D0D64C3D00049201D /* MFServerFSProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFServerFSProtocol.h; sourceTree = "<group>"; };
 		D403BD6C0D650D630049201D /* MFError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFError.h; sourceTree = "<group>"; };
 		D403BD6D0D650D630049201D /* MFError.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MFError.m; sourceTree = "<group>"; };
 		D40B047E0D8C5EC30005F448 /* MGActionButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MGActionButton.h; sourceTree = "<group>"; };
@@ -751,7 +749,6 @@
 			children = (
 				D439D5940D09E4390025574A /* MFServerProtocol.h */,
 				D4F499F00D52609400CDA4A9 /* MFFSDelegateProtocol.h */,
-				D403BC8D0D64C3D00049201D /* MFServerFSProtocol.h */,
 				D4D0E9FE0D7C887A00797279 /* MFClientFSDelegateProtocol.h */,
 				D441DB620D995C2B009F869A /* MFClientProtocol.h */,
 				D44FA6AB0DA7D0FB007AB734 /* MFClientDelegateProtocol.h */,
@@ -1028,7 +1025,6 @@
 				D4CEE0F30D3045590064042E /* MFClientFS.h in Headers */,
 				D4905C330D393F8300E21C1E /* MFClientPlugin.h in Headers */,
 				D412AFC60D596F4B0091C12B /* MGUtilities.h in Headers */,
-				D403BC8F0D64C3D00049201D /* MFServerFSProtocol.h in Headers */,
 				D403BD6E0D650D630049201D /* MFError.h in Headers */,
 				D4E983470D7223D70058AF73 /* MGNSImage.h in Headers */,
 				D420386F0D73A76B009EE78F /* MFClientRecent.h in Headers */,

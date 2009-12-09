@@ -23,27 +23,25 @@
 
 @interface MFClientFS : MFFilesystem {
 	id<MFServerFSProtocol> remoteFilesystem;
-	MFClientPlugin* plugin;
+	MFClientPlugin *plugin;
 	
 	// For Undo
-	NSDictionary* backupParameters;
-	NSDictionary* backupSecrets;
+	NSDictionary *backupParameters;
+	NSDictionary *backupSecrets;
 	
 	BOOL isEditing;
 	NSInteger displayOrder;
 	id<MFClientFSDelegateProtocol> clientFSDelegate;
 	
 	// UI references
-	NSArray* viewControllers;
-	NSViewController* topViewController;
-	NSTabView* editingTabView;
+	NSArray *viewControllers;
+	NSViewController *topViewController;
+	NSTabView *editingTabView;
 }
 
-+ (MFClientFS*)clientFSWithRemoteFS:(id)remoteFS 
-					   clientPlugin:(MFClientPlugin*)plugin;
++ (MFClientFS *)clientFSWithRemoteFS:(id)remoteFS clientPlugin:(MFClientPlugin*)plugin;
 
-- (id)initWithRemoteFS:(id)remoteFS 
-		  clientPlugin:(MFClientPlugin*)p;
+- (id)initWithRemoteFS:(id)remoteFS clientPlugin:(MFClientPlugin*)p;
 
 // Notification handling
 - (void)noteStatusInfoChanged;
@@ -57,10 +55,10 @@
 - (BOOL)canDoEditing;
 
 // UI
-- (void)setIconImage:(NSImage*)image;
-- (NSImage*)coloredImage;
+- (void)setIconImage:(NSImage *)image;
+- (NSImage *)coloredImage;
 
 @property(readwrite, assign) NSInteger displayOrder;
 @property(readwrite, retain) id<MFClientFSDelegateProtocol> clientFSDelegate; 
-@property(readonly) NSImage* iconImage;
+@property(readonly) NSImage *iconImage;
 @end

@@ -21,18 +21,18 @@
 @class MFClientFS, MFClientPlugin, MFClientRecent;
 
 @interface MFClient : NSObject <MFClientProtocol> {
-	NSMutableDictionary* filesystemsDictionary;
-	NSMutableArray* persistentFilesystems;
-	NSMutableArray* temporaryFilesystems;
-	NSMutableDictionary* pluginsDictionary;
-	NSMutableArray* plugins;
-	NSMutableArray* recents;
+	NSMutableDictionary *filesystemsDictionary;
+	NSMutableArray *persistentFilesystems;
+	NSMutableArray *temporaryFilesystems;
+	NSMutableDictionary *pluginsDictionary;
+	NSMutableArray *plugins;
+	NSMutableArray *recents;
 	id <MFServerProtocol> server;
 	id<MFClientDelegateProtocol> delegate;
-	NSConnection* connection;
+	NSConnection *connection;
 }
 
-+ (MFClient*)sharedClient;
++ (MFClient *)sharedClient;
 
 // Initialization
 - (BOOL)setup;
@@ -40,19 +40,19 @@
 - (BOOL)establishCommunication;
 
 // Action methods
-- (MFClientFS *)newFilesystemWithPlugin:(MFClientPlugin*)plugin;
-- (MFClientFS *)quickMountFilesystemWithURL:(NSURL*)url error:(NSError**)error;
-- (MFClientFS *)mountRecent:(MFClientRecent*)recent error:(NSError**)error;
-- (void)deleteFilesystem:(MFClientFS*)fs;
+- (MFClientFS *)newFilesystemWithPlugin:(MFClientPlugin *)plugin;
+- (MFClientFS *)quickMountFilesystemWithURL:(NSURL *)url error:(NSError **)error;
+- (MFClientFS *)mountRecent:(MFClientRecent *)recent error:(NSError **)error;
+- (void)deleteFilesystem:(MFClientFS *)fs;
 
 // Accessors
-- (MFClientFS *)filesystemWithUUID:(NSString*)uuid;
-- (MFClientPlugin *)pluginWithID:(NSString*)id;
+- (MFClientFS *)filesystemWithUUID:(NSString *)uuid;
+- (MFClientPlugin *)pluginWithID:(NSString *)id;
 
 @property(retain) id delegate;
 
 // All filesystems, including temporary ones
-@property(readonly) NSArray* filesystems;
+@property(readonly) NSArray *filesystems;
 
 // Only filesystems that are not temporary
 @property(readonly) NSArray *persistentFilesystems;
@@ -64,7 +64,7 @@
 @property(readonly) NSArray *recents;
 
 // UI Stuff
-- (void)moveUUIDS:(NSArray*)uuid toRow:(NSUInteger)row;
-- (NSString*)createMountIconForFilesystem:(MFClientFS*)fs atPath:(NSURL*)path;
+- (void)moveUUIDS:(NSArray *)uuid toRow:(NSUInteger)row;
+- (NSString *)createMountIconForFilesystem:(MFClientFS *)fs atPath:(NSURL *)path;
 
 @end

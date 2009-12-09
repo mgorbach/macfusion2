@@ -23,16 +23,16 @@ static CGColorRef CGColorCreateFromNSColor (CGColorSpaceRef  colorSpace, NSColor
 
 @interface NSImage (MGNSImage)
 
-- (CIImage*)ciImageRepresentation;
-- (NSImage*)imageScaledToSize:(NSSize)size;
-- (NSImage*)flippedImage;
+- (CIImage *)ciImageRepresentation;
+- (NSImage *)imageScaledToSize:(NSSize)size;
+- (NSImage *)flippedImage;
 @end
 
 @interface CIImage (MGCIImage)
-- (CIImage*)ciImageByScalingToSize:(NSSize)targetSize;
-- (CIImage*)ciImageByColoringMonochromeWithColor: (NSColor*)color
-									   intenisty: (NSNumber*)intensity;
-- (NSImage*)nsImageRepresentation;
-- (NSImage*)flippedNSImageRepresentation;
-- (CIImage*)flippedImage;
+- (CIImage *)ciImageByScalingToSize:(NSSize)targetSize;
+- (CIImage *)ciImageByColoringMonochromeWithColor:(NSColor *)color
+									   intenisty:(NSNumber *)intensity;
+- (NSImage *)nsImageRepresentation;
+- (NSImage *)flippedNSImageRepresentation;
+- (CIImage *)flippedImage;
 @end

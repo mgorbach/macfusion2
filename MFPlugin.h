@@ -18,24 +18,24 @@
 #import "MFFSDelegateProtocol.h"
 
 @interface MFPlugin : NSObject {
-	NSBundle* bundle;
+	NSBundle *bundle;
 	id <MFFSDelegateProtocol> delegate;
 	
 }
 
 - (id <MFFSDelegateProtocol>)delegate;
 - (id <MFFSDelegateProtocol>)setupDelegate;
-- (NSString*)subclassNameForClassName:(NSString*)superClassName;
-- (NSString*)subclassNameForClass:(Class)superClass;
+- (NSString *)subclassNameForClassName:(NSString*)superClassName;
+- (NSString *)subclassNameForClass:(Class)superClass;
 - (Class)subclassForClass:(Class)superClass;
 
-@property(readonly) NSString* shortName;
-@property(readonly) NSString* longName;
-@property(readonly) NSBundle* bundle;
-@property(readonly) NSString* ID;
-@property(readonly) NSString* bundlePath;
-@property(readonly) NSString* nibName;
-@property(readonly) NSString* urlSchemesString;
+@property(readonly) NSString *shortName;
+@property(readonly) NSString *longName;
+@property(readonly) NSBundle *bundle;
+@property(readonly) NSString *ID;
+@property(readonly) NSString *bundlePath;
+@property(readonly) NSString *nibName;
+@property(readonly) NSString *urlSchemesString;
 
 
 

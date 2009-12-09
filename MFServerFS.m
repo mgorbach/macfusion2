@@ -24,175 +24,131 @@
 #define FS_DIR_PATH @"~/Library/Application Support/Macfusion/Filesystems"
 
 @interface MFServerFS (PrivateAPI)
-- (MFServerFS*)initWithPlugin:(MFServerPlugin*)p;
-- (MFServerFS*)initWithParameters:(NSDictionary*)params 
-						   plugin:(MFServerPlugin*)p;
+- (MFServerFS *)initWithPlugin:(MFServerPlugin *)p;
+- (MFServerFS *)initWithParameters:(NSDictionary*)params plugin:(MFServerPlugin*)p;
 
-- (NSMutableDictionary*)fullParametersWithDictionary:(NSDictionary*)fsParams;
+- (NSMutableDictionary *)fullParametersWithDictionary:(NSDictionary *)fsParams;
 - (void)registerGeneralNotifications;
-- (NSMutableDictionary*)initializedStatusInfo;
+- (NSMutableDictionary *)initializedStatusInfo;
 - (void)writeOutData;
-- (NSString*)getNewUUID;
-- (BOOL)validateParameters:(NSDictionary*)params
-				 WithError:(NSError**)error;
-- (NSError*)genericError;
+- (NSString *)getNewUUID;
+- (BOOL)validateParameters:(NSDictionary*)params error:(NSError**)error;
+- (NSError *)genericError;
 - (void)setError:(NSError*)error;
-- (NSTimer*)newTimeoutTimer;
+- (NSTimer *)newTimeoutTimer;
 @end
 
 @implementation MFServerFS
 
-+ (MFServerFS*)newFilesystemWithPlugin:(MFServerPlugin*)plugin
-{
-	if (plugin)
-	{
-		Class FSClass = [plugin subclassForClass: self];
-		return [[FSClass alloc] initWithPlugin: plugin];
++ (MFServerFS *)newFilesystemWithPlugin:(MFServerPlugin *)plugin {
+	if (plugin) {
+		Class FSClass = [plugin subclassForClass:self];
+		return [[FSClass alloc] initWithPlugin:plugin];
 	}
 	
 	return nil;
 }
 
-+ (MFServerFS*)loadFilesystemAtPath:(NSString*)path 
-							  error:(NSError**)error
-{
-	MFServerFS* fs;
-	NSMutableDictionary* fsParameters = [NSMutableDictionary dictionaryWithContentsOfFile: path];
-	if (!fsParameters)
-	{
-		NSDictionary* errorDict = [NSDictionary dictionaryWithObjectsAndKeys: 
++ (MFServerFS *)loadFilesystemAtPath:(NSString *)path error:(NSError **)error {
+	MFServerFS *fs;
+	NSMutableDictionary *fsParameters = [NSMutableDictionary dictionaryWithContentsOfFile: path];
+	if (!fsParameters) {
+		NSDictionary* errorDict = [NSDictionary dictionaryWithObjectsAndKeys:
 								   @"Could not read dictionary data for filesystem", NSLocalizedDescriptionKey,
-								   [NSString stringWithFormat: @"File at path %@", path],
-								   NSLocalizedRecoverySuggestionErrorKey, nil];
-		*error = [NSError errorWithDomain: kMFErrorDomain
-							code: kMFErrorCodeDataCannotBeRead
-						userInfo: errorDict ];
+								   [NSString stringWithFormat: @"File at path %@", path], NSLocalizedRecoverySuggestionErrorKey, 
+								   nil];
+		*error = [NSError errorWithDomain:kMFErrorDomain code:kMFErrorCodeDataCannotBeRead userInfo:errorDict];
 		return nil;
 	}
 	
-	[fsParameters setObject: path forKey:kMFFSFilePathParameter];
-	[fsParameters setObject: [NSNumber numberWithBool:YES] forKey:kMFFSPersistentParameter ];
+	[fsParameters setObject:path forKey:kMFFSFilePathParameter];
+	[fsParameters setObject:[NSNumber numberWithBool:YES] forKey:kMFFSPersistentParameter];
 	
-	NSString* pluginID = [fsParameters objectForKey: kMFFSTypeParameter];
-	if (!pluginID)
-	{
-		NSDictionary* errorDict = [NSDictionary dictionaryWithObjectsAndKeys: 
+	NSString *pluginID = [fsParameters objectForKey:kMFFSTypeParameter];
+	if (!pluginID) {
+		NSDictionary *errorDict = [NSDictionary dictionaryWithObjectsAndKeys: 
 								   @"Could not read plugin id key for filesystem", NSLocalizedDescriptionKey,
-								   [NSString stringWithFormat: @"File at path %@", path],
-								   NSLocalizedRecoverySuggestionErrorKey, nil];
-		*error = [NSError errorWithDomain: kMFErrorDomain
-									 code: kMFErrorCodeMissingParameter
-								 userInfo: errorDict ];
+								   [NSString stringWithFormat: @"File at path %@", path], NSLocalizedRecoverySuggestionErrorKey,
+								   nil];
+		*error = [NSError errorWithDomain:kMFErrorDomain code:kMFErrorCodeMissingParameter userInfo:errorDict];
 		return nil;
 	}
 	
-	MFServerPlugin* plugin = [[MFPluginController sharedController] 
-							  pluginWithID:pluginID];
-	if (plugin)
-	{
+	MFServerPlugin *plugin = [[MFPluginController sharedController] pluginWithID:pluginID];
+	if (plugin) {
 		Class FSClass = [plugin subclassForClass: self];
-		fs = [[FSClass alloc] initWithParameters: fsParameters
-											 plugin: plugin ];
-		NSError* validationError;
-		BOOL ok = [fs validateParametersWithError: &validationError];
-		if (ok)
-		{
+		fs = [[FSClass alloc] initWithParameters:fsParameters plugin:plugin];
+		NSError *validationError;
+		BOOL ok = [fs validateParametersWithError:&validationError];
+		if (ok) {
 			return fs;
-		}
-		else
-		{		   
+		} else {		   
 			*error = validationError;
 			return nil;
-			
 		}
-	}
-	else
-	{
-		NSDictionary* errorDict = [NSDictionary dictionaryWithObjectsAndKeys: 
+	} else {
+		NSDictionary *errorDict = [NSDictionary dictionaryWithObjectsAndKeys: 
 								   @"Invalid plugin ID given", NSLocalizedDescriptionKey,
-								   [NSString stringWithFormat: @"File at path %@", path],
-								   NSLocalizedRecoverySuggestionErrorKey, nil];
-		*error = [NSError errorWithDomain: kMFErrorDomain
-									 code: kMFErrorCodeInvalidParameterValue
-								 userInfo: errorDict ];
+								   [NSString stringWithFormat: @"File at path %@", path], NSLocalizedRecoverySuggestionErrorKey,
+								   nil];
+		*error = [NSError errorWithDomain:kMFErrorDomain code:kMFErrorCodeInvalidParameterValue userInfo:errorDict];
 		return nil;
 	}
 }
 
 
-+ (MFServerFS*)filesystemFromURL:(NSURL*)url
-						  plugin:(MFServerPlugin*)p
-						   error:(NSError**)error
-{
-	NSMutableDictionary* params = [[[p delegate] parameterDictionaryForURL: url 
-																	 error: error] 
-								   mutableCopy];
-	if (!params) 
-	{
-		*error = [MFError errorWithErrorCode:kMFErrorCodeMountFaliure
-								 description:@"Plugin failed to parse URL"];
++ (MFServerFS *)filesystemFromURL:(NSURL *)url plugin:(MFServerPlugin *)p error:(NSError **)error {
+	NSMutableDictionary* params = [[[p delegate] parameterDictionaryForURL:url error:error] mutableCopy];
+	if (!params) {
+		*error = [MFError errorWithErrorCode:kMFErrorCodeMountFaliure description:@"Plugin failed to parse URL"];
 		return nil;
 	}
-	[params setValue: [NSNumber numberWithBool: NO] 
-			  forKey: kMFFSPersistentParameter ];
-	[params setValue: p.ID
-			  forKey: kMFFSTypeParameter ];
-	[params setValue: [NSString stringWithFormat: @"%@", url]
-			  forKey: kMFFSDescriptionParameter ];
+	[params setValue:[NSNumber numberWithBool: NO] forKey:kMFFSPersistentParameter];
+	[params setValue:p.ID forKey:kMFFSTypeParameter];
+	[params setValue:[NSString stringWithFormat:@"%@", url] forKey:kMFFSDescriptionParameter];
 	
-	Class FSClass = [p subclassForClass: self];
-	MFServerFS* fs = [[FSClass alloc] initWithParameters: params
-													 plugin: p];
-	NSError* validationError;
-	BOOL ok = [fs validateParametersWithError: &validationError];
-	if (!ok)
-	{
+	Class FSClass = [p subclassForClass:self];
+	MFServerFS* fs = [[FSClass alloc] initWithParameters: params plugin:p];
+	NSError *validationError;
+	BOOL ok = [fs validateParametersWithError:&validationError];
+	if (!ok) {
 		*error = validationError;
 		return nil;
-	}
-	else
-	{
+	} else {
 		return fs;
 	}
-	
 }
 
-- (MFServerFS*)initWithParameters:(NSDictionary*)params 
-						   plugin:(MFServerPlugin*)p
-{
-	if (self = [super init])
-	{
-		[self setPlugin: p];
+- (MFServerFS *)initWithParameters:(NSDictionary *)params plugin:(MFServerPlugin *)p {
+	if (self = [super init]) {
+		[self setPlugin:p];
 		delegate = [p delegate];
-		parameters = [self fullParametersWithDictionary: params];
+		parameters = [self fullParametersWithDictionary:params];
 		statusInfo = [self initializedStatusInfo];
-		pauseTimeout = NO;
-		if ( ![parameters objectForKey: KMFFSUUIDParameter] )
-		{
-			[parameters setObject: [self getNewUUID]
-						   forKey: KMFFSUUIDParameter ];
+		_pauseTimeout = NO;
+		if (![parameters objectForKey: KMFFSUUIDParameter]) {
+			[parameters setObject:[self getNewUUID] forKey:KMFFSUUIDParameter];
 		}
 		
 		[self registerGeneralNotifications];
 	}
+	
 	return self;
 }
 		 
-- (MFServerFS*)initWithPlugin:(MFServerPlugin*)p
-{
+- (MFServerFS *)initWithPlugin:(MFServerPlugin *)p {
 	NSAssert(p, @"Plugin null in MFServerFS initWithPlugin");
-	NSDictionary* newFSParameters = [NSDictionary dictionaryWithObjectsAndKeys: 
+	NSDictionary *newFSParameters = [NSDictionary dictionaryWithObjectsAndKeys:
 									 p.ID, kMFFSTypeParameter,
 									 [NSNumber numberWithBool: YES], kMFFSPersistentParameter,
-									 nil ];
+									 nil];
 									 
-	return [self initWithParameters: newFSParameters plugin: p ];
+	return [self initWithParameters:newFSParameters plugin:p];
 }
 
 
-- (void)registerGeneralNotifications
-{
-	[self addObserver:self
+- (void)registerGeneralNotifications {
+	[self addObserver:self 
 		   forKeyPath:KMFStatusDict
 			  options:NSKeyValueObservingOptionOld || NSKeyValueObservingOptionNew
 			  context:nil];
@@ -206,19 +162,15 @@
 			  context:nil];
 }
 
-- (NSMutableDictionary*)initializedStatusInfo
-{
-	NSMutableDictionary* initialStatusInfo = [NSMutableDictionary dictionaryWithCapacity:5];
+- (NSMutableDictionary *)initializedStatusInfo {
+	NSMutableDictionary *initialStatusInfo = [NSMutableDictionary dictionaryWithCapacity:5];
 	// Initialize the important keys in the status dictionary
-	[initialStatusInfo setObject:kMFStatusFSUnmounted
-						  forKey: kMFSTStatusKey];
-	[initialStatusInfo setObject:[NSMutableString stringWithString:@""]
-						  forKey: kMFSTOutputKey ];
+	[initialStatusInfo setObject:kMFStatusFSUnmounted forKey: kMFSTStatusKey];
+	[initialStatusInfo setObject:[NSMutableString stringWithString:@""] forKey:kMFSTOutputKey];
 	return initialStatusInfo;
 }
 
-- (NSString*)getNewUUID
-{
+- (NSString *)getNewUUID {
 	CFUUIDRef theUUID = CFUUIDCreate(NULL);
     CFStringRef string = CFUUIDCreateString(NULL, theUUID);
     CFRelease(theUUID);
@@ -227,41 +179,30 @@
 }
 
 
-- (NSDictionary*)defaultParameterDictionary
-{
-	NSMutableDictionary* defaultParameterDictionary = [NSMutableDictionary dictionary];
-	NSDictionary* delegateDict = [delegate defaultParameterDictionary];
+- (NSDictionary *)defaultParameterDictionary {
+	NSMutableDictionary *defaultParameterDictionary = [NSMutableDictionary dictionary];
+	NSDictionary *delegateDict = [delegate defaultParameterDictionary];
 	
 	[defaultParameterDictionary addEntriesFromDictionary: delegateDict];
-	[defaultParameterDictionary setObject: [NSNumber numberWithBool: NO] 
-								   forKey: kMFFSNegativeVNodeCacheParameter ];
-	[defaultParameterDictionary setObject: [NSNumber numberWithBool: NO]
-								   forKey: kMFFSNoAppleDoubleParameter ];
+	[defaultParameterDictionary setObject:[NSNumber numberWithBool: NO] forKey:kMFFSNegativeVNodeCacheParameter];
+	[defaultParameterDictionary setObject:[NSNumber numberWithBool: NO] forKey:kMFFSNoAppleDoubleParameter];
 	
 	return [defaultParameterDictionary copy];
 }
 
 # pragma mark Parameter processing
-- (NSMutableDictionary*)fullParametersWithDictionary:(NSDictionary*)fsParams
-{
-	NSDictionary* defaultParams = [self defaultParameterDictionary];
-	NSMutableDictionary* params = [fsParams mutableCopy];
-	if(!params)
-	{
+- (NSMutableDictionary *)fullParametersWithDictionary:(NSDictionary *)fsParams {
+	NSDictionary *defaultParams = [self defaultParameterDictionary];
+	NSMutableDictionary *params = [fsParams mutableCopy];
+	if (!params) {
 		params = [NSMutableDictionary dictionary];
 	}
 	
-
-	for(NSString* parameterKey in [defaultParams allKeys])
-	{
+	for(NSString *parameterKey in [defaultParams allKeys]) {
 		id value;
-		if ((value = [fsParams objectForKey:parameterKey]) != nil)
-		{
-		}
-		else 
-		{
-			[params setObject: [defaultParams objectForKey: parameterKey]
-					   forKey: parameterKey];
+		if ((value = [fsParams objectForKey:parameterKey]) != nil) {
+		} else {
+			[params setObject: [defaultParams objectForKey: parameterKey] forKey: parameterKey];
 		}
 		
 	}
@@ -272,67 +213,57 @@
 # pragma mark Initialization
 
 # pragma mark Task Creation methods
-- (NSDictionary*)taskEnvironment
-{
-	if ([delegate respondsToSelector:@selector(taskEnvironmentForParameters:)])
+- (NSDictionary *)taskEnvironment {
+	if ([delegate respondsToSelector:@selector(taskEnvironmentForParameters:)]) {
 		return [delegate taskEnvironmentForParameters: [self parametersWithImpliedValues]];
-	else
+	} else {
 		return [[NSProcessInfo processInfo] environment];
+	}
 }
 
 - (NSArray*)taskArguments
 {
-	NSArray* delegateArgs;
-	NSMutableArray* taskArguments = [NSMutableArray array];
+	NSArray *delegateArgs;
+	NSMutableArray *taskArguments = [NSMutableArray array];
 	
 	// MFLogS(self, @"Parameters are %@, implied parameters are %@", parameters, [self parametersWithImpliedValues]);
-	if ([delegate respondsToSelector:@selector(taskArgumentsForParameters:)])
-	{
+	if ([delegate respondsToSelector:@selector(taskArgumentsForParameters:)]) {
 		delegateArgs = [delegate taskArgumentsForParameters: [self parametersWithImpliedValues]];
-		if (!delegateArgs || [delegateArgs count] == 0)
-		{
+		if (!delegateArgs || [delegateArgs count] == 0) {
 			MFLogS(self, @"Delegate returned nil arguments or empty array!");
 			return nil;
-		}
-		else
-		{
-			[taskArguments addObjectsFromArray: delegateArgs];
-			NSString* advancedArgumentsString = [self.parameters objectForKey: kMFFSAdvancedOptionsParameter];
-			NSArray* advancedArguments = [advancedArgumentsString componentsSeparatedByString: @" "];
+		} else {
+			[taskArguments addObjectsFromArray:delegateArgs];
+			NSString *advancedArgumentsString = [self.parameters objectForKey:kMFFSAdvancedOptionsParameter];
+			NSArray *advancedArguments = [advancedArgumentsString componentsSeparatedByString:@" "];
 			[taskArguments addObjectsFromArray: advancedArguments];
 			
-			if ([[self.parameters objectForKey: kMFFSNoAppleDoubleParameter] boolValue])
-			{
+			if ([[self.parameters objectForKey: kMFFSNoAppleDoubleParameter] boolValue]) {
 				[taskArguments addObject: @"-onoappledouble"];
 			}
 			
-			if ([[self.parameters objectForKey: kMFFSNegativeVNodeCacheParameter] boolValue])
-			{
+			if ([[self.parameters objectForKey: kMFFSNegativeVNodeCacheParameter] boolValue]) {
 				[taskArguments addObject: @"-onegative_vncache"];
 			}
 			
 			return taskArguments;
 		}
-	}
-	else
-	{
+	} else {
 		MFLogS(self, @"Could not get task arguments for delegate!");
 		return nil;
 	}
 }
 
-- (void)setupIOForTask:(NSTask*)t
-{
-	NSPipe* outputPipe = [[NSPipe alloc] init];
-	NSPipe* inputPipe = [[NSPipe alloc] init];
-	[t setStandardError: outputPipe];
-	[t setStandardOutput: outputPipe];
-	[t setStandardInput: inputPipe];
+- (void)setupIOForTask:(NSTask *)t {
+	NSPipe *outputPipe = [[NSPipe alloc] init];
+	NSPipe *inputPipe = [[NSPipe alloc] init];
+	[t setStandardError:outputPipe];
+	[t setStandardOutput:outputPipe];
+	[t setStandardInput:inputPipe];
 }
 
-- (void)registerNotificationsForTask:(NSTask*)t
-{
-	NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
+- (void)registerNotificationsForTask:(NSTask *)t {
+	NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
 	[nc addObserver:self
 		   selector:@selector(handleDataOnPipe:)
 			   name:NSFileHandleDataAvailableNotification 
@@ -343,8 +274,7 @@
 			 object:t];
 }
 
-- (NSTask*)taskForLaunch
-{
+- (NSTask *)taskForLaunch {
 	NSTask* t = [[NSTask alloc] init];
 	
 	// Pull together all the tasks parameters
@@ -372,8 +302,8 @@
 
 - (BOOL)setupMountPoint
 {
-	NSFileManager* fm = [NSFileManager defaultManager];
-	NSString* mountPath = [self mountPath];
+	NSFileManager *fm = [NSFileManager defaultManager];
+	NSString *mountPath = [self mountPath];
 	BOOL pathExists, isDir, returnValue;
 	NSString* errorDescription;
 	
@@ -453,16 +383,16 @@
 	}
 	
 	MFLogS(self, @"Mounting");
-	self.pauseTimeout = NO;
+	self._pauseTimeout = NO;
 	self.status = kMFStatusFSWaiting;
 	if ([self setupMountPoint] == YES)
 	{
-		task = [self taskForLaunch];
-		[[[task standardOutput] fileHandleForReading]
+		_task = [self taskForLaunch];
+		[[[_task standardOutput] fileHandleForReading]
 		 waitForDataInBackgroundAndNotify];
-		[timer invalidate];
-		timer = [self newTimeoutTimer];
-		[task launch];
+		[_timer invalidate];
+		_timer = [self newTimeoutTimer];
+		[_task launch];
 		MFLogS(self, @"Task launched OK");
 	}
 	else
@@ -554,7 +484,7 @@
 - (void)handleMountNotification
 {
 	self.status = kMFStatusFSMounted;
-	[timer invalidate];
+	[_timer invalidate];
 }
 
 - (void)handleTaskDidTerminate:(NSNotification*)note
@@ -609,7 +539,7 @@
 - (void)handleUnmountNotification
 {
 	self.status = kMFStatusFSUnmounted;
-	[timer invalidate];
+	[_timer invalidate];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath
@@ -640,7 +570,7 @@
 	}
 }
 
-- (NSTimer*)newTimeoutTimer
+- (NSTimer *)newTimeoutTimer
 {
 	return [NSTimer scheduledTimerWithTimeInterval: 
 			[[[MFPreferences sharedPreferences] getValueForPreference: kMFPrefsTimeout] doubleValue]
@@ -652,7 +582,7 @@
 
 - (void)handleMountTimeout:(NSTimer*)theTimer
 {
-	if (self.pauseTimeout)
+	if (self._pauseTimeout)
 	{
 		// MFLogS(self, @"Timeout paused");
 		timer = [self newTimeoutTimer];
@@ -663,8 +593,8 @@
 		if (![self isFailedToMount])
 		{
 			 MFLogS(self, @"Mount time out detected. Killing task %@ pid %d",
-				   task, [task processIdentifier]);
-			kill([task processIdentifier], SIGKILL);
+				   _task, [_task processIdentifier]);
+			kill([_task processIdentifier], SIGKILL);
 			NSDictionary* dictionary = [NSDictionary dictionaryWithObjectsAndKeys: 
 										self.uuid, kMFErrorFilesystemKey,
 										@"Mount has timed out.", NSLocalizedDescriptionKey,
@@ -766,15 +696,15 @@
 
 - (BOOL)pauseTimeout
 {
-	return pauseTimeout;
+	return _pauseTimeout;
 }
 
 - (void)setPauseTimeout:(BOOL)p;
 {
-	pauseTimeout = p;
-	[timer invalidate];
-	timer = [self newTimeoutTimer];
+	_pauseTimeout = p;
+	[_timer invalidate];
+	_timer = [self newTimeoutTimer];
 }
 
-@synthesize plugin;
+@synthesize plugin=_plugin;
 @end

@@ -24,7 +24,7 @@
 #define LOG_FILE_PATH @"~/Library/Logs/MacFusion2.log"
 
 // Print to logging system
-void MFLog(NSString* format, ...) {
+void MFLog(NSString *format, ...) {
 	MFLogging* logger = [MFLogging sharedLogging];
 	
 	// get a reference to the arguments on the stack that follow
@@ -39,12 +39,10 @@ void MFLog(NSString* format, ...) {
 									arguments: argList];
     va_end  (argList);
 	[logger logMessage:string ofType:0 object: nil sender:@"MFCORE"]; 
-	
-    [string release];
 }
 
 
-void MFLogP(int type, NSString* format, ...) {
+void MFLogP(int type, NSString *format, ...) {
 	MFLogging* logger = [MFLogging sharedLogging];
 	
 	// get a reference to the arguments on the stack that follow
@@ -59,13 +57,11 @@ void MFLogP(int type, NSString* format, ...) {
 									arguments: argList];
     va_end  (argList);
 	[logger logMessage:string ofType:type object: nil sender:nil]; 
-	
-    [string release];
 }
 
-void MFLogS(id sender, NSString* format, ...)
+void MFLogS(id sender, NSString *format, ...)
 {
-	MFLogging* logger = [MFLogging sharedLogging];
+	MFLogging *logger = [MFLogging sharedLogging];
 	
 	// get a reference to the arguments on the stack that follow
     // the format paramter
@@ -75,16 +71,13 @@ void MFLogS(id sender, NSString* format, ...)
     // NSString luckily provides us with this handy method which
     // will do all the work for us, including %@
     NSString *string;
-    string = [[NSString alloc] initWithFormat: format
-									arguments: argList];
+    string = [[NSString alloc] initWithFormat: format arguments: argList];
     va_end  (argList);
 	[logger logMessage:string ofType:0 object: nil sender:sender]; 
-	
-    [string release];
 }
 
-void MFLogSO(id sender, id object, NSString* format, ...) {
-	MFLogging* logger = [MFLogging sharedLogging];
+void MFLogSO(id sender, id object, NSString *format, ...) {
+	MFLogging *logger = [MFLogging sharedLogging];
 	
 	// get a reference to the arguments on the stack that follow
     // the format paramter
@@ -94,12 +87,9 @@ void MFLogSO(id sender, id object, NSString* format, ...) {
     // NSString luckily provides us with this handy method which
     // will do all the work for us, including %@
     NSString *string;
-    string = [[NSString alloc] initWithFormat: format
-									arguments: argList];
+    string = [[NSString alloc] initWithFormat: format arguments: argList];
     va_end  (argList);
 	[logger logMessage:string ofType:0 object:object sender:sender]; 
-	
-    [string release];
 }
 
 // Print directly to console
@@ -116,23 +106,22 @@ void MFPrint(NSString* format, ...) {
 									arguments: argList];
     va_end  (argList);
 	printf("%s\n", [string cStringUsingEncoding:NSASCIIStringEncoding]);
-	
-    [string release];
 }
 
 
 @implementation MFLogging
 
-static MFLogging* sharedLogging = nil;
+static MFLogging *sharedLogging = nil;
 
-+ (MFLogging*) sharedLogging {
-	if (sharedLogging == nil)
++ (MFLogging *)sharedLogging {
+	if (sharedLogging == nil) {
 		[[self alloc] init];
+	}
 	
 	return sharedLogging;
 }
 
-+ (id)allocWithZone:(NSZone*)zone {
++ (id)allocWithZone:(NSZone *)zone {
 	if (sharedLogging == nil) {
 		sharedLogging = [super allocWithZone:zone];
 		return sharedLogging;
@@ -162,13 +151,12 @@ static MFLogging* sharedLogging = nil;
 	asl_set_filter(aslClient, ASL_FILTER_MASK_UPTO(ASL_LEVEL_INFO));
 }
 
-NSDictionary* dictFromASLMessage(aslmsg m) {
-	NSMutableDictionary* messageDict = [NSMutableDictionary dictionary];
+NSDictionary *dictFromASLMessage(aslmsg m) {
+	NSMutableDictionary *messageDict = [NSMutableDictionary dictionary];
 	NSInteger i;
-	const char* key;
-	const char* val;
-	for (i = 0; (NULL != (key = asl_key(m, i))); i++)
-	{
+	const char *key;
+	const char *val;
+	for (i = 0; (NULL != (key = asl_key(m, i))); i++) {
 		val = asl_get(m, key);
 		if (key && val)
 			[messageDict setObject: [[NSString alloc] initWithUTF8String: val]
@@ -183,15 +171,15 @@ NSDictionary* dictFromASLMessage(aslmsg m) {
 	return formatter;
 }
 
-NSString* headerStringForASLMessageDict(NSDictionary* messageDict) {
-	MFLogging* self = [MFLogging sharedLogging];
+NSString *headerStringForASLMessageDict(NSDictionary *messageDict) {
+	MFLogging *self = [MFLogging sharedLogging];
 	NSMutableArray* headerList = [NSMutableArray array];
-	NSString* sender = [messageDict objectForKey: kMFLogKeySender];
-	NSString* uuid = [messageDict objectForKey: kMFLogKeyUUID];
-	NSString* subsystem = [messageDict objectForKey: kMFLogKeySubsystem];
-	NSString* uuidFSName = uuid ? [[[self delegate] filesystemWithUUID: uuid] name] : nil;
-	NSDate* time = [NSDate dateWithTimeIntervalSince1970: [[messageDict objectForKey: kMFLogKeyTime] intValue]];;
-	NSString* formattedDate = [[self formatter] stringFromDate: time];
+	NSString *sender = [messageDict objectForKey: kMFLogKeySender];
+	NSString *uuid = [messageDict objectForKey: kMFLogKeyUUID];
+	NSString *subsystem = [messageDict objectForKey: kMFLogKeySubsystem];
+	NSString *uuidFSName = uuid ? [[[self delegate] filesystemWithUUID: uuid] name] : nil;
+	NSDate *time = [NSDate dateWithTimeIntervalSince1970: [[messageDict objectForKey: kMFLogKeyTime] intValue]];;
+	NSString *formattedDate = [[self formatter] stringFromDate: time];
 	
 	[headerList addObject: sender];
 	if (subsystem) {
@@ -242,10 +230,7 @@ NSString* headerStringForASLMessageDict(NSDictionary* messageDict) {
 	NSDictionary* messageDict = dictFromASLMessage(m);
 	[self sendASLMessageDictOverDO: messageDict];
 	
-	NSString* printstring = [NSString stringWithFormat:
-							 @"%@ %@\n",
-							 headerStringForASLMessageDict( messageDict ),
-							 message];
+	NSString* printstring = [NSString stringWithFormat:@"%@ %@\n",headerStringForASLMessageDict(messageDict),message];
 	if (stdOut) {
 		printf("%s", [printstring UTF8String]);
 	}

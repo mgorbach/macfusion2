@@ -23,28 +23,28 @@
 @protocol MFServerProtocol <NSObject>
 
 // Accessors
-- (NSArray*)filesystems;
-- (NSArray*)plugins;
-- (NSError*)recentError;
-- (NSArray*)recents;
+- (NSArray *)filesystems;
+- (NSArray *)plugins;
+- (NSError *)recentError;
+- (NSArray *)recents;
 
 // Actions
-- (MFServerFS*)newFilesystemWithPluginName:(NSString*)pluginName;
-- (void)deleteFilesystemWithUUID:(NSString*)uuid;
-- (MFServerFS*)filesystemWithUUID:(NSString*)uuid;
-- (MFServerFS*)quickMountWithURL:(NSURL*)url;
+- (MFServerFS *)newFilesystemWithPluginName:(NSString *)pluginName;
+- (void)deleteFilesystemWithUUID:(NSString *)uuid;
+- (MFServerFS *)filesystemWithUUID:(NSString *)uuid;
+- (MFServerFS *)quickMountWithURL:(NSURL *)url;
 
 //Security
-- (NSString*)tokenForFilesystemWithUUID:(NSString*)uuid;
-- (MFServerFS*)filesystemForToken:(NSString*)token;
+- (NSString *)tokenForFilesystemWithUUID:(NSString *)uuid;
+- (MFServerFS *)filesystemForToken:(NSString *)token;
 
 // Client Control
-- (void)registerClient:(id <MFClientProtocol>) client;
-- (void)unregisterClient:(id <MFClientProtocol>) client;
-- (NSString*)agentBundlePath;
+- (void)registerClient:(id <MFClientProtocol>)client;
+- (void)unregisterClient:(id <MFClientProtocol>)client;
+- (NSString *)agentBundlePath;
 
 // Logging
-- (void)sendASLMessageDict:(NSDictionary*)dict;
+- (void)sendASLMessageDict:(NSDictionary *)dict;
 
 @end
 

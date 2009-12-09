@@ -35,27 +35,27 @@ enum MFLogType {
 	kMFLogTypePlugin
 };
 
-void MFLogP(int type, NSString* format, ...);
-void MFLog(NSString* format, ...);
+void MFLogP(int type, NSString *format, ...);
+void MFLog(NSString *format, ...);
 void MFPrint(NSString* format, ...);
-void MFLogS(id sender, NSString* format, ...);
+void MFLogS(id sender, NSString *format, ...);
 void MFLogSO(id sender, id object, NSString* format, ...);
 
 @interface MFLogging : NSObject {
-	NSFileHandle* fileHandle;
+	NSFileHandle *fileHandle;
 	BOOL stdOut;
 	aslclient aslClient;
 	int fd;
 	id delegate;
-	NSDateFormatter* formatter;
+	NSDateFormatter *formatter;
 }
 
-+ (MFLogging*)sharedLogging;
++ (MFLogging *)sharedLogging;
 - (void)logMessage:(NSString*)message ofType:(NSInteger)type object:(id)object sender:(id)sender;
 - (void)setPrintToStandardOut:(BOOL)b;
 
-NSDictionary* dictFromASLMessage(aslmsg m);
-NSString* headerStringForASLMessageDict(NSDictionary* dict);
+NSDictionary *dictFromASLMessage(aslmsg m);
+NSString *headerStringForASLMessageDict(NSDictionary *dict);
 
 @property(retain, readwrite) id delegate;
 @end
