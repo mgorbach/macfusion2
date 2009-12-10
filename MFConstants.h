@@ -47,7 +47,7 @@
 #define kMFFSVolumeNameParameter @"volumeName"
 #define kMFFSVolumeIconPathParameter @"iconPath"
 #define kMFFSMountPathParameter @"mountPath"
-#define KMFFSUUIDParameter @"uuid"
+#define kMFFSUUIDParameter @"uuid"
 #define kMFFSFilePathParameter @"filePath"
 #define kMFFSPersistentParameter @"isPersistent"
 #define kMFFSDescriptionParameter @"description"

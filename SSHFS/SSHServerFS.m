@@ -8,7 +8,5 @@
 
 #import "SSHServerFS.h"
 
-
 @implementation SSHServerFS
-
 @end

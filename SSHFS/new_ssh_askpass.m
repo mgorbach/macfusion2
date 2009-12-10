@@ -20,46 +20,36 @@
 #import "MFNetworkFS.h"
 #define self @"SSHFS_ASKPASS"
 
-int main(int argc, char *argv[])
-{
-	[[MFLogging sharedLogging] setPrintToStandardOut: NO];
-	NSString* token = [[[NSProcessInfo processInfo] environment] objectForKey: @"SSHFS_TOKEN"];
+int main(int argc, char *argv[]) {
+	[[MFLogging sharedLogging] setPrintToStandardOut:NO];
+	NSString *token = [[[NSProcessInfo processInfo] environment] objectForKey:@"SSHFS_TOKEN"];
 	// MFLogS(self, @"SSH ASKPASS running token %@", token);
-	NSString* password;
+	NSString *password;
 	
-	if (!token)
-	{
+	if (!token) {
 		MFLogS(self, @"Could not find token");
 		return -1;
-	}
-	else
-	{
-		MFClientFS* fs = (MFClientFS*)mfsecGetFilesystemForToken( token );
-		if (!fs)
-		{
+	} else {
+		MFClientFS *fs = (MFClientFS *)mfsecGetFilesystemForToken(token);
+		if (!fs) {
 			MFLogS(self, @"Could not get fs for token"); 
 			return -1;
 		}
 		
-		NSDictionary* secrets = mfsecGetSecretsDictionaryForFilesystem( fs );
-		if (!secrets)
-		{
+		NSDictionary *secrets = mfsecGetSecretsDictionaryForFilesystem(fs);
+		if (!secrets) {
 			MFLogS(self, @"No stored secrets found for FS %@, Querying", fs);
-			password = mfsecQueryForFSNetworkPassword( fs );
-		}
-		else
-		{
+			password = mfsecQueryForFSNetworkPassword(fs);
+		} else {
 			MFLogS(self, @"Secrets found for FS %@", fs);
-			password = [secrets objectForKey: kNetFSPasswordParameter];
+			password = [secrets objectForKey:kNetFSPasswordParameter];
 		}
 		
-		if (!password)
-		{
-			password = mfsecQueryForFSNetworkPassword( fs );
+		if (!password) {
+			password = mfsecQueryForFSNetworkPassword(fs);
 		}
 		
-		if ([password length] > 0)
-		{
+		if ([password length] > 0) {
 			printf("%s", [password UTF8String]);
 		}
 	}

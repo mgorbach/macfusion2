@@ -18,10 +18,8 @@
 #import "MFPlugin.h"
 
 @interface MFServerPlugin : MFPlugin {
-
 }
 
-+ (MFServerPlugin*)pluginFromBundleAtPath:(NSString*)path;
-
++ (MFServerPlugin *)pluginFromBundleAtPath:(NSString *)path;
 
 @end

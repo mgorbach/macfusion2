@@ -34,14 +34,13 @@ static MFPluginController* sharedController = nil;
 	return sharedController;
 }
 
-- (id)copyWithZone:(NSZone*)zone
-{
+- (id)copyWithZone:(NSZone *)zone {
 	return self;
 }
 
 - (id)init {
 	if (self = [super init]) {
-		pluginsDictionary = [[NSMutableDictionary alloc] init];
+		_pluginsDictionary = [[NSMutableDictionary alloc]   init];
 	}
 	
 	return self;
@@ -49,7 +48,7 @@ static MFPluginController* sharedController = nil;
 
 - (NSArray *)pathsToPluginBundles {
 	BOOL isDir = NO;
-	NSFileManager* fm = [NSFileManager defaultManager];
+	NSFileManager *fm = [NSFileManager defaultManager];
 	NSArray *libraryPaths = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSAllDomainsMask - NSSystemDomainMask, YES);
 	NSMutableArray *pluginSearchPaths = [NSMutableArray array];
 	NSMutableArray *pluginPaths = [NSMutableArray array];
@@ -70,7 +69,7 @@ static MFPluginController* sharedController = nil;
 		[pluginSearchPaths addObject: pluginsPath];
 	}
 	for(NSString *path in pluginSearchPaths) {
-		for(NSString *pluginPath in [fm directoryContentsAtPath:path]) {
+		for(NSString *pluginPath in [fm contentsOfDirectoryAtPath:path error:NULL]) {
 			if ([[pluginPath pathExtension] isEqualToString:PLUGIN_EXTENSION]) {
 				[pluginPaths addObject: [path stringByAppendingPathComponent: pluginPath]];
 			}
@@ -80,7 +79,7 @@ static MFPluginController* sharedController = nil;
 	return [pluginPaths copy];
 }
 
-- (BOOL)validatePluginAtPath:(NSString*)path {
+- (BOOL)validatePluginAtPath:(NSString *)path {
 	// TODO: Plugin validation goes here, or maybe this should go into 
 	return YES;
 }
@@ -91,7 +90,7 @@ static MFPluginController* sharedController = nil;
 		// TODO: What if different version of the same plugin are located in multiple places?
 		MFServerPlugin *newPlugin = nil;
 		if ([self validatePluginAtPath: path] && (newPlugin = [MFServerPlugin pluginFromBundleAtPath: path])) {
-			[pluginsDictionary setObject: newPlugin forKey: newPlugin.ID];
+			[_pluginsDictionary setObject: newPlugin forKey: newPlugin.ID];
 			MFLogS(self, @"Loaded plugin at path %@ OK: %@", path, newPlugin.ID);
 		} else {
 			MFLogS(self, @"Failed to load plugin at path %@", path);
@@ -100,7 +99,7 @@ static MFPluginController* sharedController = nil;
 }
 
 - (MFServerPlugin *)pluginWithID:(NSString *)ID {
-	return [pluginsDictionary objectForKey:ID];
+	return [_pluginsDictionary objectForKey:ID];
 }
 
 - (MFServerPlugin *)pluginForFilesystem:(MFServerFS *)fs {
@@ -108,11 +107,11 @@ static MFPluginController* sharedController = nil;
 }
 
 - (NSArray *)plugins {
-	return [pluginsDictionary allValues];
+	return [_pluginsDictionary allValues];
 }
 
 - (NSDictionary *)pluginsDictionary {
-	return [pluginsDictionary copy];
+	return [_pluginsDictionary copy];
 }
 
 @end

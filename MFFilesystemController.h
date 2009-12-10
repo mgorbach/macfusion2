@@ -18,15 +18,14 @@
 @class MFServerFS, MFServerPlugin;
 
 @interface MFFilesystemController : NSObject {
-	NSMutableDictionary *filesystemsDictionary;
-	NSMutableArray *filesystems;
-	NSMutableArray *recents;
-	NSMutableArray *mountedPaths;
-	NSMutableDictionary *tokens;
-	NSMutableDictionary *mountPathPersistenceCache;
+	NSMutableDictionary *_filesystemsDictionary;
+	NSMutableArray *_filesystems;
+	NSMutableArray *_recents;
+	NSMutableArray *_mountedPaths;
+	NSMutableDictionary *_tokens;
 	
-	DASessionRef appearSession;
-	DASessionRef disappearSession;
+	DASessionRef _appearSession;
+	DASessionRef _disappearSession;
 }
 
 // Init

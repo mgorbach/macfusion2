@@ -28,7 +28,7 @@
 static MFMainController* sharedController = nil;
 
 #pragma mark Singleton Methods
-+ (MFMainController*)sharedController {
++ (MFMainController *)sharedController {
 	if (sharedController == nil) {
 		sharedController = [[self alloc] init];
 	}
@@ -44,7 +44,7 @@ static MFMainController* sharedController = nil;
 
 - (void)initialize {
 	mfcSetupTrashMonitoring();
-	MFPluginController* pluginController = [MFPluginController sharedController];
+	MFPluginController *pluginController = [MFPluginController sharedController];
 	[pluginController loadPlugins];
 	
 	[MFFilesystemController sharedController];
@@ -57,22 +57,21 @@ static MFMainController* sharedController = nil;
 
 # pragma mark Opening Files
 - (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filePath {
-	NSDictionary* fileDict = [NSDictionary dictionaryWithContentsOfFile: filePath];
-	NSString* uuid = [fileDict objectForKey: KMFFSUUIDParameter];
+	NSDictionary *fileDict = [NSDictionary dictionaryWithContentsOfFile:filePath];
+	NSString *uuid = [fileDict objectForKey: KMFFSUUIDParameter];
 	if (!uuid) {
 		MFLogS(self, @"Asked to open bad file at pah %@", filePath);
 		return NO;
 	}
 	
-	MFServerFS* fs = [[MFFilesystemController sharedController] filesystemWithUUID: uuid];
+	MFServerFS *fs = [[MFFilesystemController sharedController] filesystemWithUUID: uuid];
 	if (!fs) {
 		MFLogS(self, @"Can not find filesystem references at by file with uuid %@", uuid);
 		return NO;
 	}
 
 	if ([fs isMounted]) {
-		[[NSWorkspace sharedWorkspace] selectFile:nil
-						 inFileViewerRootedAtPath:[fs mountPath]];
+		[[NSWorkspace sharedWorkspace] selectFile:nil inFileViewerRootedAtPath:[fs mountPath]];
 	} else if ([fs isUnmounted] || [fs isFailedToMount]) {
 		[fs mount];
 	}

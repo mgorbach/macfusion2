@@ -18,7 +18,7 @@
 #import "MFMainController.h"
 
 int main (int argc, const char * argv[]) {
-	MFMainController* primaryController = [MFMainController sharedController];
+	MFMainController *primaryController = [MFMainController sharedController];
 	[NSApplication sharedApplication];
 	[NSApp setDelegate:primaryController];
 	[NSApp run];

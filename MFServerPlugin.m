@@ -18,32 +18,26 @@
 #import "MFPlugin.h"
 
 @implementation MFServerPlugin
-+ (MFServerPlugin*)pluginFromBundleAtPath:(NSString*)path
-{
-	
-	MFServerPlugin* plugin = nil;
++ (MFServerPlugin *)pluginFromBundleAtPath:(NSString *)path {
+	MFServerPlugin *plugin = nil;
 	plugin = [[MFServerPlugin alloc] initWithPath:path];
 	
 	return plugin;
 }
 
-- (MFPlugin*)initWithPath:(NSString*)path
-{
+- (MFPlugin *)initWithPath:(NSString *)path {
 	self = [super init];
-	if (self != nil)
-	{
-		NSBundle* b = [NSBundle bundleWithPath:path];
+	if (self != nil) {
+		NSBundle *b = [NSBundle bundleWithPath:path];
 		bundle = b;
 		
 		delegate = [self setupDelegate];
-		if(!delegate)
-		{
+		if (!delegate) {
 			return nil;
 		}
 	}
 	
 	return self;
 }
-
 
 @end
