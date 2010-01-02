@@ -18,13 +18,13 @@
 @class CIFilter;
 
 @interface MGTransitioningTabView : NSTabView {
-	NSRect imageRect;
-	CIFilter* transitionFilter;
-	NSAnimation* animation;
-	NSMutableDictionary* viewDimensions;
+	NSRect _imageRect;
+	CIFilter *_transitionFilter;
+	NSAnimation *_animation;
+	NSMutableDictionary *_viewDimensions;
 }
 
-- (NSSize)sizeWithTabviewItem:(NSTabViewItem*)item;
+- (NSSize)sizeWithTabviewItem:(NSTabViewItem *)item;
 @end
 
 @interface TabViewAnimation : NSAnimation {

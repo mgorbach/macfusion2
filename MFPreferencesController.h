@@ -18,16 +18,16 @@
 @class MFClient, MFPreferences;
 
 @interface MFPreferencesController : NSWindowController {
-	IBOutlet NSButton* agentLoginItemButton;
-	IBOutlet NSButton* menuLoginItemButton;
-	MFClient* client;
-	MFPreferences* sharedPreferences;
-	NSMapTable* prefsViewSizes;
-	NSView* emptyView;
+	IBOutlet NSButton *agentLoginItemButton;
+	IBOutlet NSButton *menuLoginItemButton;
+	IBOutlet NSTextField *fuseVersionTextField;
+	IBOutlet NSView *pluginPrefsView;
+	IBOutlet NSView *generalPrefsView;
 	
-	IBOutlet NSTextField* fuseVersionTextField;
-	IBOutlet NSView* pluginPrefsView;
-	IBOutlet NSView* generalPrefsView;
+	MFClient *_client;
+	MFPreferences *_sharedPreferences;
+	NSMapTable *_prefsViewSizes;
+	NSView *_emptyView;
 }
 
 - (IBAction)loginItemCheckboxChanged:(id)sender;

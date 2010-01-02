@@ -21,10 +21,9 @@
 @implementation MGTransitioningTabView
 - (id)initWithFrame:(NSRect)frame
 {
-	if (self = [super initWithFrame: frame])
-	{
-		viewDimensions = [NSMutableDictionary dictionary];
-		[self setAutoresizingMask: NSViewHeightSizable | NSViewWidthSizable];
+	if (self = [super initWithFrame: frame]) {
+		_viewDimensions = [NSMutableDictionary dictionary];
+		[self setAutoresizingMask:NSViewHeightSizable | NSViewWidthSizable];
 	}
 	
 	return self;
@@ -38,44 +37,31 @@ static void ClearBitmapImageRep(NSBitmapImageRep *bitmap) {
     }
 }
 
-- (void)addTabViewItem:(NSTabViewItem*)item
-{
-//	NSLog(@"Adding Tabview Item %@", item);
-	[viewDimensions setObject: [NSValue valueWithSize: [[item view] frame].size]
-					   forKey: [item label] ];
-	[super addTabViewItem: item];
-//	NSLog(@"Dimensions Dict %@", viewDimensions);
+- (void)addTabViewItem:(NSTabViewItem*)item {
+	[_viewDimensions setObject: [NSValue valueWithSize:[[item view] frame].size] forKey:[item label]];
+	[super addTabViewItem:item];
 }
 
-- (void)drawRect:(NSRect)rect
-{
-	[super drawRect: rect];
-	if (animation != nil)
-	{
-		[transitionFilter setValue: [NSNumber numberWithFloat: [animation currentValue]]
-							forKey:@"inputTime"];
-		CIImage* outputImage = [transitionFilter valueForKey:@"outputImage"];
-		[outputImage drawInRect:imageRect
-					   fromRect:NSMakeRect( 0, imageRect.size.height, imageRect.size.width, -imageRect.size.height )
-					  operation:NSCompositeSourceOver
-					   fraction:1.0];
+- (void)drawRect:(NSRect)rect {
+	[super drawRect:rect];
+	if (_animation != nil) {
+		[_transitionFilter setValue:[NSNumber numberWithFloat:[_animation currentValue]] forKey:@"inputTime"];
+		CIImage *outputImage = [_transitionFilter valueForKey:@"outputImage"];
+		[outputImage drawInRect:_imageRect fromRect:NSMakeRect(0, _imageRect.size.height, _imageRect.size.width, -imageRect.size.height) operation:NSCompositeSourceOver fraction:1.0];
 		 
 	}
 }
 
-- (void)setTransitionForinitialCIImage:(CIImage *)initialCIImage 
-					   finalCIImage:(CIImage *)finalCIImage
-{
-	transitionFilter = [CIFilter filterWithName:@"CIDissolveTransition"];
-	[transitionFilter setDefaults];
-	[transitionFilter setValue:initialCIImage forKey:@"inputImage"];
-	[transitionFilter setValue:finalCIImage forKey:@"inputTargetImage"];
+- (void)setTransitionForinitialCIImage:(CIImage *)initialCIImage finalCIImage:(CIImage *)finalCIImage {
+	_transitionFilter = [CIFilter filterWithName:@"CIDissolveTransition"];
+	[_transitionFilter setDefaults];
+	[_transitionFilter setValue:initialCIImage forKey:@"inputImage"];
+	[_transitionFilter setValue:finalCIImage forKey:@"inputTargetImage"];
 }
 
-- (void)selectTabViewItem:(NSTabViewItem*)tabViewItem
-{
-	[super selectTabViewItem: tabViewItem];
-	NSSize newViewSize = [[viewDimensions objectForKey: [tabViewItem label]] sizeValue];
+- (void)selectTabViewItem:(NSTabViewItem *)tabViewItem {
+	[super selectTabViewItem:tabViewItem];
+	NSSize newViewSize = [[_viewDimensions objectForKey:[tabViewItem label]] sizeValue];
 	[[tabViewItem view] setFrameSize: newViewSize];
 	
 	/*
@@ -113,9 +99,8 @@ static void ClearBitmapImageRep(NSBitmapImageRep *bitmap) {
 	 */;
 }
 
-- (NSSize)sizeWithTabviewItem:(NSTabViewItem*)item
-{
-	NSSize itemSize = [[viewDimensions objectForKey:[item label]] sizeValue];
+- (NSSize)sizeWithTabviewItem:(NSTabViewItem *)item {
+	NSSize itemSize = [[_viewDimensions objectForKey:[item label]] sizeValue];
 	CGFloat deltaX = [self frame].size.width - [self contentRect].size.width;
 	CGFloat deltaY = [self frame].size.height - [self contentRect].size.height;
 	NSSize sizeToReturn = NSMakeSize(itemSize.width+deltaX, itemSize.height+deltaY);
@@ -129,7 +114,6 @@ static void ClearBitmapImageRep(NSBitmapImageRep *bitmap) {
 // Override NSAnimation's -setCurrentProgress: method, and use it as our point to hook in and advance our Core Image transition effect to the next time slice.
 - (void)setCurrentProgress:(NSAnimationProgress)progress {
     [super setCurrentProgress:progress];
-//    [[self delegate] set];
 }
 
 @end

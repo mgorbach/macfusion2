@@ -10,7 +10,7 @@
 
 @class MFIconSettingImageView;
 @interface MFAdvancedViewController : NSViewController {
-	IBOutlet MFIconSettingImageView* iconView;
+	IBOutlet MFIconSettingImageView *iconView;
 }
 
 - (IBAction)chooseIcon:(id)sender;

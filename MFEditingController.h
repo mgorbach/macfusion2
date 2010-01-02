@@ -25,9 +25,9 @@
 @class MFClientFS;
 
 @interface MFEditingController : NSWindowController {
-	MFClientFS* fsBeingEdited;
+	MFClientFS* _fsBeingEdited;
 
 }
 
-+ (NSInteger)editFilesystem:(MFClientFS*)fs onWindow:(NSWindow*)window;
++ (NSInteger)editFilesystem:(MFClientFS *)fs onWindow:(NSWindow *)window;
 @end

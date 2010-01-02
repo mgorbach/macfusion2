@@ -18,12 +18,9 @@
 
 
 @implementation MGSmoothingImageView
-- (void)drawRect:(NSRect)rect 
-{
+- (void)drawRect:(NSRect)rect {
 	[[NSGraphicsContext currentContext] setImageInterpolation: NSImageInterpolationHigh];
-	[[self image] drawInRect:rect
-					fromRect:NSZeroRect
-				   operation:NSCompositeSourceOver
-					fraction:1.0];
+	[[self image] drawInRect:rect fromRect:NSZeroRect operation:NSCompositeSourceOver fraction:1.0];
 }
+
 @end

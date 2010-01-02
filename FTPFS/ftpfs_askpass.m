@@ -26,37 +26,28 @@ int main(int argc, char *argv[])
 	NSString* token = [[[NSProcessInfo processInfo] environment] objectForKey: @"FTPFS_TOKEN"];
 	NSString* password;
 	
-	if (!token)
-	{
+	if (!token) {
 		MFLogS(self, @"Could not find token");
 		return -1;
-	}
-	else
-	{
-		MFClientFS* fs = (MFClientFS*)mfsecGetFilesystemForToken( token );
-		if (!fs)
-		{
+	} else {
+		MFClientFS* fs = (MFClientFS *)mfsecGetFilesystemForToken(token);
+		if (!fs) {
 			MFLogS(self, @"Could not get fs for token"); 
 			return -1;
 		}
 		
-		NSDictionary* secrets = mfsecGetSecretsDictionaryForFilesystem( fs );
-		if (!secrets)
-		{
-			password = mfsecQueryForFSNetworkPassword( fs );
-		}
-		else
-		{
-			password = [secrets objectForKey: kNetFSPasswordParameter];
+		NSDictionary *secrets = mfsecGetSecretsDictionaryForFilesystem(fs);
+		if (!secrets) {
+			password = mfsecQueryForFSNetworkPassword(fs);
+		} else {
+			password = [secrets objectForKey:kNetFSPasswordParameter];
 		}
 		
-		if (!password)
-		{
-			password = mfsecQueryForFSNetworkPassword( fs );
+		if (!password) {
+			password = mfsecQueryForFSNetworkPassword(fs);
 		}
 		
-		if (password && [password length] > 0)
-		{
+		if (password && [password length] > 0) {
 			printf("%s\n", [password UTF8String]);
 		}
 	}

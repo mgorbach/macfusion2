@@ -21,8 +21,8 @@
 
 
 @interface MFLogViewerTableCell : NSCell {
-	NSDateFormatter* formatter;
-	NSMutableDictionary* heightCache;
+	NSDateFormatter* _formatter;
+	NSMutableDictionary* _heightCache;
 }
 
 - (CGFloat)heightForCellInWidth:(CGFloat)width;

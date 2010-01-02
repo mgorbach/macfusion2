@@ -30,22 +30,20 @@
 #define kUUIDSearchCategoryTag 3
 #define kAllSearchCategoryTag 4
 
-static NSString* kSearchToolbarItemIdentifier = @"searchItem";
-static NSString* kFSFilterToolbarItemIdentifier = @"fsFilterItem";
-static NSString* kAutoscrollToolbarItemIdentifier = @"autoscroll";
+static NSString *kSearchToolbarItemIdentifier = @"searchItem";
+static NSString *kFSFilterToolbarItemIdentifier = @"fsFilterItem";
+static NSString *kAutoscrollToolbarItemIdentifier = @"autoscroll";
 
 @interface MFLogViewerController(PrivateAPI)
-@property(readwrite, retain) NSPredicate* filterPredicate;
-@property(readwrite, retain) NSPredicate* searchPredicate;
+@property(readwrite, retain) NSPredicate *filterPredicate;
+@property(readwrite, retain) NSPredicate *searchPredicate;
 @end
 
 @implementation MFLogViewerController
-- (id)initWithWindowNibName:(NSString*)name
-{
-	if (self = [super initWithWindowNibName:name])
-	{
-		logReader = [MFLogReader sharedReader];
-		[logReader start];
+- (id)initWithWindowNibName:(NSString *)name {
+	if (self = [super initWithWindowNibName:name]) {
+		_logReader = [MFLogReader sharedReader];
+		[_logReader start];
 		self.filterPredicate = nil;
 		self.searchPredicate = nil;
 	}
@@ -53,192 +51,171 @@ static NSString* kAutoscrollToolbarItemIdentifier = @"autoscroll";
 	return self;
 }
 
-+ (NSSet*)keyPathsForValuesAffectingFullLogPredicate
-{
-	return [NSSet setWithObjects: 
-			@"filterPredicate", @"searchPredicate", nil];
++ (NSSet *)keyPathsForValuesAffectingFullLogPredicate {
+	return [NSSet setWithObjects:@"filterPredicate", @"searchPredicate", nil];
 }
 
-- (void)windowDidLoad
-{
-	[logTableView setIntercellSpacing: NSMakeSize(0, 0)];
-	[logTableView bind:@"logMessages"
-			  toObject:logArrayController
-		   withKeyPath:@"arrangedObjects"
-			   options:nil];
-	[logArrayController addObserver: self
-				forKeyPath:@"arrangedObjects"
-				   options:(NSKeyValueObservingOptions)0
-				   context:self];
-	[logArrayController bind:@"filterPredicate"
-					toObject:self
-				 withKeyPath:@"fullLogPredicate"
-					 options:nil];
+- (void)windowDidLoad {
+	[logTableView setIntercellSpacing:NSMakeSize(0, 0)];
+	[logTableView bind:@"logMessages" toObject:logArrayController withKeyPath:@"arrangedObjects" options:nil];
+	[logArrayController addObserver:self forKeyPath:@"arrangedObjects" options:(NSKeyValueObservingOptions)0 context:self];
+	[logArrayController bind:@"filterPredicate" toObject:self withKeyPath:@"fullLogPredicate" options:nil];
 	
 	[logTableView scrollRowToVisible: [logTableView numberOfRows] - 1];
-	NSMenu* fsMenu = [[NSMenu alloc] initWithTitle:@"Filesystems"];
-	[fsMenu setDelegate: self];
-	filesystemFilterPopup = [[NSPopUpButton alloc] initWithFrame: NSMakeRect(0, 0, 200, 30)];
-	[filesystemFilterPopup setMenu: fsMenu];
-	[self menuNeedsUpdate: fsMenu];
+	NSMenu *fsMenu = [[NSMenu alloc] initWithTitle:@"Filesystems"];
+	[fsMenu setDelegate:self];
+	filesystemFilterPopup = [[NSPopUpButton alloc] initWithFrame:NSMakeRect(0, 0, 200, 30)];
+	[filesystemFilterPopup setMenu:fsMenu];
+	[self menuNeedsUpdate:fsMenu];
 	
-	autoScrollButton = [[NSButton alloc] initWithFrame: NSMakeRect(0, 0, 200, 30)];
-	[[autoScrollButton cell] setButtonType: NSSwitchButton];
+	autoScrollButton = [[NSButton alloc] initWithFrame:NSMakeRect(0, 0, 200, 30)];
+	[[autoScrollButton cell] setButtonType:NSSwitchButton];
 	[autoScrollButton setTitle:@"Auto-scroll"];
-	[autoScrollButton setAction: @selector(setAutoScroll:)];
-	[autoScrollButton setState: [[MFPreferences sharedPreferences] getBoolForPreference: kMFPrefsAutoScrollLog]];
+	[autoScrollButton setAction:@selector(setAutoScroll:)];
+	[autoScrollButton setState:[[MFPreferences sharedPreferences] getBoolForPreference:kMFPrefsAutoScrollLog]];
 	
 	logSearchField = [[NSSearchField alloc] initWithFrame: NSMakeRect(0, 0, 200, 30)];
-	[logSearchField setAction: @selector(searchFieldUpdated:)];
-	[logSearchField setTarget: self];
-	[[logSearchField cell] setPlaceholderString: @"Search Logs"];
-	NSMenu* searchCategoryMenu = [[NSMenu alloc] initWithTitle:@"Search Categories"];
+	[logSearchField setAction:@selector(searchFieldUpdated:)];
+	[logSearchField setTarget:self];
+	[[logSearchField cell] setPlaceholderString:@"Search Logs"];
+	NSMenu *searchCategoryMenu = [[NSMenu alloc] initWithTitle:@"Search Categories"];
 	[searchCategoryMenu addItemWithTitle:@"All" action:@selector(searchCategoryChanged:) keyEquivalent:@""];
-	[[searchCategoryMenu itemAtIndex:0] setTag: kAllSearchCategoryTag];
+	[[searchCategoryMenu itemAtIndex:0] setTag:kAllSearchCategoryTag];
 	[searchCategoryMenu addItemWithTitle:@"Sender" action:@selector(searchCategoryChanged:) keyEquivalent:@""];
-	[[searchCategoryMenu itemAtIndex:1] setTag: kSenderSearchCategoryTag];
+	[[searchCategoryMenu itemAtIndex:1] setTag:kSenderSearchCategoryTag];
 	[searchCategoryMenu addItemWithTitle: @"Message" action:@selector(searchCategoryChanged:) keyEquivalent:@""];
-	[[searchCategoryMenu itemAtIndex:2] setTag: kMessageSearchCategoryTag];
+	[[searchCategoryMenu itemAtIndex:2] setTag:kMessageSearchCategoryTag];
 	[searchCategoryMenu addItemWithTitle: @"Subsystem" action:@selector(searchCategoryChanged:) keyEquivalent:@""];
-	[[searchCategoryMenu itemAtIndex:3] setTag: kSubsystemSearchCategoryTag];
+	[[searchCategoryMenu itemAtIndex:3] setTag:kSubsystemSearchCategoryTag];
 	[searchCategoryMenu addItemWithTitle: @"UUID" action:@selector(searchCategoryChanged:) keyEquivalent:@""];
-	[[searchCategoryMenu itemAtIndex:4] setTag: kUUIDSearchCategoryTag];
-	[[logSearchField cell] setSearchMenuTemplate: searchCategoryMenu];
-	[self searchCategoryChanged: [searchCategoryMenu itemWithTag: kAllSearchCategoryTag]];
+	[[searchCategoryMenu itemAtIndex:4] setTag:kUUIDSearchCategoryTag];
+	[[logSearchField cell] setSearchMenuTemplate:searchCategoryMenu];
+	[self searchCategoryChanged:[searchCategoryMenu itemWithTag: kAllSearchCategoryTag]];
 	
-	
-	NSToolbar* toolbar = [[NSToolbar alloc] initWithIdentifier: @"Test"];
-	[toolbar setAllowsUserCustomization: NO];
-	[toolbar setAutosavesConfiguration: NO];
-	[toolbar setDisplayMode: NSToolbarDisplayModeIconAndLabel];
-	[toolbar setDelegate: self];
-	[[self window] setToolbar: toolbar];
+	NSToolbar *toolbar = [[NSToolbar alloc] initWithIdentifier:@"Test"];
+	[toolbar setAllowsUserCustomization:NO];
+	[toolbar setAutosavesConfiguration:NO];
+	[toolbar setDisplayMode:NSToolbarDisplayModeIconAndLabel];
+	[toolbar setDelegate:self];
+	[[self window] setToolbar:toolbar];
 }
 
 # pragma mark Updating
-
-- (void) observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
-{
+- (void) observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
     if (context == self) {
 		[logTableView reloadData];
-		if ([[MFPreferences sharedPreferences] getBoolForPreference: kMFPrefsAutoScrollLog])
-			[logTableView scrollRowToVisible: [logTableView numberOfRows] - 1];
-	}
-	else {
+		if ([[MFPreferences sharedPreferences] getBoolForPreference: kMFPrefsAutoScrollLog]) {
+			[logTableView scrollRowToVisible:[logTableView numberOfRows] - 1];
+		}
+	} else {
 		[super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
 	}
 }
 
-- (void) setAutoScroll:(id)sender
-{
-	[[MFPreferences sharedPreferences] setBool: [sender state]
-								 forPreference: kMFPrefsAutoScrollLog ];
+- (void)setAutoScroll:(id)sender {
+	[[MFPreferences sharedPreferences] setBool:[sender state] forPreference:kMFPrefsAutoScrollLog];
 }
 
 # pragma mark Menus
-- (void)menuNeedsUpdate:(NSMenu*)menu
-{
+- (void)menuNeedsUpdate:(NSMenu *)menu {
 	// NSLog(@"Menu needs update");
-	for(id item in [menu itemArray])
+	for (id item in [menu itemArray]) {
 		[menu removeItem: item];
+	}
 	
-	[menu setShowsStateColumn: NO];
-	[menu addItemWithTitle:@"All"
-					action:@selector(fsSelected:)
-			 keyEquivalent:@""];
-	for(MFClientFS* fs in [[MFClient sharedClient] filesystems])
-	{
-		NSMenuItem* menuItem = [[NSMenuItem alloc] initWithTitle: fs.name
-														  action: @selector(fsSelected:)
-												   keyEquivalent:@""];
-		[menuItem setRepresentedObject: fs];
-		[menu addItem: menuItem];
+	[menu setShowsStateColumn:NO];
+	[menu addItemWithTitle:@"All" action:@selector(fsSelected:) keyEquivalent:@""];
+	for(MFClientFS *fs in [[MFClient sharedClient] filesystems]) {
+		NSMenuItem *menuItem = [[NSMenuItem alloc] initWithTitle: fs.name action: @selector(fsSelected:) keyEquivalent:@""];
+		[menuItem setRepresentedObject:fs];
+		[menu addItem:menuItem];
 	}
 }
 
-- (void)fsSelected:(id)sender
-{
-	if ([[sender representedObject] isKindOfClass: [MFClientFS class]])
-	{
+- (void)fsSelected:(id)sender {
+	if ([[sender representedObject] isKindOfClass: [MFClientFS class]]) {
 		// MFLogS(self, @"Setting filter");
-		self.filterPredicate =
-		 [NSPredicate predicateWithFormat: @"self.UUID == %@", 
-		  [[sender representedObject] uuid]];
-	}
-	else
-	{
+		self.filterPredicate = [NSPredicate predicateWithFormat: @"self.UUID == %@",[[sender representedObject] uuid]];
+	} else {
 		self.filterPredicate = nil;
 	}
 }
 
 # pragma mark Search & Filter
-- (NSPredicate*)fullLogPredicate
-{
-	if (filterPredicate && searchPredicate)
-		return [NSCompoundPredicate andPredicateWithSubpredicates:
-			[NSArray arrayWithObjects: 
-			 filterPredicate, searchPredicate, nil]];
-	if (filterPredicate)
+- (NSPredicate *)fullLogPredicate {
+	if (filterPredicate && searchPredicate) {
+		return [NSCompoundPredicate andPredicateWithSubpredicates:[NSArray arrayWithObjects:filterPredicate, searchPredicate, nil]];
+	}
+		
+	if (filterPredicate) {
 		return filterPredicate;
-	if (searchPredicate)
+	}
+		
+	if (searchPredicate) {
 		return searchPredicate;
+	}
 	
 	return nil;
 }
 
-- (void)searchFieldUpdated:(id)sender
-{
-	NSString* text = [logSearchField stringValue];
+- (void)searchFieldUpdated:(id)sender {
+	NSString *text = [logSearchField stringValue];
 	
-	if (!text || [text length] == 0)
-	{	
+	if (!text || [text length] == 0) {	
 		self.searchPredicate = nil;
 		return;
 	}
 	
-	NSPredicate* messagePredicate = [NSPredicate predicateWithFormat: @"self.%@ CONTAINS[cd] %@", kMFLogKeyMessage, text];;
-	NSPredicate* senderPredicate = [NSPredicate predicateWithFormat: @"self.%@ CONTAINS[cd] %@", kMFLogKeySender, text];
-	NSPredicate* subsystemPredicate = [NSPredicate predicateWithFormat: @"self.%@ CONTAINS[cd] %@", kMFLogKeySubsystem, text];
-	NSPredicate* uuidPredicate = [NSPredicate predicateWithFormat:@"self.%@ CONTAINS[cd] %@", kMFLogKeyUUID, text];
+	NSPredicate *messagePredicate = [NSPredicate predicateWithFormat: @"self.%@ CONTAINS[cd] %@", kMFLogKeyMessage, text];;
+	NSPredicate *senderPredicate = [NSPredicate predicateWithFormat: @"self.%@ CONTAINS[cd] %@", kMFLogKeySender, text];
+	NSPredicate *subsystemPredicate = [NSPredicate predicateWithFormat: @"self.%@ CONTAINS[cd] %@", kMFLogKeySubsystem, text];
+	NSPredicate *uuidPredicate = [NSPredicate predicateWithFormat:@"self.%@ CONTAINS[cd] %@", kMFLogKeyUUID, text];
 	
-	if (searchCategory == kAllSearchCategoryTag)
-		self.searchPredicate = [NSCompoundPredicate orPredicateWithSubpredicates: 
-				[NSArray arrayWithObjects: messagePredicate, senderPredicate, subsystemPredicate, uuidPredicate, nil]];
-	if (searchCategory == kMessageSearchCategoryTag)
-		self.searchPredicate = messagePredicate;
-	if (searchCategory == kSubsystemSearchCategoryTag)
-		self.searchPredicate = subsystemPredicate;
-	if (searchCategory == kSenderSearchCategoryTag)
-		self.searchPredicate = senderPredicate;
-	if (searchCategory == kUUIDSearchCategoryTag)
-		self.searchPredicate = uuidPredicate;
-	
+	switch (_searchCategory) {
+		case kAllSearchCategoryTag:
+			self.searchPredicate = [NSCompoundPredicate orPredicateWithSubpredicates: 
+									[NSArray arrayWithObjects: messagePredicate, senderPredicate, subsystemPredicate, uuidPredicate, nil]];
+			break;
+		case kMessageSearchCategoryTag:
+			self.searchPredicate = messagePredicate;
+			break;
+		case kSubsystemSearchCategoryTag:
+			self.searchPredicate = subsystemPredicate;
+			break;
+		case kSenderSearchCategoryTag:
+			self.searchPredicate = senderPredicate;
+			break;
+		case kUUIDSearchCategoryTag:
+			self.searchPredicate = uuidPredicate;
+			break;
+		default:
+			break;
+	}
 }
 
-- (void)searchCategoryChanged:(id)sender
-{
-	[[logSearchField cell] setPlaceholderString: [NSString stringWithFormat:
-												  @"%@", [sender title]]];
-	searchCategory = [sender tag];
+- (void)searchCategoryChanged:(id)sender {
+	[[logSearchField cell] setPlaceholderString: [NSString stringWithFormat:@"%@", [sender title]]];
+	_searchCategory = [sender tag];
 	[self searchFieldUpdated: logSearchField];
 	
-	for(NSMenuItem* m in [[sender menu] itemArray])
+	for (NSMenuItem *m in [[sender menu] itemArray]) {
 		[m setState: NO];
+	}
+		
 	[sender setState: YES];
 }
 
-- (IBAction)filterForFilesystem:(MFClientFS*)fs
-{
-	for(NSMenuItem* item in [filesystemFilterPopup itemArray])
-		if ([item representedObject] == fs)
-		{
-			[filesystemFilterPopup selectItem: item];
-			[self fsSelected: item];
-		}
+- (IBAction)filterForFilesystem:(MFClientFS *)fs {
+	for(NSMenuItem *item in [filesystemFilterPopup itemArray]) {
+		if ([item representedObject] == fs) {
+			[filesystemFilterPopup selectItem:item];
+			[self fsSelected:item];
+		}	
+	}
 }
 
 # pragma mark Toolbars
-- (NSArray *) toolbarAllowedItemIdentifiers: (NSToolbar *) toolbar {
+- (NSArray *)toolbarAllowedItemIdentifiers: (NSToolbar *) toolbar {
     return [NSArray arrayWithObjects: 
 			kSearchToolbarItemIdentifier,
 			kAutoscrollToolbarItemIdentifier,
@@ -249,45 +226,34 @@ static NSString* kAutoscrollToolbarItemIdentifier = @"autoscroll";
 			nil];
 }
 
-- (NSArray *) toolbarDefaultItemIdentifiers: (NSToolbar *)toolbar 
-{
-    return [NSArray arrayWithObjects: kFSFilterToolbarItemIdentifier,
-			kAutoscrollToolbarItemIdentifier, NSToolbarFlexibleSpaceItemIdentifier, kSearchToolbarItemIdentifier ,
-			nil];
+- (NSArray *)toolbarDefaultItemIdentifiers:(NSToolbar *)toolbar {
+    return [NSArray arrayWithObjects: kFSFilterToolbarItemIdentifier,kAutoscrollToolbarItemIdentifier, NSToolbarFlexibleSpaceItemIdentifier, kSearchToolbarItemIdentifier,nil];
 }
 
-- (NSToolbarItem *)toolbar:(NSToolbar *)toolbar
-itemForItemIdentifier:(NSString *)itemIdentifier
-willBeInsertedIntoToolbar:(BOOL)flag
-{
-	NSToolbarItem* toolbarItem = nil;
-	if ([itemIdentifier isEqualTo: kFSFilterToolbarItemIdentifier])
-	{
-		toolbarItem = [[NSToolbarItem alloc] initWithItemIdentifier: kFSFilterToolbarItemIdentifier];
-		[toolbarItem setLabel: @"Filesystem"];
-		[toolbarItem setPaletteLabel: [toolbarItem label]];
-		[toolbarItem setView: filesystemFilterPopup];
-	}
-	if ([itemIdentifier isEqualTo: kAutoscrollToolbarItemIdentifier])
-	{
+- (NSToolbarItem *)toolbar:(NSToolbar *)toolbar itemForItemIdentifier:(NSString *)itemIdentifier willBeInsertedIntoToolbar:(BOOL)flag {
+	NSToolbarItem *toolbarItem = nil;
+	if ([itemIdentifier isEqualTo:kFSFilterToolbarItemIdentifier]) {
+		toolbarItem = [[NSToolbarItem alloc] initWithItemIdentifier:kFSFilterToolbarItemIdentifier];
+		[toolbarItem setLabel:@"Filesystem"];
+		[toolbarItem setPaletteLabel:[toolbarItem label]];
+		[toolbarItem setView:filesystemFilterPopup];
+	} else if ([itemIdentifier isEqualTo:kAutoscrollToolbarItemIdentifier]) {
 		toolbarItem  = [[NSToolbarItem alloc] initWithItemIdentifier: kAutoscrollToolbarItemIdentifier];
-		[toolbarItem setLabel: @""];
-		[toolbarItem setPaletteLabel: [toolbarItem label]];
-		[toolbarItem setView: autoScrollButton];
-		[toolbarItem setMinSize: NSMakeSize(100, 20)];
-	}
-	if ([itemIdentifier isEqualTo: kSearchToolbarItemIdentifier])
-	{
-		toolbarItem = [[NSToolbarItem alloc] initWithItemIdentifier: kSearchToolbarItemIdentifier];
-		[toolbarItem setLabel: @"Search"];
-		[toolbarItem setPaletteLabel: [toolbarItem label]];
-		[toolbarItem setView: logSearchField];
-		[toolbarItem setMinSize: NSMakeSize(75, 20)];
-		[toolbarItem setMaxSize: NSMakeSize(150, 20)];
+		[toolbarItem setLabel:@""];
+		[toolbarItem setPaletteLabel:[toolbarItem label]];
+		[toolbarItem setView:autoScrollButton];
+		[toolbarItem setMinSize:NSMakeSize(100, 20)];
+	} else if ([itemIdentifier isEqualTo: kSearchToolbarItemIdentifier]) {
+		toolbarItem = [[NSToolbarItem alloc] initWithItemIdentifier:kSearchToolbarItemIdentifier];
+		[toolbarItem setLabel:@"Search"];
+		[toolbarItem setPaletteLabel:[toolbarItem label]];
+		[toolbarItem setView:logSearchField];
+		[toolbarItem setMinSize:NSMakeSize(75, 20)];
+		[toolbarItem setMaxSize:NSMakeSize(150, 20)];
 	}
 	
 	return toolbarItem;
 }
 
-@synthesize filterPredicate, searchPredicate;
+@synthesize filterPredicate=_filterPredicate, searchPredicate=_searchPredicate;
 @end

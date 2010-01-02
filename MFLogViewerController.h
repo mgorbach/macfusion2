@@ -21,24 +21,24 @@
 @class MFLogReader, MFClientFS;
 
 @interface MFLogViewerController : NSWindowController {
-	MFLogReader* logReader;
-	IBOutlet NSTableView* logTableView;
-	IBOutlet NSArrayController* logArrayController;
-	IBOutlet NSPopUpButton* filesystemFilterPopup;
-	IBOutlet NSButton* autoScrollButton;
-	IBOutlet NSSearchField* logSearchField;
+	IBOutlet NSTableView *logTableView;
+	IBOutlet NSArrayController *logArrayController;
+	IBOutlet NSPopUpButton *filesystemFilterPopup;
+	IBOutlet NSButton *autoScrollButton;
+	IBOutlet NSSearchField *logSearchField;
 	
-	NSInteger searchCategory;
-	NSPredicate* filterPredicate;
-	NSPredicate* searchPredicate;
+	MFLogReader *_logReader;
+	NSInteger _searchCategory;
+	NSPredicate *_filterPredicate;
+	NSPredicate *_searchPredicate;
 }
 
-- (IBAction)filterForFilesystem:(MFClientFS*)fs;
+- (IBAction)filterForFilesystem:(MFClientFS *)fs;
 - (IBAction)searchCategoryChanged:(id)sender;
 
 
-@property(readonly) NSPredicate* fullLogPredicate;
-@property(readwrite, retain) NSPredicate* filterPredicate;
-@property(readwrite, retain) NSPredicate* searchPredicate;
+@property(readonly) NSPredicate *fullLogPredicate;
+@property(readwrite, retain) NSPredicate *filterPredicate;
+@property(readwrite, retain) NSPredicate *searchPredicate;
 
 @end

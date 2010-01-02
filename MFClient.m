@@ -430,7 +430,7 @@ OSStatus myKeychainCallback ( SecKeychainEvent keychainEvent,
 	NSString *dirPath = [dirPathURL path];
 	NSString *filename = [NSString stringWithFormat: @"%@.fusion", [fs name]];
 	NSString *fullPath = [dirPath stringByAppendingPathComponent: filename];
-	NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:[fs uuid], KMFFSUUIDParameter, nil];
+	NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:[fs uuid], kMFFSUUIDParameter, nil];
 	[dict writeToFile: fullPath atomically: YES];
 	NSImage *iconImage = [NSImage imageNamed:@"macfusionIcon.icns"];
 	[[NSWorkspace sharedWorkspace] setIcon:iconImage forFile:fullPath options:0];

@@ -27,124 +27,100 @@
 @end
 
 @implementation MFIconSettingImageView
-+ (void)initialize
-{
++ (void)initialize {
 	[self exposeBinding: @"fs"];
 }
 
-- (id)initWithFrame:(NSRect)frame
-{
-	if (self = [super initWithFrame: frame])
-	{
-		[self registerForDraggedTypes:
-		 [NSArray arrayWithObjects: NSFilenamesPboardType, (NSString*)kUTTypeAppleICNS,
-		  nil] ];
-		 dragHighlight = NO;
+- (id)initWithFrame:(NSRect)frame {
+	if (self = [super initWithFrame: frame]) {
+		[self registerForDraggedTypes: [NSArray arrayWithObjects: NSFilenamesPboardType, (NSString*)kUTTypeAppleICNS, nil]];
+		_dragHighlight = NO;
 	}
 	
 	return self;
 }
 
-- (void)recalcImages
-{
-	[self setNeedsDisplay: YES];
+- (void)recalcImages {
+	[self setNeedsDisplay:YES];
 }
 
-- (void)awakeFromNib
-{
-	[self addObserver:self
-		   forKeyPath:@"fs.imagePath"
-			  options:NSKeyValueObservingOptionNew
-			  context:self];
+- (void)awakeFromNib {
+	[self addObserver:self forKeyPath:@"fs.imagePath" options:NSKeyValueObservingOptionNew context:self];
 }
 
-- (void)drawRect:(NSRect)rect 
-{
+- (void)drawRect:(NSRect)rect {
 	[[NSGraphicsContext currentContext] setImageInterpolation: NSImageInterpolationHigh];
-	NSImage* imageToDraw = [[fs coloredImage] imageScaledToSize: 
-							NSMakeSize(rect.size.width, rect.size.height)];
+	NSImage* imageToDraw = [[fs coloredImage] imageScaledToSize:NSMakeSize(rect.size.width, rect.size.height)];
 	BOOL highlight = ([[self window] firstResponder] == self);
 	
-	if (dragHighlight || highlight)
-	{
+	if (_dragHighlight || highlight) {
 		[[NSColor darkGrayColor] set];
 		[NSBezierPath setDefaultLineWidth: 3.0];
 		[NSBezierPath strokeRect: rect];
 	}
 	
-	[imageToDraw drawInRect:rect
-				   fromRect:NSMakeRect(0, 0, rect.size.width, rect.size.height)
-				  operation:NSCompositeSourceOver
-				   fraction:1.0];
+	[imageToDraw drawInRect:rect fromRect:NSMakeRect(0, 0, rect.size.width, rect.size.height) operation:NSCompositeSourceOver fraction:1.0];
 }
 
 # pragma mark C&P
-- (void)setImageFromPasteboard:(NSPasteboard*)pb
-{
+- (void)setImageFromPasteboard:(NSPasteboard *)pb {
 	// MFLogS(self, @"Pasting pb types %@", [pb types]);
-	NSImage* imageToSet = nil;
+	NSImage *imageToSet = nil;
 	
 	// Try getting filename data first
-	NSArray* fileNameData = [pb propertyListForType: NSFilenamesPboardType];
-	NSString* firstFileName = [fileNameData objectAtIndex: 0];
-	if ([firstFileName isLike:@"*.icns"])
-	{
+	NSArray *fileNameData = [pb propertyListForType:NSFilenamesPboardType];
+	NSString *firstFileName = [fileNameData objectAtIndex:0];
+	if ([firstFileName isLike:@"*.icns"]) {
 		NSImage* iconImage = [[NSImage alloc] initWithContentsOfFile: firstFileName];
-		if (iconImage)
+		if (iconImage) {
 			imageToSet = iconImage;
+		}
 	}
 	
-	if(!imageToSet)
-	{
-		NSData* icnsData = [pb dataForType: (NSString*)kUTTypeAppleICNS];
-		NSImage* icnsImage = [[NSImage alloc] initWithData: icnsData];
-		if (icnsImage)
+	if (!imageToSet) {
+		NSData *icnsData = [pb dataForType:(NSString*)kUTTypeAppleICNS];
+		NSImage *icnsImage = [[NSImage alloc] initWithData:icnsData];
+		if (icnsImage) {
 			imageToSet = icnsImage;
+		}
 	}
 	
-	if (imageToSet)
-	{
-		[self.fs setIconImage: imageToSet];
-		[self setNeedsDisplay: YES];
+	if (imageToSet) {
+		[self.fs setIconImage:imageToSet];
+		[self setNeedsDisplay:YES];
 	}
 }
 
-
-
-- (void)paste:(id)paste
-{
-	[self setImageFromPasteboard: [NSPasteboard generalPasteboard]];
+- (void)paste:(id)paste {
+	[self setImageFromPasteboard:[NSPasteboard generalPasteboard]];
 }
 
 # pragma mark NSResponder
-- (BOOL)acceptsFirstResponder
-{
+- (BOOL)acceptsFirstResponder {
 	return YES;
 }
 
-- (BOOL)becomeFirstResponder
-{
+- (BOOL)becomeFirstResponder {
 	[self setNeedsDisplay: YES];
 	return YES;
 }
 
-- (BOOL)resignFirstResponder
-{
+- (BOOL)resignFirstResponder {
 	[self setNeedsDisplay: YES];
 	return YES;
 }
 
-- (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)item
-{
+- (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)item {
 	// MFLogS(self, @"Validating %@", item);
-	if ([item action] == @selector(paste:))
-	{
-		if ([[NSPasteboard generalPasteboard] dataForType: (NSString*)kUTTypeAppleICNS])
+	if ([item action] == @selector(paste:)) {
+		if ([[NSPasteboard generalPasteboard] dataForType: (NSString*)kUTTypeAppleICNS]) {
 			return YES;
+		}
 		
-		NSArray* fileNames = [[NSPasteboard generalPasteboard] propertyListForType: NSFilenamesPboardType];
-		if (fileNames && [[fileNames objectAtIndex: 0] isLike: @"*.icns"])
+		NSArray *fileNames = [[NSPasteboard generalPasteboard] propertyListForType:NSFilenamesPboardType];
+		if (fileNames && [[fileNames objectAtIndex: 0] isLike: @"*.icns"]) {
 			return YES;
+		}
 		
 		return NO;
 	}
@@ -152,79 +128,63 @@
 	return NO;
 }
 
-- (void)keyDown:(NSEvent*)event
-{
-	if ([event keyCode] == 117)
-	{
+- (void)keyDown:(NSEvent *)event {
+	if ([event keyCode] == 117) {
 		[fs setIconImage: nil];
 		[self setNeedsDisplay: YES];
-	}
-	else
-	{
+	} else {
 		[super keyDown: event];
 	}
 }
 
 # pragma mark D&D
-- (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)sender
-{
-	NSPasteboard* pb = [sender draggingPasteboard];
-	NSString* type = [pb availableTypeFromArray: [NSArray arrayWithObjects: NSFilenamesPboardType,
-												  (NSString*)kUTTypeAppleICNS, nil]];
-	if (type)
-	{
-		dragHighlight = YES;
-		[self setNeedsDisplay: YES];
+- (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)sender {
+	NSPasteboard *pb = [sender draggingPasteboard];
+	NSString *type = [pb availableTypeFromArray: [NSArray arrayWithObjects: NSFilenamesPboardType,(NSString *)kUTTypeAppleICNS, nil]];
+	if (type) {
+		_dragHighlight = YES;
+		[self setNeedsDisplay:YES];
 		return NSDragOperationCopy;
 	}
 	
 	return NSDragOperationNone;
 }
 
-- (NSDragOperation)draggingUpdated:(id <NSDraggingInfo>)sender
-{
+- (NSDragOperation)draggingUpdated:(id <NSDraggingInfo>)sender {
 	return NSDragOperationCopy;
 }
 
-- (void)draggingExited:(id <NSDraggingInfo>)sender
-{
-	dragHighlight = NO;
+- (void)draggingExited:(id <NSDraggingInfo>)sender {
+	_dragHighlight = NO;
 	[self setNeedsDisplay: YES];
 }
 
-- (NSDragOperation)draggingSourceOperationMaskForLocal:(BOOL)isLocal
-{
+- (NSDragOperation)draggingSourceOperationMaskForLocal:(BOOL)isLocal {
 	return NSDragOperationCopy;
 }
 
-- (BOOL)prepareForDragOperation:(id <NSDraggingInfo>)sender
-{
+- (BOOL)prepareForDragOperation:(id <NSDraggingInfo>)sender {
 	return YES;
 }
 
-- (BOOL)performDragOperation:(id <NSDraggingInfo>)sender
-{
-	[self setImageFromPasteboard: [sender draggingPasteboard]];
+- (BOOL)performDragOperation:(id <NSDraggingInfo>)sender {
+	[self setImageFromPasteboard:[sender draggingPasteboard]];
 	return YES;
 }
 
-- (void)concludeDragOperation:(id <NSDraggingInfo>)sender
-{
-	dragHighlight = NO;
+- (void)concludeDragOperation:(id <NSDraggingInfo>)sender {
+	_dragHighlight = NO;
 	[self setNeedsDisplay: YES];
 }
 
 # pragma mark KVO
-- (void) observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object 
-						 change:(NSDictionary *)change context:(void *)context
-{
+- (void) observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
     if (context == self) {
 		[self recalcImages];
-	}
-	else {
+	} else {
 		[super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
 	}
 }
 
-@synthesize fs;
+@synthesize fs=_fs;
 @end

@@ -21,7 +21,7 @@
 
 
 @interface MFLogViewerTableView : NSTableView {
-	NSArray* logMessages;
+	NSArray* _logMessages;
 }
 
 @property(readonly) NSArray* logMessages;

@@ -56,7 +56,7 @@ static NSString *advancedViewControllerKey = @"sshfsAdvancedView";
 						   [parameters objectForKey:kNetFSDirectoryParameter]]];
 	
 	[arguments addObject:[parameters objectForKey:kMFFSMountPathParameter]];
-	[arguments addObject:[NSString stringWithFormat:@"-p%@", [parameters objectForKey:kNetFSPortParameter ]]];
+	[arguments addObject:[NSString stringWithFormat:@"-p%@", [parameters objectForKey:kNetFSPortParameter]]];
 	
 	[arguments addObject:@"-oCheckHostIP=no"];
 	[arguments addObject:@"-oStrictHostKeyChecking=no"];
@@ -74,7 +74,7 @@ static NSString *advancedViewControllerKey = @"sshfsAdvancedView";
 }
 
 - (NSDictionary *)taskEnvironmentForParameters:(NSDictionary *)params {
-	NSMutableDictionary* env = [NSMutableDictionary dictionaryWithDictionary:[[NSProcessInfo processInfo] environment]];
+	NSMutableDictionary *env = [NSMutableDictionary dictionaryWithDictionary:[[NSProcessInfo processInfo] environment]];
 	[env setObject:[self askpassPath] forKey:@"SSH_ASKPASS"];
 	[env setObject:mfsecTokenForFilesystemWithUUID([params objectForKey:KMFFSUUIDParameter]) forKey:@"SSHFS_TOKEN"];
 
@@ -87,7 +87,7 @@ static NSString *advancedViewControllerKey = @"sshfsAdvancedView";
 	return [NSArray arrayWithObjects:@"ssh", @"sftp", nil];
 }
 
-- (NSDictionary *)parameterDictionaryForURL:(NSURL*)url error:(NSError**)error {
+- (NSDictionary *)parameterDictionaryForURL:(NSURL*)url error:(NSError **)outError {
 	NSString *host = [url host];
 	NSString *userName = [url user];
 	NSNumber *port = [url port];
@@ -149,7 +149,7 @@ static NSString *advancedViewControllerKey = @"sshfsAdvancedView";
 	return description;
 }
 
-- (id)impliedValueParameterNamed:(NSString*)parameterName otherParameters:(NSDictionary*)parameters {
+- (id)impliedValueParameterNamed:(NSString *)parameterName otherParameters:(NSDictionary *)parameters {
 	if ([parameterName isEqualToString:kMFFSMountPathParameter] && [parameters objectForKey:kNetFSHostParameter]) {
 		NSString *mountBathBase = [parameters objectForKey:kMFFSNameParameter] ? [parameters objectForKey:kMFFSNameParameter] :[parameters objectForKey:kNetFSHostParameter];
 		
@@ -174,13 +174,13 @@ static NSString *advancedViewControllerKey = @"sshfsAdvancedView";
 }
 
 # pragma mark Validation
-- (BOOL)validateValue:(id)value forParameterName:(NSString*)paramName error:(NSError**)error {
+- (BOOL)validateValue:(id)value forParameterName:(NSString*)paramName error:(NSError **)outError {
 	if ([paramName isEqualToString:kNetFSPortParameter]) {
 		NSNumber* converted = [NSNumber numberWithInt:[value intValue]];
 		if([converted isKindOfClass:[NSNumber class]] && [converted intValue] > 0 && [converted intValue] < 65535) {
 			return YES;
 		} else {
-			*error = [MFError invalidParameterValueErrorWithParameterName:kNetFSPortParameter value:value description:@"Must be positive number < 65535"];
+			*outError = [MFError invalidParameterValueErrorWithParameterName:kNetFSPortParameter value:value description:@"Must be positive number < 65535"];
 			return NO;
 		}
 	}
@@ -188,9 +188,9 @@ static NSString *advancedViewControllerKey = @"sshfsAdvancedView";
 	return YES;
 }
 
-- (BOOL)validateParameters:(NSDictionary *)parameters error:(NSError **)error {
+- (BOOL)validateParameters:(NSDictionary *)parameters error:(NSError **)outError {
 	for (NSString *paramName in [parameters allKeys]) {
-		BOOL ok = [self validateValue:[parameters objectForKey:paramName] forParameterName:paramName error:error];
+		BOOL ok = [self validateValue:[parameters objectForKey:paramName] forParameterName:paramName error:outError];
 		
 		if (!ok) {
 			return NO;
@@ -198,14 +198,14 @@ static NSString *advancedViewControllerKey = @"sshfsAdvancedView";
 	}
 	
 	if (![parameters objectForKey:kNetFSHostParameter]) {
-		*error = [MFError parameterMissingErrorWithParameterName:kNetFSHostParameter ];
+		*outError = [MFError parameterMissingErrorWithParameterName:kNetFSHostParameter];
 		return NO;
 	}
 	
 	return YES;
 }
 
-- (NSError *)errorForParameters:(NSDictionary*)parameters output:(NSString*)output {
+- (NSError *)errorForParameters:(NSDictionary *)parameters output:(NSString *)output {
 	if ([output rangeOfString:@"Permission denied"].location != NSNotFound) {
 		return [MFError errorWithErrorCode:kMFErrorCodeMountFaliure description:@"Authentication has failed."];
 	}

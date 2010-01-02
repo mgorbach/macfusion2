@@ -53,7 +53,7 @@
 }
 
 - (NSString *)uuid {
-	return [self valueForParameterNamed:KMFFSUUIDParameter];
+	return [self valueForParameterNamed:kMFFSUUIDParameter];
 }
 
 - (NSString *)status {
