@@ -50,7 +50,7 @@
 
 - (void)drawRect:(NSRect)rect {
 	[[NSGraphicsContext currentContext] setImageInterpolation: NSImageInterpolationHigh];
-	NSImage* imageToDraw = [[fs coloredImage] imageScaledToSize:NSMakeSize(rect.size.width, rect.size.height)];
+	NSImage *imageToDraw = [[_fs coloredImage] imageScaledToSize:NSMakeSize(rect.size.width, rect.size.height)];
 	BOOL highlight = ([[self window] firstResponder] == self);
 	
 	if (_dragHighlight || highlight) {
@@ -130,8 +130,8 @@
 
 - (void)keyDown:(NSEvent *)event {
 	if ([event keyCode] == 117) {
-		[fs setIconImage: nil];
-		[self setNeedsDisplay: YES];
+		[_fs setIconImage:nil];
+		[self setNeedsDisplay:YES];
 	} else {
 		[super keyDown: event];
 	}

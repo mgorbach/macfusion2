@@ -63,7 +63,7 @@ static NSString *advancedViewControllerKey = @"sshfsAdvancedView";
 
 - (NSDictionary *)taskEnvironmentForParameters:(NSDictionary *)params {
 	NSMutableDictionary* env = [NSMutableDictionary dictionaryWithDictionary:[[NSProcessInfo processInfo] environment]];
-	[env setObject:mfsecTokenForFilesystemWithUUID([params objectForKey:KMFFSUUIDParameter]) forKey:@"FTPFS_TOKEN"];
+	[env setObject:mfsecTokenForFilesystemWithUUID([params objectForKey:kMFFSUUIDParameter]) forKey:@"FTPFS_TOKEN"];
 	[env setObject:[self askpassPath] forKey:@"FTPFS_ASKPASS"];
 	
 	return [env copy];

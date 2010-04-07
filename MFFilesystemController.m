@@ -181,7 +181,7 @@ static MFFilesystemController* sharedController = nil;
 		 }
 	 }
 	
-	BOOL writeOK = [recents writeToFile: recentsPath atomically:NO];
+	BOOL writeOK = [_recents writeToFile: recentsPath atomically:NO];
 	if (!writeOK) {
 		MFLogS(self, @"Could not write recents to file!");
 	}
@@ -204,7 +204,7 @@ static MFFilesystemController* sharedController = nil;
 	// Strip the UUID so it never repeats
 	[params setValue:nil forKey:kMFFSUUIDParameter];
 	
-	for(NSDictionary *recent in recents) {
+	for(NSDictionary *recent in _recents) {
 		BOOL equal = YES;
 		for(NSString *key in [recent allKeys]) {
 			equal = ([[recent objectForKey:key] isEqual:[params objectForKey:key]]);
@@ -221,8 +221,8 @@ static MFFilesystemController* sharedController = nil;
 	}
 	
 	[[self mutableArrayValueForKey:@"recents"] addObject:params];
-	if ([recents count] > 10) {
-		[recents removeObjectAtIndex: 0];
+	if ([_recents count] > 10) {
+		[_recents removeObjectAtIndex: 0];
 	}
 	[self writeRecentFilesystems];
 }
@@ -386,7 +386,7 @@ static void diskUnMounted(DADiskRef disk, void *mySelf) {
 	NSAssert(path, @"Mounted Path nil in MFFilesystemControlled addMountedPath");
 	if (![_mountedPaths containsObject: path]) {
 		[_mountedPaths addObject:path];
-		for(MFServerFS *fs in filesystems) {
+		for(MFServerFS *fs in _filesystems) {
 			if ([fs.mountPath isEqualToString: path] && ([fs isWaiting] )) {
 				[fs handleMountNotification];
 				[self invalidateTokensForFS: fs];
@@ -404,7 +404,7 @@ static void diskUnMounted(DADiskRef disk, void *mySelf) {
 	NSAssert(path, @"Mounted Path nil in MFFilesystemControlled removeMountedPath");
 	if ([_mountedPaths containsObject:path]) {
 		[_mountedPaths removeObject:path];
-		NSArray *matchingFilesystems = [filesystems filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"self.mountPath == %@", path]];
+		NSArray *matchingFilesystems = [_filesystems filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"self.mountPath == %@", path]];
 		[matchingFilesystems makeObjectsPerformSelector:@selector(handleUnmountNotification)];
 		[self updateFSPersistenceCache];
 		

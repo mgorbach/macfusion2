@@ -7,7 +7,3 @@
 //
 
 #import "MFServerFSProtocol.h"
-
-
-@implementation MFServerFSProtocol
-@end

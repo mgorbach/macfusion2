@@ -143,16 +143,16 @@ static NSString *kAutoscrollToolbarItemIdentifier = @"autoscroll";
 
 # pragma mark Search & Filter
 - (NSPredicate *)fullLogPredicate {
-	if (filterPredicate && searchPredicate) {
-		return [NSCompoundPredicate andPredicateWithSubpredicates:[NSArray arrayWithObjects:filterPredicate, searchPredicate, nil]];
+	if (_filterPredicate && _searchPredicate) {
+		return [NSCompoundPredicate andPredicateWithSubpredicates:[NSArray arrayWithObjects:_filterPredicate, _searchPredicate, nil]];
 	}
 		
-	if (filterPredicate) {
-		return filterPredicate;
+	if (_filterPredicate) {
+		return _filterPredicate;
 	}
 		
-	if (searchPredicate) {
-		return searchPredicate;
+	if (_searchPredicate) {
+		return _searchPredicate;
 	}
 	
 	return nil;

@@ -1,9 +1,6 @@
 //
-//  MFEditingController.h
+//  MFServerFSProtocol.h
 //  MacFusion2
-//
-//  Created by Michael Gorbach on 6/16/08.
-//  Copyright 2008 __MyCompanyName__. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,16 +15,16 @@
 // limitations under the License.
 
 #import <Cocoa/Cocoa.h>
+@class MFServerPlugin;
 
-#define kMFEditReturnOK 0
-#define kMFEditReturnCancel 1
+@protocol MFServerFSProtocol <NSObject>
+- (NSDictionary*)statusInfo;
+- (NSDictionary*)parameters;
 
-@class MFClientFS;
+- (void)mount;
+- (void)unmount;
+- (NSError*)validateAndSetParameters:(NSDictionary*)params;
+- (MFServerPlugin*)plugin;
+- (void)setPauseTimeout:(BOOL)pause;
 
-@interface MFEditingController : NSWindowController <NSTabViewDelegate> {
-	MFClientFS* _fsBeingEdited;
-
-}
-
-+ (NSInteger)editFilesystem:(MFClientFS *)fs onWindow:(NSWindow *)window;
 @end

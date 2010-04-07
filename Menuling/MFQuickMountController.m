@@ -71,7 +71,7 @@
 - (IBAction)recentClicked:(id)sender {
 	MFClientRecent *recent = [[[MFClient sharedClient] recents] objectAtIndex:[recentsTableView selectedRow]];
 	NSError *error;
-	MFClientFS *tempFS = [client mountRecent: recent error:&error];
+	MFClientFS *tempFS = [_client mountRecent:recent error:&error];
 	[self handleMountAttemptForFS:tempFS error:error];
 }
 
@@ -86,7 +86,7 @@
 		
 	if ([_fs isFailedToMount]) {
 		if ([_fs error]) {
-			[self presentError:[fs error] modalForWindow:[self window] delegate:self didPresentSelector:@selector(alertDidEnd:returnCode:contextInfo:) contextInfo:nil];
+			[self presentError:[_fs error] modalForWindow:[self window] delegate:self didPresentSelector:@selector(alertDidEnd:returnCode:contextInfo:) contextInfo:nil];
 		}
 		
 		[indicator stopAnimation:self];

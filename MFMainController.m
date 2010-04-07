@@ -58,7 +58,7 @@ static MFMainController* sharedController = nil;
 # pragma mark Opening Files
 - (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filePath {
 	NSDictionary *fileDict = [NSDictionary dictionaryWithContentsOfFile:filePath];
-	NSString *uuid = [fileDict objectForKey: KMFFSUUIDParameter];
+	NSString *uuid = [fileDict objectForKey:kMFFSUUIDParameter];
 	if (!uuid) {
 		MFLogS(self, @"Asked to open bad file at pah %@", filePath);
 		return NO;

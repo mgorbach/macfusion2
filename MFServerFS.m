@@ -127,7 +127,7 @@
 		statusInfo = [self initializedStatusInfo];
 		_pauseTimeout = NO;
 		if (![parameters objectForKey:kMFFSUUIDParameter]) {
-			[parameters setObject:[self getNewUUID] forKey:KMFFSUUIDParameter];
+			[parameters setObject:[self getNewUUID] forKey:kMFFSUUIDParameter];
 		}
 		
 		[self registerGeneralNotifications];
@@ -354,7 +354,7 @@
 	}
 	
 	MFLogS(self, @"Mounting");
-	self._pauseTimeout = NO;
+	self.pauseTimeout = NO;
 	self.status = kMFStatusFSWaiting;
 	if ([self setupMountPoint] == YES) {
 		_task = [self taskForLaunch];
@@ -421,7 +421,7 @@
 			*error = [MFError parameterMissingErrorWithParameterName:kMFFSMountPathParameter];
 			return NO;
 		}
-		if (![impliedParams objectForKey:KMFFSUUIDParameter]) {
+		if (![impliedParams objectForKey:kMFFSUUIDParameter]) {
 			*error = [MFError parameterMissingErrorWithParameterName:kMFFSUUIDParameter];
 			return NO;
 		}
@@ -505,9 +505,9 @@
 }
 
 - (void)handleMountTimeout:(NSTimer *)theTimer {
-	if (self._pauseTimeout) {
+	if (_pauseTimeout) {
 		// MFLogS(self, @"Timeout paused");
-		timer = [self newTimeoutTimer];
+		_timer = [self newTimeoutTimer];
 		return;
 	}
 		

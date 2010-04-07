@@ -349,7 +349,7 @@ OSStatus myKeychainCallback ( SecKeychainEvent keychainEvent,
 }
 
 - (MFClientPlugin *)pluginWithID:(NSString *)anID {
-	NSAssert(id, @"id nil when requesting plugin in MFClient");
+	NSAssert(anID, @"id nil when requesting plugin in MFClient");
 	return [pluginsDictionary objectForKey:anID];
 }
 

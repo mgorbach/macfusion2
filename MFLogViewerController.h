@@ -20,7 +20,7 @@
 #import <Cocoa/Cocoa.h>
 @class MFLogReader, MFClientFS;
 
-@interface MFLogViewerController : NSWindowController {
+@interface MFLogViewerController : NSWindowController <NSMenuDelegate> {
 	IBOutlet NSTableView *logTableView;
 	IBOutlet NSArrayController *logArrayController;
 	IBOutlet NSPopUpButton *filesystemFilterPopup;

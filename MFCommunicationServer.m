@@ -43,13 +43,13 @@ static MFCommunicationServer *sharedServer = nil;
 	
 	[[MFFilesystemController sharedController] addObserver:self forKeyPath:@"filesystems" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:nil];
 	[[MFFilesystemController sharedController] addObserver:self forKeyPath:@"plugins" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:nil];
-	[[MFFilesystemController sharedController] addObserver:self forKeyPath:@"recents" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:nil];w
+	[[MFFilesystemController sharedController] addObserver:self forKeyPath:@"recents" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:nil];
 }
 
 - (id) init {
 	self = [super init];
 	if (self != nil) {
-		clients = [NSMutableArray array];
+		_clients = [NSMutableArray array];
 		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleConnectionDidDie:) name:NSConnectionDidDieNotification object:nil];
 	}
 	
@@ -70,12 +70,12 @@ static MFCommunicationServer *sharedServer = nil;
 	if ([keyPath isEqualToString:@"status"] && [object isKindOfClass:[MFFilesystem class]]
 		&& ![[change objectForKey:NSKeyValueChangeOldKey] isEqualToString:[change objectForKey:NSKeyValueChangeNewKey]]) {
 		MFFilesystem *fs = (MFFilesystem *)object;
-		[clients makeObjectsPerformSelector:@selector(noteStatusChangedForFSWithUUID:) withObject:fs.uuid];
+		[_clients makeObjectsPerformSelector:@selector(noteStatusChangedForFSWithUUID:) withObject:fs.uuid];
 	}
 	
 	if ([keyPath isEqualToString:@"parameters"] && [object isKindOfClass:[MFFilesystem class]]) {
 		MFFilesystem *fs = (MFFilesystem*)object;
-		[clients makeObjectsPerformSelector:@selector(noteParametersChangedForFSWithUUID:) withObject:fs.uuid];
+		[_clients makeObjectsPerformSelector:@selector(noteParametersChangedForFSWithUUID:) withObject:fs.uuid];
 	}
 	
 	if ([keyPath isEqualToString:@"filesystems"] && object == [MFFilesystemController sharedController]) {
@@ -84,7 +84,7 @@ static MFCommunicationServer *sharedServer = nil;
 			for (MFServerFS *fs in [change objectForKey:NSKeyValueChangeNewKey]) {
 				[fs addObserver:self forKeyPath:@"status" options:NSKeyValueObservingOptionNew context:nil];
 				[fs addObserver:self forKeyPath:@"parameters" options:NSKeyValueObservingOptionNew context:nil];
-				[clients makeObjectsPerformSelector:@selector(noteFilesystemAddedWithUUID:) withObject:[fs uuid]];
+				[_clients makeObjectsPerformSelector:@selector(noteFilesystemAddedWithUUID:) withObject:[fs uuid]];
 			}
 		}
 		
@@ -92,7 +92,7 @@ static MFCommunicationServer *sharedServer = nil;
 			for(MFServerFS *fs in [change objectForKey:NSKeyValueChangeOldKey]) {
 				[fs removeObserver:self forKeyPath:@"status"];
 				[fs removeObserver:self forKeyPath:@"parameters"];
-				[clients makeObjectsPerformSelector:@selector(noteFilesystemRemovedWithUUID:) withObject:[fs uuid]];
+				[_clients makeObjectsPerformSelector:@selector(noteFilesystemRemovedWithUUID:) withObject:[fs uuid]];
 			}
 		}
 	}
@@ -102,7 +102,7 @@ static MFCommunicationServer *sharedServer = nil;
 		if (changeKind == NSKeyValueChangeInsertion) {
 			NSArray *newRecents = [change objectForKey:NSKeyValueChangeNewKey];
 			for(NSDictionary *recentsDict in newRecents) {
-				[clients makeObjectsPerformSelector:@selector(noteRecentAdded:) withObject:recentsDict];
+				[_clients makeObjectsPerformSelector:@selector(noteRecentAdded:) withObject:recentsDict];
 			 }
 		}
 	}
@@ -153,7 +153,7 @@ static MFCommunicationServer *sharedServer = nil;
 	NSError *error;
 	MFServerFS *fs = [[MFFilesystemController sharedController] quickMountWithURL:url error:&error];
 	if (error) {
-		recentError = error;
+		_recentError = error;
 	}
 	return fs;
 }
@@ -199,13 +199,13 @@ static MFCommunicationServer *sharedServer = nil;
 
 - (void)unregisterClient:(id <MFClientProtocol>) client {
 	NSAssert([client conformsToProtocol:@protocol(MFClientProtocol)], @"Client doesn't conform to protocol, unregisterClient");
-	NSAssert([clients containsObject:client], @"Client not registered, unregisterClient");
+	NSAssert([_clients containsObject:client], @"Client not registered, unregisterClient");
 	[_clients removeObject:client];
 }
 
 - (void)handleConnectionDidDie:(NSNotification *)note {
 	// NSLog(@"Connection did die on server! %@ object %@ userInfo %@", note, [note object], [note userInfo]);
-	for(id obj in clients) {
+	for(id obj in _clients) {
 		if ([obj connectionForProxy] == [note object]) {
 			// NSLog(@"Killing %@", obj);
 			[_clients removeObject:obj];
@@ -220,7 +220,7 @@ static MFCommunicationServer *sharedServer = nil;
 # pragma mark Logging
 - (void)sendASLMessageDict:(NSDictionary *)messageDict {
 	@try {
-		[clients makeObjectsPerformSelector:@selector(recordASLMessageDict:) withObject:messageDict];
+		[_clients makeObjectsPerformSelector:@selector(recordASLMessageDict:) withObject:messageDict];
 	}
 	@catch (NSException* e) {
 		return;

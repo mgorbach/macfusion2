@@ -47,7 +47,7 @@ static void ClearBitmapImageRep(NSBitmapImageRep *bitmap) {
 	if (_animation != nil) {
 		[_transitionFilter setValue:[NSNumber numberWithFloat:[_animation currentValue]] forKey:@"inputTime"];
 		CIImage *outputImage = [_transitionFilter valueForKey:@"outputImage"];
-		[outputImage drawInRect:_imageRect fromRect:NSMakeRect(0, _imageRect.size.height, _imageRect.size.width, -imageRect.size.height) operation:NSCompositeSourceOver fraction:1.0];
+		[outputImage drawInRect:_imageRect fromRect:NSMakeRect(0, _imageRect.size.height, _imageRect.size.width, -_imageRect.size.height) operation:NSCompositeSourceOver fraction:1.0];
 		 
 	}
 }
