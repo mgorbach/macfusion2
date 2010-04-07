@@ -89,9 +89,10 @@
 		D4656C8E0D6FD6DC00DE2208 /* sshfs.png in Resources */ = {isa = PBXBuildFile; fileRef = D4656C8C0D6FD6DC00DE2208 /* sshfs.png */; };
 		D4656C9F0D6FDBF900DE2208 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D4656C9E0D6FDBF900DE2208 /* QuartzCore.framework */; };
 		D46E4C0E0D02593B004926CE /* MFConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = D46E4C0D0D02593B004926CE /* MFConstants.m */; };
+		D47C1CA0116C34740073CE7F /* MFServerPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = D4905C6F0D394A6700E21C1E /* MFServerPlugin.m */; };
+		D47C1CA1116C34790073CE7F /* MFServerFS.m in Sources */ = {isa = PBXBuildFile; fileRef = D4905C6C0D394A5D00E21C1E /* MFServerFS.m */; };
+		D47C1CA5116C34840073CE7F /* MFPluginController.m in Sources */ = {isa = PBXBuildFile; fileRef = D4B14C850CE0455A003195A3 /* MFPluginController.m */; };
 		D47DED810D9ED5C700C0F934 /* SSHServerFS.m in Sources */ = {isa = PBXBuildFile; fileRef = D47DED800D9ED5C700C0F934 /* SSHServerFS.m */; };
-		D47DEDBC0D9ED73900C0F934 /* MFServerPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = D4905C6F0D394A6700E21C1E /* MFServerPlugin.m */; };
-		D47DEDBD0D9ED74000C0F934 /* MFServerFS.m in Sources */ = {isa = PBXBuildFile; fileRef = D4905C6C0D394A5D00E21C1E /* MFServerFS.m */; };
 		D47DF1790DA034AF00C0F934 /* MFClientFSUI.h in Headers */ = {isa = PBXBuildFile; fileRef = D47DF1770DA034AF00C0F934 /* MFClientFSUI.h */; };
 		D47DF17A0DA034AF00C0F934 /* MFClientFSUI.m in Sources */ = {isa = PBXBuildFile; fileRef = D47DF1780DA034AF00C0F934 /* MFClientFSUI.m */; };
 		D47F677E0D983F6C00E91D45 /* MFLogReader.h in Headers */ = {isa = PBXBuildFile; fileRef = D47F677C0D983F6C00E91D45 /* MFLogReader.h */; };
@@ -165,7 +166,6 @@
 		D4E983450D7223CE0058AF73 /* MGNSImage.m in Sources */ = {isa = PBXBuildFile; fileRef = D4E983440D7223CE0058AF73 /* MGNSImage.m */; };
 		D4E983470D7223D70058AF73 /* MGNSImage.h in Headers */ = {isa = PBXBuildFile; fileRef = D4E983460D7223D70058AF73 /* MGNSImage.h */; };
 		D4EA61570D8B30ED006D8885 /* MFMainController.m in Sources */ = {isa = PBXBuildFile; fileRef = D42E13E50CDFC69500C81814 /* MFMainController.m */; };
-		D4EA61580D8B30ED006D8885 /* MFPluginController.m in Sources */ = {isa = PBXBuildFile; fileRef = D4B14C850CE0455A003195A3 /* MFPluginController.m */; };
 		D4EA61590D8B30ED006D8885 /* macfusionAgent.m in Sources */ = {isa = PBXBuildFile; fileRef = 08FB7796FE84155DC02AAC07 /* macfusionAgent.m */; };
 		D4EA615A0D8B30ED006D8885 /* MFFilesystemController.m in Sources */ = {isa = PBXBuildFile; fileRef = D4B14FC10CE25A88003195A3 /* MFFilesystemController.m */; };
 		D4EA615B0D8B30ED006D8885 /* MFCommunicationServer.m in Sources */ = {isa = PBXBuildFile; fileRef = D439D5910D09E1510025574A /* MFCommunicationServer.m */; };
@@ -1398,6 +1398,9 @@
 				D47DF17A0DA034AF00C0F934 /* MFClientFSUI.m in Sources */,
 				D40363300E0780BF0048BB63 /* MFEditingController.m in Sources */,
 				D44EDA88116162B8000E9FEA /* MFServerFSProtocol.m in Sources */,
+				D47C1CA0116C34740073CE7F /* MFServerPlugin.m in Sources */,
+				D47C1CA1116C34790073CE7F /* MFServerFS.m in Sources */,
+				D47C1CA5116C34840073CE7F /* MFPluginController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1465,12 +1468,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				D4EA61570D8B30ED006D8885 /* MFMainController.m in Sources */,
-				D4EA61580D8B30ED006D8885 /* MFPluginController.m in Sources */,
 				D4EA61590D8B30ED006D8885 /* macfusionAgent.m in Sources */,
 				D4EA615A0D8B30ED006D8885 /* MFFilesystemController.m in Sources */,
 				D4EA615B0D8B30ED006D8885 /* MFCommunicationServer.m in Sources */,
-				D47DEDBC0D9ED73900C0F934 /* MFServerPlugin.m in Sources */,
-				D47DEDBD0D9ED74000C0F934 /* MFServerFS.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1755,8 +1755,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1)";
-				ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1 = "ppc i386";
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
@@ -2036,8 +2034,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1)";
-				ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1 = "ppc i386";
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
@@ -2418,8 +2414,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1)";
-				ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1 = "ppc i386";
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
@@ -2447,7 +2441,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(NATIVE_ARCH)";
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;

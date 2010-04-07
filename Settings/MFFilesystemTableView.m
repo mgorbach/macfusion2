@@ -38,7 +38,7 @@
 		self.filesystems = [NSMutableArray array];
 		MFFilesystemCell* cell = [MFFilesystemCell new];
 		[[[self tableColumns] objectAtIndex:0] setDataCell: cell];
-		[self setDataSource: self];
+//		[self setDataSource: self];
 		[self registerForDraggedTypes: [NSArray arrayWithObjects: kMFFilesystemDragType, NSFilesPromisePboardType, nil ]];
 		[self setDraggingSourceOperationMask:NSDragOperationEvery forLocal:NO];
 		[self setDraggingSourceOperationMask:NSDragOperationEvery forLocal:YES];

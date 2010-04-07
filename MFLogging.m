@@ -181,7 +181,10 @@ NSString *headerStringForASLMessageDict(NSDictionary *messageDict) {
 	NSDate *time = [NSDate dateWithTimeIntervalSince1970: [[messageDict objectForKey: kMFLogKeyTime] intValue]];;
 	NSString *formattedDate = [[self formatter] stringFromDate: time];
 	
-	[headerList addObject: sender];
+	if (sender) {
+		[headerList addObject:sender];	
+	}
+	
 	if (subsystem) {
 		[headerList addObject: subsystem];
 	}
