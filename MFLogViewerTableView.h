@@ -20,7 +20,7 @@
 #import <Cocoa/Cocoa.h>
 
 
-@interface MFLogViewerTableView : NSTableView {
+@interface MFLogViewerTableView : NSTableView <NSTableViewDelegate, NSTableViewDataSource> {
 	NSArray* _logMessages;
 }
 

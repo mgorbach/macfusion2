@@ -303,7 +303,7 @@
 	pathExists = [fm fileExistsAtPath:mountPath isDirectory:&isDir];
 	if (pathExists && isDir == YES) {
 		// directory already exists 
-		BOOL empty = ([[fm directoryContentsAtPath:mountPath] count] == 0);
+		BOOL empty = ([[fm contentsOfDirectoryAtPath:mountPath error:nil] count] == 0);
 		BOOL writeable = [fm isWritableFileAtPath:mountPath];
 		if (!empty) {
 			errorDescription = @"Mount path directory in use.";
@@ -318,7 +318,7 @@
 		errorDescription = @"Mount path is a file, not a directory.";
 		returnValue = NO;
 	} else {
-		if ([fm createDirectoryAtPath:mountPath attributes:nil]) {
+		if ([fm createDirectoryAtPath:mountPath withIntermediateDirectories:YES attributes:nil error:nil]) {
 			returnValue = YES;
 		} else {
 			errorDescription = @"Mount path could not be created.";
@@ -343,8 +343,8 @@
 	removexattr([mountPath cStringUsingEncoding:NSUTF8StringEncoding],[@"org.mgorbach.macfusion.xattr.uuid" cStringUsingEncoding:NSUTF8StringEncoding],0);
 	
 	pathExists = [fm fileExistsAtPath:mountPath isDirectory:&isDir];
-	if (pathExists && isDir && ([[fm directoryContentsAtPath:mountPath] count] == 0)) {
-		[fm removeFileAtPath:mountPath handler:nil];
+	if (pathExists && isDir && ([[fm contentsOfDirectoryAtPath:mountPath error:nil] count] == 0)) {
+		[fm removeItemAtPath:mountPath error:nil];
 	}
 }
 

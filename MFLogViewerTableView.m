@@ -39,15 +39,15 @@
 	return self;
 }
 
-- (int)numberOfRowsInTableView:(NSTableView *)tableView {
+- (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView {
 	return [_logMessages count];
 }
 
-- (id)tableView:(NSTableView *) tableView objectValueForTableColumn:(NSTableColumn *)tableColumn row:(int)row {
+- (id)tableView:(NSTableView *) tableView objectValueForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row {
 	return [(NSDictionary *)[_logMessages objectAtIndex:row] objectForKey:[NSString stringWithUTF8String:ASL_KEY_MSG]];
 }
 
-- (void)tableView:(NSTableView *)tableView willDisplayCell:(NSCell *)cell forTableColumn:(NSTableColumn *)tableColumn row:(int)row {
+- (void)tableView:(NSTableView *)tableView willDisplayCell:(NSCell *)cell forTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row {
 	[cell setRepresentedObject:[_logMessages objectAtIndex:row]];
 }
 

@@ -17,7 +17,7 @@
 #import <Cocoa/Cocoa.h>
 @class MFClient, MFPreferences;
 
-@interface MFPreferencesController : NSWindowController {
+@interface MFPreferencesController : NSWindowController <NSToolbarDelegate> {
 	IBOutlet NSButton *agentLoginItemButton;
 	IBOutlet NSButton *menuLoginItemButton;
 	IBOutlet NSTextField *fuseVersionTextField;

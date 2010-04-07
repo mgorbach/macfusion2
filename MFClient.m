@@ -23,6 +23,7 @@
 #import "MFCore.h"
 #import "MFLogReader.h"
 #import "MFLogging.h"
+#import "MFSecurity.h"
 
 #define ORDERING_FILE_PATH @"~/Library/Application Support/Macfusion/Ordering.plist"
 

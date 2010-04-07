@@ -17,7 +17,7 @@
 #import <Cocoa/Cocoa.h>
 @class MFSettingsController, MFClientFS;
 
-@interface MFFilesystemTableView : NSTableView
+@interface MFFilesystemTableView : NSTableView <NSTableViewDelegate>
 {
 	NSMutableArray* filesystems;
 	MFSettingsController* controller;

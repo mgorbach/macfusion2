@@ -304,7 +304,7 @@ static CGColorRef CGColorCreateFromNSColor(CGColorSpaceRef  colorSpace, NSColor 
 	// Write Black and White image
 	NSString *fullBWImagePath = [iconDirPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.tiff", self.uuid]];
 	if ([[NSFileManager defaultManager] fileExistsAtPath:fullBWImagePath]) {
-		[[NSFileManager defaultManager] removeFileAtPath: fullBWImagePath handler:nil];
+		[[NSFileManager defaultManager] removeItemAtPath:fullBWImagePath error:nil];
 	}
 	
 	CIFilter *bwFilter = [CIFilter filterWithName:@"CIColorControls"];

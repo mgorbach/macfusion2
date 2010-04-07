@@ -34,7 +34,7 @@
 {
 	if (self = [super initWithCoder:decoder])
 	{
-		[self setDelegate: self];
+		[self setDelegate:self];
 		self.filesystems = [NSMutableArray array];
 		MFFilesystemCell* cell = [MFFilesystemCell new];
 		[[[self tableColumns] objectAtIndex:0] setDataCell: cell];
@@ -72,7 +72,7 @@
 - (void) tableView: (NSTableView *) tableView 
    willDisplayCell: (NSCell*) cell 
 	forTableColumn: (NSTableColumn *) tableColumn 
-			   row: (int) row
+			   row: (NSInteger) row
 {
 	MFClientFS* fs = [self.filesystems objectAtIndex: row];
 	if ([[tableColumn identifier] isEqualTo: @"main"])
