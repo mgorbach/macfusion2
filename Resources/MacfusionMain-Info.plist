@@ -46,7 +46,7 @@
 	<key>SUCheckForUpdates</key>
 	<true/>
 	<key>CFBundleVersion</key>
-	<string>2.0.3</string>
+	<string>2.0.4</string>
 	<key>NSMainNibFile</key>
 	<string>main</string>
 	<key>NSPrincipalClass</key>
