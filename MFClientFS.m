@@ -95,6 +95,15 @@
 	[self didChangeValueForKey:kMFParameterDict];
 }
 
+-(id)copyWithZone:(NSZone*)theZone
+{
+    MFClientFS* copy = [[MFClientFS allocWithZone:theZone] initWithRemoteFS:remoteFilesystem
+                                                               clientPlugin:plugin];
+    [copy fillInitialData];
+    
+    return copy;
+}
+
 - (void)fillInitialData
 {
 	[self copyStatusInfo];

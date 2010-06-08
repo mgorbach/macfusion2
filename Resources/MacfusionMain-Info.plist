@@ -28,7 +28,7 @@
 		</dict>
 	</array>
 	<key>CFBundleShortVersionString</key>
-	<string>2.0.3</string>
+	<string>2.0.4</string>
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
 	<key>CFBundleIconFile</key>

@@ -69,6 +69,16 @@
 		return nil;
 }
 
+-(NSInteger)numberOfRowsInTableView:(NSTableView*)theView
+{
+    return [self.filesystems count];
+}
+
+-(id)tableView:(NSTableView*)aTableView objectValueForTableColumn:(NSTableColumn*)aTableColumn row:(NSInteger)rowIndex
+{
+    return [self.filesystems objectAtIndex:rowIndex];
+}
+
 - (void) tableView: (NSTableView *) tableView 
    willDisplayCell: (NSCell*) cell 
 	forTableColumn: (NSTableColumn *) tableColumn 

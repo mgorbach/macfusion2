@@ -247,7 +247,12 @@ NSString* headerStringForASLMessageDict(NSDictionary* messageDict)
 	asl_log(aslClient, m, ASL_LEVEL_ERR, [message UTF8String]);
 	
 	// Send to other macfusion system processes over DO
-	NSDictionary* messageDict = dictFromASLMessage(m);
+	NSMutableDictionary* messageDict = [NSMutableDictionary dictionaryWithDictionary:dictFromASLMessage(m)];
+    if([messageDict objectForKey:@"sender"] == nil)
+    {
+        [messageDict setObject:sender forKey:kMFLogKeySender];
+    }
+    
 	[self sendASLMessageDictOverDO: messageDict];
 	
 	NSString* printstring = [NSString stringWithFormat:
