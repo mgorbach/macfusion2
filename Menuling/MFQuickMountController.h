@@ -19,15 +19,17 @@
 
 @class MFClientFS, MFClient;
 
-@interface MFQuickMountController : NSWindowController <MFClientFSDelegateProtocol> {
-	IBOutlet NSTextField *qmTextField;
-	IBOutlet NSTableView *recentsTableView;
-	IBOutlet NSArrayController *recentsArrayController;
-	IBOutlet NSProgressIndicator *indicator;
-	IBOutlet NSButton *connectButton;
+@interface MFQuickMountController : NSWindowController <MFClientFSDelegateProtocol> 
+{
 	
-	MFClientFS *_fs;
-	MFClient *_client;
+	IBOutlet NSTextField* qmTextField;
+	IBOutlet NSTableView* recentsTableView;
+	IBOutlet NSArrayController* recentsArrayController;
+	IBOutlet NSProgressIndicator* indicator;
+	IBOutlet NSButton* connectButton;
+	
+	MFClientFS* fs;
+	MFClient* client;
 }
 
 - (IBAction)quickMount:(id)sender;

@@ -21,10 +21,13 @@
 
 }
 
-+ (MFError *)parameterMissingErrorWithParameterName:(NSString*)parameter;
++ (MFError*)parameterMissingErrorWithParameterName:(NSString*)parameter;
 
-+ (MFError *)invalidParameterValueErrorWithParameterName:(NSString*)parameter value:(id)value description:(NSString*)description;
++ (MFError*)invalidParameterValueErrorWithParameterName:(NSString*)parameter
+												  value:(id)value
+											description:(NSString*)description;
 
-+ (MFError *)errorWithErrorCode:(NSInteger)code description:(NSString*)description;
++ (MFError*)errorWithErrorCode:(NSInteger)code 
+				   description:(NSString*)description;
 
 @end

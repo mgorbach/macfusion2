@@ -22,23 +22,25 @@
 #import "MFLogging.h"
 
 @interface MFLogReader(PrivatAPI)
-@property(readwrite, retain) NSMutableArray *logMessages;
+@property(readwrite, retain) NSMutableArray* logMessages;
 @end
 
 @implementation MFLogReader
 
-static MFLogReader *sharedReader;
+static MFLogReader* sharedReader;
 
-+ (MFLogReader *)sharedReader {
-	if (sharedReader == nil) {
-		[[self alloc] init];	
-	}
++ (MFLogReader*)sharedReader
+{
+	if (sharedReader == nil)
+		[[self alloc] init];
 	
 	return sharedReader;
 }
 
-+ (id)allocWithZone:(NSZone *)zone {
-	if (sharedReader == nil) {
++ (id)allocWithZone:(NSZone*)zone
+{
+	if (sharedReader == nil)
+	{
 		sharedReader = [super allocWithZone: zone];
 		return sharedReader;
 	}
@@ -46,13 +48,15 @@ static MFLogReader *sharedReader;
 	return nil;
 }
 
-- (void)addASLEntries:(NSArray*)array {
+- (void)addASLEntries:(NSArray*)array
+{
 	[self willChangeValueForKey:@"logMessages"];
 	[logMessages addObjectsFromArray: array];
 	[self didChangeValueForKey:@"logMessages"];
 }
 
-- (void)readEntriesFromASL {	
+- (void)readEntriesFromASL
+{	
 	aslmsg q = asl_new(ASL_TYPE_QUERY);
 	aslmsg m;
 
@@ -61,34 +65,40 @@ static MFLogReader *sharedReader;
 	aslresponse r = asl_search(NULL, q);
 	NSMutableArray* logMessagesToAdd = [NSMutableArray array];
 	
-	while (NULL != (m = aslresponse_next(r))) {
+	while(NULL != (m = aslresponse_next(r)))
+	{
 		NSDictionary* dict = dictFromASLMessage(m);
 		[logMessagesToAdd addObject: dict];
 	}
 	
 	aslresponse_free(r);
-	[self performSelectorOnMainThread:@selector(addASLEntries:) withObject:logMessagesToAdd waitUntilDone:NO];
+	[self performSelectorOnMainThread:@selector(addASLEntries:)
+						   withObject:logMessagesToAdd waitUntilDone:NO];
 }
 
-- (void)recordASLMessageDict:(NSDictionary*)messageDict {
-	[[self mutableArrayValueForKey: @"logMessages"] addObject:messageDict];
+- (void)recordASLMessageDict:(NSDictionary*)messageDict
+{
+	[[self mutableArrayValueForKey: @"logMessages"] addObject:
+	 messageDict];
 }
 
-- (id)init {
-	if (self = [super init]) {
-		logMessages = [NSMutableArray array];
-		[NSThread detachNewThreadSelector:@selector(readEntriesFromASL) toTarget:self withObject:nil];
-		isRunning = NO;
-	}
+- (void)init
+{
+	logMessages = [NSMutableArray array];
+	[NSThread detachNewThreadSelector: @selector(readEntriesFromASL)
+							 toTarget: self
+						   withObject:nil ];
+	isRunning = NO;
 	
-	return self;
 }
 
-- (BOOL)isRunning {
+- (BOOL)isRunning
+{
 	return isRunning;
 }
 
-- (void)start {
+- (void)start
+{
 	isRunning = YES;
 }
 

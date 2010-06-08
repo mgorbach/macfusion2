@@ -19,15 +19,16 @@
 
 @class MFFilesystemController, MFPluginController;
 
-@interface MFCommunicationServer : NSObject <MFServerProtocol> {
-	NSError *_recentError;
-	NSMutableArray *_clients;
+@interface MFCommunicationServer : NSObject <MFServerProtocol>
+{
+	NSError* recentError;
+	NSMutableArray* clients;
 }
 
-+ (MFCommunicationServer *)sharedServer;
++ (MFCommunicationServer*)sharedServer;
 
-- (MFFilesystemController *)filesystemController;
-- (MFPluginController *)pluginController;
+- (MFFilesystemController*)filesystemController;
+- (MFPluginController*)pluginController;
 - (void)startServing;
 
 @end

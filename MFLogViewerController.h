@@ -20,25 +20,25 @@
 #import <Cocoa/Cocoa.h>
 @class MFLogReader, MFClientFS;
 
-@interface MFLogViewerController : NSWindowController <NSMenuDelegate, NSToolbarDelegate> {
-	IBOutlet NSTableView *logTableView;
-	IBOutlet NSArrayController *logArrayController;
-	IBOutlet NSPopUpButton *filesystemFilterPopup;
-	IBOutlet NSButton *autoScrollButton;
-	IBOutlet NSSearchField *logSearchField;
+@interface MFLogViewerController : NSWindowController {
+	MFLogReader* logReader;
+	IBOutlet NSTableView* logTableView;
+	IBOutlet NSArrayController* logArrayController;
+	IBOutlet NSPopUpButton* filesystemFilterPopup;
+	IBOutlet NSButton* autoScrollButton;
+	IBOutlet NSSearchField* logSearchField;
 	
-	MFLogReader *_logReader;
-	NSInteger _searchCategory;
-	NSPredicate *_filterPredicate;
-	NSPredicate *_searchPredicate;
+	NSInteger searchCategory;
+	NSPredicate* filterPredicate;
+	NSPredicate* searchPredicate;
 }
 
-- (IBAction)filterForFilesystem:(MFClientFS *)fs;
+- (IBAction)filterForFilesystem:(MFClientFS*)fs;
 - (IBAction)searchCategoryChanged:(id)sender;
 
 
-@property(readonly) NSPredicate *fullLogPredicate;
-@property(readwrite, retain) NSPredicate *filterPredicate;
-@property(readwrite, retain) NSPredicate *searchPredicate;
+@property(readonly) NSPredicate* fullLogPredicate;
+@property(readwrite, retain) NSPredicate* filterPredicate;
+@property(readwrite, retain) NSPredicate* searchPredicate;
 
 @end

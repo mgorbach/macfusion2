@@ -1,7 +1,7 @@
 // IconFamily.m
 // IconFamily class implementation
 // by Troy Stephens, Thomas Schnitzer, David Remahl, Nathan Day, Ben Haller, Sven Janssen, Peter Hosey, Conor Dearden, Elliot Glaysher, and Dave MacLachlan
-// version 0.9.4
+// version 0.9.3 alpha
 //
 // Project Home Page:
 //   http://iconfamily.sourceforge.net/
@@ -9,7 +9,7 @@
 // Problems, shortcomings, and uncertainties that I'm aware of are flagged with "NOTE:".  Please address bug reports, bug fixes, suggestions, etc. to the project Forums and bug tracker at https://sourceforge.net/projects/iconfamily/
 
 /*
-    Copyright (c) 2001-2010 Troy N. Stephens
+    Copyright (c) 2001-2006 Troy N. Stephens
     Portions Copyright (c) 2007 Google Inc.
  
     Use and distribution of this source code is governed by the MIT License, whose terms are as follows.
@@ -38,10 +38,6 @@ enum {
 };
 #endif
 
-// Necessary on 10.5 for Preview's "New with Clipboard" menu item to see the IconFamily data.
-#define ICONFAMILY_UTI @"com.apple.icns"
-// Determined by using Pasteboard Manager to put com.apple.icns data on the clipboard. Alternatively, you can determine this by copying an application to the clipboard using the Finder (select an application and press cmd-C).
-#define ICONFAMILY_PBOARD_TYPE @"'icns' (CorePasteboardFlavorType 0x69636E73)"
 
 @interface IconFamily (Internals)
 
@@ -108,24 +104,6 @@ enum {
             [self autorelease];
             return nil;
         }
-    }
-    return self;
-}
-
-- initWithData:(NSData *)data
-{
-    self = [self init];
-    if (self) {
-        Handle storageMem = NULL;
-
-        OSStatus err = PtrToHand([data bytes], &storageMem, (long)[data length]);
-        if( err != noErr )
-        {
-            [self release];
-            return nil;
-        }
-
-        hIconFamily = (IconFamilyHandle)storageMem;
     }
     return self;
 }
@@ -298,7 +276,7 @@ enum {
     }
     
     [iconImage512x512 lockFocus];
-    iconBitmap512x512 = [[[NSBitmapImageRep alloc] initWithFocusedViewRect:NSMakeRect(0, 0, 512, 512)] autorelease];
+    iconBitmap512x512 = [[NSBitmapImageRep alloc] initWithFocusedViewRect:NSMakeRect(0, 0, 512, 512)];
     [iconImage512x512 unlockFocus];
     if (!iconBitmap512x512) {
       [self release];
@@ -319,6 +297,7 @@ enum {
     }
     
     [self setIconFamilyElement:kIconServices512PixelDataARGB fromBitmapImageRep:iconBitmap512x512];
+    [iconBitmap512x512 release];   
     
     iconImage256x256 = [IconFamily resampleImage:bitmappedIconImage512x512 toIconWidth:256 usingImageInterpolation:imageInterpolation];
     if (iconImage256x256) {
@@ -389,30 +368,19 @@ enum {
     [super dealloc];
 }
 
-- (void) finalize
-{
-   /*  "Starting with Mac OS X v10.3, Memory Manager is thread safe"
-       -- Memory Manager Reference
-   */
-   DisposeHandle( (Handle)hIconFamily );
-   hIconFamily = NULL;
-
-   [super finalize];
-}
-
 - (NSBitmapImageRep*) bitmapImageRepWithAlphaForIconFamilyElement:(OSType)elementType;
 {
     NSBitmapImageRep* bitmapImageRep;
     int pixelsWide;
     Handle hRawBitmapData;
-    Handle hRawMaskData = NULL;
+    Handle hRawMaskData;
     OSType maskElementType;
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
 	NSBitmapFormat bitmapFormat = NSAlphaFirstBitmapFormat;
 #endif
     OSErr result;
-    UInt32* pRawBitmapData;
-    UInt32* pRawBitmapDataEnd;
+    unsigned long* pRawBitmapData;
+    unsigned long* pRawBitmapDataEnd;
     unsigned char* pRawMaskData;
     unsigned char* pBitmapImageRepBitmapData;
 
@@ -488,11 +456,11 @@ enum {
     // With proper attention to byte order, we can fold the mask data into the color data in-place, producing RGBA data suitable for handing off to NSBitmapImageRep.
 #endif
 //    HLock( hRawBitmapData ); // Handle-based memory isn't compacted anymore, so calling HLock()/HUnlock() is unnecessary.
-    pRawBitmapData = (UInt32*) *hRawBitmapData;
+    pRawBitmapData = (unsigned long*) *hRawBitmapData;
     pRawBitmapDataEnd = pRawBitmapData + pixelsWide * pixelsWide;
     if (hRawMaskData) {
 //        HLock( hRawMaskData ); // Handle-based memory isn't compacted anymore, so calling HLock()/HUnlock() is unnecessary.
-        pRawMaskData = (UInt8*) *hRawMaskData;
+        pRawMaskData = (unsigned char*) *hRawMaskData;
         while (pRawBitmapData < pRawBitmapDataEnd) {
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
             // Convert the xRGB pixel data to ARGB.
@@ -500,24 +468,24 @@ enum {
             //                                                          -------         -----
             // Bytes in memory are                                      x R G B         x R G B
             // *pRawBitmapData loads as 32-bit word into register       xRGB            BGRx
-            // CFSwapInt32HostToBig() swaps this to                     xRGB            xRGB
+            // NSSwapHostLongToBig() swaps this to                      xRGB            xRGB
             // Loading *pRawMaskData and shifting left 24 bits yields   A000            A000
             // Bitwise ORing these two words together yields            ARGB            ARGB
-            // CFSwapInt32BigToHost() swaps this to                     ARGB            BGRA
+            // NSSwapBigLongToHost() swaps this to                      ARGB            BGRA
             // Bytes in memory after they're stored as a 32-bit word    A R G B         A R G B
-            *pRawBitmapData = CFSwapInt32BigToHost((*pRawMaskData++ << 24) | CFSwapInt32HostToBig(*pRawBitmapData));
+            *pRawBitmapData = NSSwapBigLongToHost((*pRawMaskData++ << 24) | NSSwapHostLongToBig(*pRawBitmapData));
 #else
             // Convert the xRGB pixel data to RGBA.
             //                                                          PowerPC         Intel
             //                                                          -------         -----
             // Bytes in memory are                                      x R G B         x R G B
             // *pRawBitmapData loads as 32-bit word into register       xRGB            BGRx
-            // CFSwapInt32HostToBig() swaps this to                     xRGB            xRGB
+            // NSSwapHostLongToBig() swaps this to                      xRGB            xRGB
             // Shifting left 8 bits yields ('0' denotes all zero bits)  RGB0            RGB0
             // Bitwise ORing with *pRawMaskData byte yields             RGBA            RGBA
-            // CFSwapInt32BigToHost() swaps this to                     RGBA            ABGR
+            // NSSwapBigLongToHost() swaps this to                      RGBA            ABGR
             // Bytes in memory after they're stored as a 32-bit word    R G B A         R G B A
-            *pRawBitmapData = CFSwapInt32BigToHost((CFSwapInt32HostToBig(*pRawBitmapData) << 8) | *pRawMaskData++);
+            *pRawBitmapData = NSSwapBigLongToHost((NSSwapHostLongToBig(*pRawBitmapData) << 8) | *pRawMaskData++);
 #endif
             ++pRawBitmapData;
         }
@@ -706,7 +674,7 @@ enum {
 	NSString *parentDirectory;
 	
     // Before we do anything, get the original modification time for the target file.
-    NSDate* modificationDate = [[[NSFileManager defaultManager] attributesOfItemAtPath:path error:nil] objectForKey:NSFileModificationDate];
+    NSDate* modificationDate = [[[NSFileManager defaultManager] fileAttributesAtPath:path traverseLink:NO] objectForKey:NSFileModificationDate];
 
 	if ([path isAbsolutePath])
 		parentDirectory = [path stringByDeletingLastPathComponent];
@@ -821,7 +789,7 @@ enum {
 	
     // Now set the modification time back to when the file was actually last modified.
     NSDictionary* attributes = [NSDictionary dictionaryWithObjectsAndKeys:modificationDate, NSFileModificationDate, nil];
-    [[NSFileManager defaultManager] setAttributes:attributes ofItemAtPath:path error:nil];
+    [[NSFileManager defaultManager] changeFileAttributes:attributes atPath:path];
 
     // Notify the system that the directory containing the file has changed, to
     // give Finder the chance to find out about the file's new custom icon.
@@ -924,7 +892,7 @@ enum {
     iconrPath = [path stringByAppendingPathComponent:@"Icon\r"];
     if( [fm fileExistsAtPath:iconrPath] )
     {
-        if( ![fm removeItemAtPath:iconrPath error:nil] )
+        if( ![fm removeFileAtPath:iconrPath handler:nil] )
             return NO;
     }
     if( ![iconrPath getFSRef:&iconrFSRef createFileIfNecessary:YES] )
@@ -938,11 +906,9 @@ enum {
                               /*outName*/ NULL,
                               /*fsSpec*/ NULL,
                               /*parentRef*/ NULL );
-    // This shouldn't fail because we just created the file above.
-    if( result != noErr )
-        return NO;
-    else {
+    if( result == fnfErr ) {
         // The file doesn't exist. Prepare to create it.
+
         struct FileInfo *finderInfo = (struct FileInfo *)catInfo.finderInfo;
 
         // These are the file type and creator given to Icon files created by
@@ -964,13 +930,8 @@ enum {
 
         // Standard reserved-field practice.
         finderInfo->reservedField = 0;
-
-        // Update the catalog info:
-        result = FSSetCatalogInfo(&iconrFSRef, kFSCatInfoFinderInfo, &catInfo);
-
-        if (result != noErr)
-            return NO;
-    }
+    } else if( result != noErr )
+        return NO;
     
     // Get the filename, to be applied to the Icon file.
     filename.length = [@"Icon\r" length];
@@ -1064,53 +1025,18 @@ enum {
     return YES;
 }
 
-+ (BOOL) removeCustomIconFromDirectory:(NSString*)path
-{
-    FSRef targetFolderFSRef;
-    if( [path getFSRef:&targetFolderFSRef createFileIfNecessary:NO] ) {
-        OSStatus result;
-        struct FSCatalogInfo catInfo;
-        struct FileInfo *finderInfo = (struct FileInfo *)catInfo.finderInfo;
-
-        result = FSGetCatalogInfo( &targetFolderFSRef,
-                                  kFSCatInfoFinderInfo,
-                                  &catInfo,
-                                  /*outName*/ NULL,
-                                  /*fsSpec*/ NULL,
-                                  /*parentRef*/ NULL);
-        if( result != noErr )
-            return NO;
-
-        // Tell the Finder that the folder no longer has a custom icon.
-        finderInfo->finderFlags &= ~( kHasCustomIcon | kHasBeenInited );
-
-        result = FSSetCatalogInfo( &targetFolderFSRef,
-                          kFSCatInfoFinderInfo,
-                          &catInfo);
-        if( result != noErr )
-            return NO;
-
-        // Notify the system that the target directory has changed, to give Finder
-        // the chance to find out about its new custom icon.
-        result = FNNotify( &targetFolderFSRef, kFNDirectoryModifiedMessage, kNilOptions );
-        if (result != noErr)
-            return NO;
-    }
-
-    if( ! [[NSFileManager defaultManager] removeItemAtPath:[path stringByAppendingPathComponent:@"Icon\r"] error:nil] )
-        return NO;
-	
-    return YES;
-}
-
-- (NSData *) data
-{
-    return [NSData dataWithBytes:*hIconFamily length:GetHandleSize((Handle)hIconFamily)];
-}
-
 - (BOOL) writeToFile:(NSString*)path
 {
-    return [[self data] writeToFile:path atomically:NO];
+    NSData* iconData = nil;
+
+//    HLock((Handle)hIconFamily); // Handle-based memory isn't compacted anymore, so calling HLock()/HUnlock() is unnecessary.
+    
+    iconData = [NSData dataWithBytes:*hIconFamily length:GetHandleSize((Handle)hIconFamily)];
+    BOOL success = [iconData writeToFile:path atomically:NO];
+
+//    HUnlock((Handle)hIconFamily); // Handle-based memory isn't compacted anymore, so calling HLock()/HUnlock() is unnecessary.
+
+    return success;
 }
 
 @end
@@ -1140,7 +1066,7 @@ enum {
     workingImage = [image copyWithZone:[image zone]];
     [workingImage setScalesWhenResized:YES];
     size = [workingImage size];
-    workingImageRep = [workingImage bestRepresentationForRect:NSZeroRect context:nil hints:nil];
+    workingImageRep = [workingImage bestRepresentationForDevice:nil];
     if ([workingImageRep isKindOfClass:[NSBitmapImageRep class]]) {
         pixelSize.width  = [workingImageRep pixelsWide];
         pixelSize.height = [workingImageRep pixelsHigh];
@@ -1152,10 +1078,10 @@ enum {
     }
     if (size.width >= size.height) {
         newSize.width  = iconWidth;
-        newSize.height = (float)floor( iconWidth * size.height / size.width + 0.5 );
+        newSize.height = floor( (float) iconWidth * size.height / size.width + 0.5 );
     } else {
         newSize.height = iconWidth;
-        newSize.width  = (float)floor( iconWidth * size.width / size.height + 0.5 );
+        newSize.width  = floor( (float) iconWidth * size.width / size.height + 0.5 );
     }
     [workingImage setSize:newSize];
 
@@ -1176,8 +1102,8 @@ enum {
     [graphicsContext setImageInterpolation:imageInterpolation];
     
     // Composite the working image into the icon bitmap, centered.
-    targetRect.origin.x = ((float)iconWidth - newSize.width ) / 2.0f;
-    targetRect.origin.y = ((float)iconWidth - newSize.height) / 2.0f;
+    targetRect.origin.x = ((float)iconWidth - newSize.width ) / 2.0;
+    targetRect.origin.y = ((float)iconWidth - newSize.height) / 2.0;
     targetRect.size.width = newSize.width;
     targetRect.size.height = newSize.height;
     [workingImageRep drawInRect:targetRect];
@@ -1206,13 +1132,13 @@ enum {
     float oneOverAlpha;
     
     // Get information about the bitmapImageRep.
-    long pixelsWide      = [bitmapImageRep pixelsWide];
-    long pixelsHigh      = [bitmapImageRep pixelsHigh];
-    long bitsPerSample   = [bitmapImageRep bitsPerSample];
-    long samplesPerPixel = [bitmapImageRep samplesPerPixel];
-    long bitsPerPixel    = [bitmapImageRep bitsPerPixel];
+    int pixelsWide      = [bitmapImageRep pixelsWide];
+    int pixelsHigh      = [bitmapImageRep pixelsHigh];
+    int bitsPerSample   = [bitmapImageRep bitsPerSample];
+    int samplesPerPixel = [bitmapImageRep samplesPerPixel];
+    int bitsPerPixel    = [bitmapImageRep bitsPerPixel];
     BOOL isPlanar       = [bitmapImageRep isPlanar];
-    long bytesPerRow     = [bitmapImageRep bytesPerRow];
+    int bytesPerRow     = [bitmapImageRep bytesPerRow];
     unsigned char* bitmapData = [bitmapImageRep bitmapData];
 
     // Make sure bitmap has the required dimensions.
@@ -1241,6 +1167,7 @@ enum {
 			return NULL;
 		pRawData = (unsigned char*) *hRawData;
 	
+		pSrc = bitmapData;
 		pDest = pRawData;
 		
 		if (bitsPerPixel == 32) {
@@ -1297,13 +1224,13 @@ enum {
     int x, y;
 	
     // Get information about the bitmapImageRep.
-    long pixelsWide      = [bitmapImageRep pixelsWide];
-    long pixelsHigh      = [bitmapImageRep pixelsHigh];
-    long bitsPerSample   = [bitmapImageRep bitsPerSample];
-    long samplesPerPixel = [bitmapImageRep samplesPerPixel];
-    long bitsPerPixel    = [bitmapImageRep bitsPerPixel];
+    int pixelsWide      = [bitmapImageRep pixelsWide];
+    int pixelsHigh      = [bitmapImageRep pixelsHigh];
+    int bitsPerSample   = [bitmapImageRep bitsPerSample];
+    int samplesPerPixel = [bitmapImageRep samplesPerPixel];
+    int bitsPerPixel    = [bitmapImageRep bitsPerPixel];
     BOOL isPlanar       = [bitmapImageRep isPlanar];
-    long bytesPerRow     = [bitmapImageRep bytesPerRow];
+    int bytesPerRow     = [bitmapImageRep bytesPerRow];
     unsigned char* bitmapData = [bitmapImageRep bitmapData];
     
     // Make sure bitmap has the required dimensions.
@@ -1336,6 +1263,7 @@ enum {
 		
 		cgPal = CGPaletteCreateDefaultColorPalette();
 		
+		pSrc = bitmapData;
 		pDest = pRawData;
 		if (bitsPerPixel == 32) {
 			for (y = 0; y < pixelsHigh; y++) {
@@ -1386,13 +1314,13 @@ enum {
     int x, y;
     
     // Get information about the bitmapImageRep.
-    long pixelsWide      = [bitmapImageRep pixelsWide];
-    long pixelsHigh      = [bitmapImageRep pixelsHigh];
-    long bitsPerSample   = [bitmapImageRep bitsPerSample];
-    long samplesPerPixel = [bitmapImageRep samplesPerPixel];
-    long bitsPerPixel    = [bitmapImageRep bitsPerPixel];
+    int pixelsWide      = [bitmapImageRep pixelsWide];
+    int pixelsHigh      = [bitmapImageRep pixelsHigh];
+    int bitsPerSample   = [bitmapImageRep bitsPerSample];
+    int samplesPerPixel = [bitmapImageRep samplesPerPixel];
+    int bitsPerPixel    = [bitmapImageRep bitsPerPixel];
     BOOL isPlanar       = [bitmapImageRep isPlanar];
-    long bytesPerRow     = [bitmapImageRep bytesPerRow];
+    int bytesPerRow     = [bitmapImageRep bytesPerRow];
     unsigned char* bitmapData = [bitmapImageRep bitmapData];
 
     // Make sure bitmap has the required dimensions.
@@ -1464,13 +1392,13 @@ enum {
     unsigned char maskByte;
     
     // Get information about the bitmapImageRep.
-    long pixelsWide      = [bitmapImageRep pixelsWide];
-    long pixelsHigh      = [bitmapImageRep pixelsHigh];
-    long bitsPerSample   = [bitmapImageRep bitsPerSample];
-    long samplesPerPixel = [bitmapImageRep samplesPerPixel];
-    long bitsPerPixel    = [bitmapImageRep bitsPerPixel];
+    int pixelsWide      = [bitmapImageRep pixelsWide];
+    int pixelsHigh      = [bitmapImageRep pixelsHigh];
+    int bitsPerSample   = [bitmapImageRep bitsPerSample];
+    int samplesPerPixel = [bitmapImageRep samplesPerPixel];
+    int bitsPerPixel    = [bitmapImageRep bitsPerPixel];
     BOOL isPlanar       = [bitmapImageRep isPlanar];
-    long bytesPerRow     = [bitmapImageRep bytesPerRow];
+    int bytesPerRow     = [bitmapImageRep bytesPerRow];
     unsigned char* bitmapData = [bitmapImageRep bitmapData];
 	
     // Make sure bitmap has the required dimensions.
@@ -1570,51 +1498,5 @@ enum {
 
 @end
 
-// Methods for interfacing with the Cocoa Pasteboard.
-
-@implementation IconFamily (ScrapAdditions)
-
-+ (BOOL) canInitWithScrap
-{
-    NSArray *types = [[NSPasteboard generalPasteboard] types];
-    return [types containsObject:ICONFAMILY_UTI] || [types containsObject:ICONFAMILY_PBOARD_TYPE];
-}
-
-+ (IconFamily*) iconFamilyWithScrap
-{
-    return [[[IconFamily alloc] initWithScrap] autorelease];
-}
-
-- initWithScrap
-{
-    NSPasteboard *pboard = [NSPasteboard generalPasteboard];
-
-    NSData *data = [pboard dataForType:ICONFAMILY_UTI];
-    if( !data )
-        data = [pboard dataForType:ICONFAMILY_PBOARD_TYPE];
-    if( !data )
-    {
-        [self release];
-        return nil;
-    }
-
-    self = [self initWithData:data];
-
-    return self;
-}
-
-- (BOOL) putOnScrap
-{
-    NSPasteboard *pboard = [NSPasteboard generalPasteboard];
-
-    [pboard declareTypes:[NSArray arrayWithObjects:ICONFAMILY_UTI, ICONFAMILY_PBOARD_TYPE, nil] owner:self];
-    NSData *data = [self data];
-    [pboard setData:data forType:ICONFAMILY_UTI];
-    [pboard setData:data forType:ICONFAMILY_PBOARD_TYPE];
-
-    return YES;
-}
-
-@end
 
 

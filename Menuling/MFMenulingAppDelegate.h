@@ -20,7 +20,7 @@
 
 @class MFClient, MFQuickMountController;
 
-@interface MFMenulingAppDelegate : NSObject <MFClientFSDelegateProtocol, MFClientDelegateProtocol, NSMenuDelegate> {
+@interface MFMenulingAppDelegate : NSObject <MFClientFSDelegateProtocol, MFClientDelegateProtocol> {
 	NSStatusItem* statusItem;
 	MFClient* client;
 	MFQuickMountController* qmController;

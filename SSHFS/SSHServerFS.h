@@ -10,6 +10,7 @@
 #import "MFServerFS.h"
 
 @interface SSHServerFS : MFServerFS {
+
 }
 
 @end

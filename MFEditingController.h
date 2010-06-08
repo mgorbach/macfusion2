@@ -24,10 +24,10 @@
 
 @class MFClientFS;
 
-@interface MFEditingController : NSWindowController <NSTabViewDelegate> {
-	MFClientFS* _fsBeingEdited;
+@interface MFEditingController : NSWindowController {
+	MFClientFS* fsBeingEdited;
 
 }
 
-+ (NSInteger)editFilesystem:(MFClientFS *)fs onWindow:(NSWindow *)window;
++ (NSInteger)editFilesystem:(MFClientFS*)fs onWindow:(NSWindow*)window;
 @end

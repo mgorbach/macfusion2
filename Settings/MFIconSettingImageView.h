@@ -21,9 +21,11 @@
 @class MFClientFS;
 
 @interface MFIconSettingImageView : NSView {
-	MFClientFS *_fs;
-	BOOL _dragHighlight;
+	MFClientFS* fs;
+	CIImage* normalImage;
+	CIImage* selectedImage;
+	BOOL dragHighlight;
 }
 
-@property(readwrite, retain) MFClientFS *fs;
+@property(readwrite, retain) MFClientFS* fs;
 @end

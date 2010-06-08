@@ -25,18 +25,16 @@
 #define kMFPrefsAutosize @"autosize"
 
 @interface MFPreferences : NSObject {
-	NSMutableDictionary *_prefsDict;
-	BOOL _firstTimeRun;
+	NSMutableDictionary* prefsDict;
+	BOOL firstTimeRun;
 }
 
-+ (MFPreferences *)sharedPreferences;
-
-- (void)setValue:(id)value forPreference:(NSString*)prefKey;
-- (void)setBool:(BOOL)value forPreference:(NSString*)prefKey;
-
++ (MFPreferences*) sharedPreferences;
 - (id)getValueForPreference:(NSString*)prefKey;
+- (void)setValue:(id)value 
+   forPreference:(NSString*)prefKey;
+- (void)setBool:(BOOL)value forPreference:(NSString*)prefKey;
 - (BOOL)getBoolForPreference:(NSString*)prefKey;
-
 - (void)readPrefsFromDisk;
 
 @end

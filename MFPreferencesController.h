@@ -17,17 +17,17 @@
 #import <Cocoa/Cocoa.h>
 @class MFClient, MFPreferences;
 
-@interface MFPreferencesController : NSWindowController <NSToolbarDelegate> {
-	IBOutlet NSButton *agentLoginItemButton;
-	IBOutlet NSButton *menuLoginItemButton;
-	IBOutlet NSTextField *fuseVersionTextField;
-	IBOutlet NSView *pluginPrefsView;
-	IBOutlet NSView *generalPrefsView;
+@interface MFPreferencesController : NSWindowController {
+	IBOutlet NSButton* agentLoginItemButton;
+	IBOutlet NSButton* menuLoginItemButton;
+	MFClient* client;
+	MFPreferences* sharedPreferences;
+	NSMapTable* prefsViewSizes;
+	NSView* emptyView;
 	
-	MFClient *_client;
-	MFPreferences *_sharedPreferences;
-	NSMapTable *_prefsViewSizes;
-	NSView *_emptyView;
+	IBOutlet NSTextField* fuseVersionTextField;
+	IBOutlet NSView* pluginPrefsView;
+	IBOutlet NSView* generalPrefsView;
 }
 
 - (IBAction)loginItemCheckboxChanged:(id)sender;

@@ -21,7 +21,6 @@
 #import "MFQuickMountController.h"
 #import "MFConstants.h"
 #import "MFError.h"
-#import "MFCore.h"
 #import <Carbon/Carbon.h>
 
 #define MENU_ICON_SIZE 24
@@ -83,13 +82,13 @@ OSStatus MyHotKeyHandler(EventHandlerCallRef nextHandler,EventRef theEvent,
 		[NSApp terminate:self];
 	[statusItem setTitle:@""];
 	NSMenu* menu = [[NSMenu alloc] initWithTitle:@"Macfusion2"];
-	[menu setDelegate:self];
-	[statusItem setMenu:menu];
+	[menu setDelegate: self];
+	[statusItem setMenu: menu];
 	NSImage* menuIcon = [NSImage imageNamed:@"MacFusion_Menu_Dark.png"];
 	NSImage* menuIconSelected = [NSImage imageNamed:@"MacFusion_Menu_Light.png"];
-	[statusItem setHighlightMode:YES];
-	[statusItem setImage:menuIcon];
-	[statusItem setAlternateImage:menuIconSelected];
+	[statusItem setHighlightMode: YES];
+	[statusItem setImage: menuIcon];
+	[statusItem setAlternateImage: menuIconSelected];
 }
 
 - (void)connectToServer:(id)sender
@@ -231,7 +230,8 @@ OSStatus MyHotKeyHandler(EventHandlerCallRef nextHandler,EventRef theEvent,
 
 - (void)openConfiguration:(id)sender
 {
-	[[NSWorkspace sharedWorkspace] launchApplication: mfcMainBundlePath()];
+	[[NSWorkspace sharedWorkspace] launchApplication: 
+	 (NSString*)mfcMainBundlePath()];
 }
 
 - (void)applicationWillTerminate:(NSNotification*)note

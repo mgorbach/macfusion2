@@ -34,11 +34,11 @@
 {
 	if (self = [super initWithCoder:decoder])
 	{
-		[self setDelegate:self];
+		[self setDelegate: self];
 		self.filesystems = [NSMutableArray array];
 		MFFilesystemCell* cell = [MFFilesystemCell new];
 		[[[self tableColumns] objectAtIndex:0] setDataCell: cell];
-//		[self setDataSource: self];
+		[self setDataSource: self];
 		[self registerForDraggedTypes: [NSArray arrayWithObjects: kMFFilesystemDragType, NSFilesPromisePboardType, nil ]];
 		[self setDraggingSourceOperationMask:NSDragOperationEvery forLocal:NO];
 		[self setDraggingSourceOperationMask:NSDragOperationEvery forLocal:YES];
@@ -72,7 +72,7 @@
 - (void) tableView: (NSTableView *) tableView 
    willDisplayCell: (NSCell*) cell 
 	forTableColumn: (NSTableColumn *) tableColumn 
-			   row: (NSInteger) row
+			   row: (int) row
 {
 	MFClientFS* fs = [self.filesystems objectAtIndex: row];
 	if ([[tableColumn identifier] isEqualTo: @"main"])

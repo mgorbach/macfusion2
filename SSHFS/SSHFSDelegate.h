@@ -18,6 +18,8 @@
 #import "MFFSDelegateProtocol.h"
 
 @interface SSHFSDelegate : NSObject <MFFSDelegateProtocol> {
+
 }
+
 
 @end

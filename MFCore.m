@@ -96,7 +96,6 @@ BOOL mfcGetStateOfLoginItemWithPath( NSString* path )
 			break;
 	}
 	
-	CFRelease(loginItems);
 	CFRelease(loginItemsRef);
 	return present;
 }
@@ -136,7 +135,6 @@ BOOL mfcSetStateForAgentLoginItem(BOOL state)
 	}
 	
 	CFRelease(loginItemsRef);
-	CFRelease(loginItems);
 	return YES;
 }
 
@@ -171,7 +169,7 @@ void mfcLaunchMenuling()
 void mfcCheckIntegrity()
 {
 	ProcessSerialNumber currentPSN = { 0, kNoProcess };
-	CFStringRef processName = NULL;
+	CFStringRef processName;
 	FSRef bundleFSRef;
 	OSErr error;
 	id runningAgentPath=nil;
@@ -180,35 +178,42 @@ void mfcCheckIntegrity()
 	pid_t runningAgentPID=0, runningMenulingPID=0;
 	
 	while(GetNextProcess( &currentPSN ) == noErr
-		  && currentPSN.lowLongOfPSN != kNoProcess ) {
-		NSString* processPath = nil;
+		  && currentPSN.lowLongOfPSN != kNoProcess )
+	{
+		NSString* processPath;
 		CopyProcessName( &currentPSN, &processName );
-		pid_t processPID = 0;
+		pid_t processPID;
 		
-		BOOL isAgent = [(NSString*)processName isEqualToString: @"macfusionAgent"];
-		BOOL isMenuling = [(NSString*)processName isEqualToString: @"macfusionMenuling"];
-		
-		if (isAgent || isMenuling) {
+		if ( [ (NSString*)processName isEqualToString: @"macfusionAgent" ] || 
+			 [ (NSString*)processName isEqualToString: @"macfusionMenuling"] )
+		{
 			error = GetProcessBundleLocation( &currentPSN, &bundleFSRef);
 			GetProcessPID( &currentPSN , &processPID);
 			
-			if (error == noErr) {
+			if (error == noErr)
+			{
 				CFURLRef bundleURLRef = CFURLCreateFromFSRef( kCFAllocatorDefault, &bundleFSRef);
 				processPath = [ (NSURL*)bundleURLRef path ];
 				CFRelease( bundleURLRef );
-			} else {
+			}
+			else
+			{
 				processPath = (NSString*)[NSNull null]; 
 				// Set the processPath to NSNull if we failed getting it
 				// This can happen if the process is running from the trash (i.e. it's been deleted)
 			}
+		}
+		
+		if ( [ (NSString*)processName isEqualToString: @"macfusionAgent"] )
+		{
+			runningAgentPath = processPath;
+			runningAgentPID = processPID;
+		}
 			
-			if(isAgent) {
-				runningAgentPath = processPath;
-				runningAgentPID = processPID;
-			} else {
-				runningMenulingPath = processPath;
-				runningMenulingPID = processPID;
-			}
+		if ( [ (NSString*)processName isEqualToString: @"macfusionMenuling"] )
+		{
+			runningMenulingPath = processPath;
+			runningMenulingPID = processPID;
 		}
 
 		CFRelease( processName );

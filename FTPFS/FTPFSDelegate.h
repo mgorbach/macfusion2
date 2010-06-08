@@ -18,6 +18,7 @@
 #import "MFFSDelegateProtocol.h"
 
 @interface FTPFSDelegate : NSObject <MFFSDelegateProtocol> {
+	
 }
 
 

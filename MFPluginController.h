@@ -19,14 +19,14 @@
 @class MFServerFS, MFServerPlugin;
 
 @interface MFPluginController : NSObject {
-	NSMutableDictionary *_pluginsDictionary;
+	NSMutableDictionary* pluginsDictionary;
 }
 
-+ (MFPluginController *)sharedController;
++ (MFPluginController*)sharedController;
 
-- (MFServerPlugin *)pluginWithID:(NSString *)ID;
+- (MFServerPlugin*)pluginWithID:(NSString*)ID;
 - (void)loadPlugins;
-- (NSArray *)plugins;
-- (NSDictionary *)pluginsDictionary;
+- (NSArray*)plugins;
+- (NSDictionary*)pluginsDictionary;
 
 @end

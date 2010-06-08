@@ -17,14 +17,19 @@
 #import "MGUtilities.h"
 
 
-BOOL isNilOrNull(id object) {
-	if (object == nil || object == [NSNull null]) {
+BOOL isNilOrNull(id object)
+{
+	if (object == nil || object == [NSNull null])
+	{
 		return YES;
-	} else {
+	}
+	else
+	{
 		return NO;
 	}
 }
 
-BOOL isNotNilOrNull(id object) {
+BOOL isNotNilOrNull(id object)
+{
 	return !(isNilOrNull(object));
 }
