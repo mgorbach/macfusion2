@@ -22,6 +22,7 @@
 @interface MFCommunicationServer : NSObject <MFServerProtocol> {
 	NSError *_recentError;
 	NSMutableArray *_clients;
+    NSConnection *_doConnection;
 }
 
 + (MFCommunicationServer *)sharedServer;

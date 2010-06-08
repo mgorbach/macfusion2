@@ -57,9 +57,9 @@ static MFCommunicationServer *sharedServer = nil;
 }
 
 - (void)vendDisributedObject {
-	NSConnection *connection = [NSConnection new];
-	[connection setRootObject:self];
-	if ([connection registerName:kMFDistributedObjectName] == YES) {
+	_doConnection = [NSConnection new];
+	[_doConnection setRootObject:self];
+	if ([_doConnection registerName:kMFDistributedObjectName]) {
 	} else {
 		MFLogS(self, @"Failed to register connection name");
 		exit(-1);

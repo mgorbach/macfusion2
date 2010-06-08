@@ -156,6 +156,9 @@ static MFClient *sharedClient = nil;
 - (BOOL)establishCommunication {
 	// Set up DO
 	connection = [NSConnection connectionWithRegisteredName:kMFDistributedObjectName host:nil];
+    [connection setRequestTimeout:5.0f];
+    [connection setReplyTimeout:5.0f];
+    
 	id serverObject = [connection rootProxy];
 	[serverObject setProtocolForProxy:@protocol(MFServerProtocol)];
 	server = (id <MFServerProtocol>)serverObject;
