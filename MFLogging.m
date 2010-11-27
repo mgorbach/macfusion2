@@ -232,15 +232,6 @@ NSString *headerStringForASLMessageDict(NSDictionary *messageDict) {
 	// Send to other macfusion system processes over DO
 	NSDictionary* messageDict = dictFromASLMessage(m);
 	[self sendASLMessageDictOverDO: messageDict];
-	
-	NSString* printstring = [NSString stringWithFormat:@"%@ %@\n",headerStringForASLMessageDict(messageDict),message];
-	if (stdOut) {
-		printf("%s", [printstring UTF8String]);
-	}
-	
-	
-	// Send to ASL log db for storage
-	// asl_send(aslClient, m);
 }
 
 
