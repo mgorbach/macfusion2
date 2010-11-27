@@ -21,6 +21,8 @@
 #import "MFLogging.h"
 #import "MFPreferences.h"
 
+#import <sys/xattr.h>
+
 #define FS_DIR_PATH @"~/Library/Application Support/Macfusion/Filesystems"
 
 @interface MFServerFS (PrivateAPI)

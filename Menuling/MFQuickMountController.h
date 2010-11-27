@@ -15,7 +15,8 @@
 // limitations under the License.
 
 #import <Cocoa/Cocoa.h>
-#import "MFClientFSDelegateProtocol.h";
+
+#import "MFClientFSDelegateProtocol.h"
 
 @class MFClientFS, MFClient;
 

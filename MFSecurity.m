@@ -72,8 +72,7 @@ NSDictionary *getNetworkSecretsForFilesystemAndReturnItem(MFFilesystem *fs, SecK
 	SecProtocolType protocol = [[[fs parameters] objectForKey:kNetFSProtocolParameter] intValue];
 	
 	if (userName && hostName && port && protocol) {
-		OSStatus error = SecKeychainFindInternetPassword(NULL,[hostName lengthOfBytesUsingEncoding: NSUTF8StringEncoding],[hostName UTF8String],0,NULL,[userName lengthOfBytesUsingEncoding: NSUTF8StringEncoding],[userName UTF8String],0,NULL,port,protocol,
-														  (SecAuthenticationType)NULL,&passwordLength,&passwordData,itemRef);
+		OSStatus error = SecKeychainFindInternetPassword(NULL,[hostName lengthOfBytesUsingEncoding: NSUTF8StringEncoding],[hostName UTF8String],0,NULL,[userName lengthOfBytesUsingEncoding: NSUTF8StringEncoding],[userName UTF8String],0,NULL,port,protocol,(SecAuthenticationType)NULL,&passwordLength,&passwordData,itemRef);
 		if (error == noErr) {
 			// MFLogS(self, @"Successfully found internet password for fs %@", fs);
 			NSString *password = [NSString stringWithCString:passwordData encoding:NSUTF8StringEncoding];

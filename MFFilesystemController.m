@@ -20,6 +20,8 @@
 #import "MFServerFS.h"
 #import "MFError.h"
 #import "MFConstants.h"
+#import "MFLogging.h"
+
 #import <DiskArbitration/DiskArbitration.h>
 
 #define FSDEF_EXTENSION @"macfusion"
@@ -310,7 +312,7 @@ static void diskUnMounted(DADiskRef disk, void *mySelf) {
     NSString *tokenString = [(NSString *)string autorelease];
 	if ([[_tokens allValues] containsObject: fs]) {
 		MFLogSO(self, fs, @"Uh oh ... adding a second token for an FS already in tokens");
-		MFLogSO(self, @"Tokens Before %@", _tokens);
+		// MFLogSO(self, _tokens, @"Tokens Before %@", _tokens);
 	}
 	
 	[_tokens setObject: fs forKey: tokenString];

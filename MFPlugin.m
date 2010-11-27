@@ -16,6 +16,7 @@
 
 #import "MFPlugin.h"
 #import "MFConstants.h"
+#import "MFLogging.h"
 
 @interface MFPlugin(PrivateAPI)
 @end

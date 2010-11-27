@@ -22,6 +22,8 @@
 #import "MFConstants.h"
 #import "MFError.h"
 #import "MFCore.h"
+#import "MFLogging.h"
+
 #import <Carbon/Carbon.h>
 
 #define MENU_ICON_SIZE 24

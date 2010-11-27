@@ -16,7 +16,7 @@
 
 #import "MFFilesystem.h"
 #import "MFPlugin.h"
-#import "MFConstants.h"]
+#import "MFConstants.h"
 #import "MFSecurity.h"
 
 #define FS_DIR_PATH @"~/Library/Application Support/Macfusion/Filesystems"

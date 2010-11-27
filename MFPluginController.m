@@ -18,6 +18,7 @@
 #import "MFServerPlugin.h"
 #import "MFServerFS.h"
 #import "MFCore.h"
+#import "MFLogging.h"
 
 #define PLUGIN_EXTENSION @"mfplugin"
 

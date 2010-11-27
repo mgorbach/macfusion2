@@ -20,10 +20,11 @@
 #import "MFFilesystemController.h"
 #import "MFFilesystem.h"
 #import "MFCommunicationServer.h"
-#include <sys/xattr.h>
 #import "MFLogging.h"
 #import "MFConstants.h"
+#import "MFCore.h"
 
+#include <sys/xattr.h>
 @implementation MFMainController
 static MFMainController* sharedController = nil;
 

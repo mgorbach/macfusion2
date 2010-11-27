@@ -22,6 +22,7 @@
 #import "MFPreferences.h"
 #import "MFClientProtocol.h"
 #import "MFLogging.h"
+#import "MFCore.h"
 
 @implementation MFCommunicationServer
 static MFCommunicationServer *sharedServer = nil;

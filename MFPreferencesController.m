@@ -18,6 +18,7 @@
 #import "MFCore.h"
 #import "MFClient.h"
 #import "MFPreferences.h"
+#import "MFLogging.h"
 
 #define kMFPrefsPluginToolbarIdentifier @"Plugin"
 #define kMFPrefsGeneralToolbarIdentifier @"General"

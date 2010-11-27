@@ -7,6 +7,8 @@
 //
 
 #import "MFPreferences.h"
+#import "MFLogging.h"
+
 #import <Carbon/Carbon.h>
 
 #define PREFS_FILE_PATH @"~/Library/Application Support/Macfusion/Preferences/preferences.plist"

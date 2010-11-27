@@ -20,6 +20,7 @@
 #import "MFClientFSUI.h"
 #import "MFAdvancedViewController.h"
 #import "MGTransitioningTabView.h"
+#import "MFLogging.h"
 
 NSString *kMFUIMainViewKey=@"main";
 NSString *kMFUIAdvancedViewKey=@"advanced";
@@ -111,7 +112,7 @@ NSString *kMFUIMacfusionAdvancedViewKey=@"macfusion";
 			[tabView setFrame:NSMakeRect( 0, 0, tabview_x+view_width, tabview_y+150 )];
 			editingTabView = tabView;
 		} else {
-			MFLogSO(self, @"No view loaded for fs %@", self);
+			MFLogSO(self, @"No view loaded for fs %@", [self name]);
 			return nil;
 		}
 	}

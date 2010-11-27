@@ -17,6 +17,7 @@
 #import "MFCore.h"
 #import "MFConstants.h"
 #import "MFServerProtocol.h"
+#import "MFLogging.h"
 
 #define self @"MFCORE"
 

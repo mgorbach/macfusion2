@@ -22,8 +22,9 @@
 #import "IconFamily.h"
 #import "MFAdvancedViewController.h"
 #import "MGNSImage.h"
+#import "MFLogging.h"
+
 #import <QuartzCore/QuartzCore.h>
-#import "MGNSImage.h"
 
 @interface MFClientFS (PrivateAPI)
 - (void)fillInitialData;

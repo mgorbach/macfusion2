@@ -20,6 +20,7 @@
 #import "MFEditingController.h"
 #import "MGTransitioningTabView.h"
 #import "MFClientFSUI.h"
+#import "MFLogging.h"
 
 @interface MFEditingController(PrivateAPI)
 - (id)initWithFilesystem:(MFClientFS *)fs;
