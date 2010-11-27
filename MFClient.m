@@ -185,20 +185,20 @@ static MFClient *sharedClient = nil;
 
 #pragma mark Server Callback Handling
 - (void)noteStatusChangedForFSWithUUID:(NSString *)uuid {
-	MFClientFS *fs = [self filesystemWithUUID: uuid];
+	MFClientFS *fs = [self filesystemWithUUID:uuid];
 	[fs noteStatusInfoChanged];
 	MFLogSO(self, fs, @"Note status changed for fs %@ to %@", fs, fs.status);
 }
 
 - (void)noteParametersChangedForFSWithUUID:(NSString *)uuid {
-	MFClientFS *fs = [self filesystemWithUUID: uuid];
+	MFClientFS *fs = [self filesystemWithUUID:uuid];
 	MFLogSO(self, fs, @"Note parameters changed for fs %@", fs);
 	[fs noteParametersChanged];
 }
 
 - (void)noteFilesystemAddedWithUUID:(NSString *)uuid {
 	MFLogS(self, @"Note fs added with uuid %@", uuid);
-	id remoteFilesystem = [server filesystemWithUUID: uuid];
+	id remoteFilesystem = [server filesystemWithUUID:uuid];
 	if (![self filesystemWithUUID:uuid]) {
 		MFClientPlugin *plugin = [pluginsDictionary objectForKey: [remoteFilesystem pluginID]];
 		MFClientFS *fs = [MFClientFS clientFSWithRemoteFS:remoteFilesystem clientPlugin:plugin];
@@ -209,7 +209,7 @@ static MFClient *sharedClient = nil;
 
 - (void)noteFilesystemRemovedWithUUID:(NSString *)uuid {
 	MFLogS(self, @"Note fs removed with uuid %@", uuid);
-	MFClientFS *fs = [self filesystemWithUUID: uuid];
+	MFClientFS *fs = [self filesystemWithUUID:uuid];
 	[self removeFilesystem: fs];
 }
 
@@ -225,7 +225,7 @@ static MFClient *sharedClient = nil;
 - (MFClientFS *)newFilesystemWithPlugin:(MFClientPlugin *)plugin {
 	NSAssert(plugin, @"MFClient asked to make new filesystem with nil plugin");
 	id newRemoteFS = [server newFilesystemWithPluginName: plugin.ID];
-	return [self filesystemWithUUID: [newRemoteFS uuid]];
+	return [self filesystemWithUUID:[newRemoteFS uuid]];
 }
 
 - (MFClientFS *)quickMountFilesystemWithURL:(NSURL *)url error:(NSError **)error {
@@ -237,7 +237,7 @@ static MFClient *sharedClient = nil;
 		return nil;
 	} else {
 		if ([self filesystemWithUUID:[remoteFS uuid]]) {
-			return [self filesystemWithUUID: [remoteFS uuid]];
+			return [self filesystemWithUUID:[remoteFS uuid]];
 		}
 		
 		MFClientPlugin *plugin = [self pluginWithID: [remoteFS pluginID]];
@@ -249,7 +249,7 @@ static MFClient *sharedClient = nil;
 
 - (void)deleteFilesystem:(MFClientFS *)fs {
 	NSString *uuid = [fs uuid];
-	[server deleteFilesystemWithUUID: uuid];
+	[server deleteFilesystemWithUUID:uuid];
 }
 
 - (void)handleConnectionDied:(NSNotification *)note {
@@ -363,7 +363,7 @@ OSStatus myKeychainCallback ( SecKeychainEvent keychainEvent,
 	NSMutableIndexSet *indexesToDelete = [NSMutableIndexSet indexSet];
 	
 	for(NSString *uuid in uuids) {
-		MFClientFS *fs = [self filesystemWithUUID: uuid];
+		MFClientFS *fs = [self filesystemWithUUID:uuid];
 		if (fs && [fs isPersistent]) {
 			[filesystemsToInsert addObject: fs];
 			[indexesToDelete addIndex: [persistentFilesystems indexOfObject:fs]];
@@ -411,8 +411,8 @@ OSStatus myKeychainCallback ( SecKeychainEvent keychainEvent,
 	NSArray *uuidOrdering = [NSArray arrayWithContentsOfFile:fullPath];
 	if (uuidOrdering) {
 		for(NSString *uuid in uuidOrdering)
-			if ([self filesystemWithUUID: uuid]) {
-				[[self filesystemWithUUID: uuid] setDisplayOrder:[uuidOrdering indexOfObject: uuid]];	
+			if ([self filesystemWithUUID:uuid]) {
+				[[self filesystemWithUUID:uuid] setDisplayOrder:[uuidOrdering indexOfObject:uuid]];	
 			}
 	}
 	
