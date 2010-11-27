@@ -38,7 +38,7 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>1.0</string>
+	<string>2.0.4</string>
 	<key>LSUIElement</key>
 	<true/>
 	<key>NSMainNibFile</key>
