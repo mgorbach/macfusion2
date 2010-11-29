@@ -1,0 +1,190 @@
+body 
+{
+	background-color: #cccccc;
+}
+
+#wrapper {
+	border-color: #0454d6;
+	border-style: solid;
+	margin: 0px auto;
+	width: 80%;
+	background-color: #A9C9FD;
+	-webkit-border-radius: 20px;
+	-moz-border-radius: 20px;
+	padding-right: 0px;
+	padding-top: 0px;
+	margin-top: 40px;
+	min-width: 800px;
+}
+
+#navigation {
+	background-color: #368aff;
+	border-color: #0454d6;
+	border-bottom-style: solid;
+	border-bottom-width: 2.0px;
+	border-left-style: solid;
+	border-left-width: 2.0px;
+	float: right;
+	margin-top: 0px;
+	margin-bottom: 0px;
+	padding: 0px 0px 0px 0px;
+	-webkit-border-bottom-left-radius: 20px;
+	-moz-border-radius-bottomleft: 20px;
+	-webkit-border-top-right-radius: 20px;
+	-moz-border-radius-topright: 20px;
+}
+
+#navigation li {
+	display: inline;
+	margin: 0px;
+	padding: 0px 0px;
+	float: left;
+	text-align: center;
+}
+
+#header
+{
+	background-image: url(Images/grad_header.png);
+	background-repeat: repeat-x;
+	height: 95px;
+	width: auto;
+	-webkit-border-top-right-radius: 17px;
+	-moz-border-radius-topright: 17px;
+	position: relative
+}
+
+#navigation a {
+	padding: 5px 10px 5px 10px;
+	margin: 0px 0px 0px 0px;
+	font-family: "Lucida Grande", Verdana, Arial, sans-serif;
+	font-size: 15px;
+	text-decoration: none;
+	color: black;
+	display: block;
+	width: auto;
+	text-align: center;
+}
+
+#navigation a:hover {
+	background-color: #A9C9FD;
+}
+
+#navigation > :last-child a:hover {
+	-webkit-border-top-right-radius: 17px;
+	-moz-border-radius-topright: 17px
+}
+
+#navigation a.selected {
+	background-color: #0454d6;
+	-webkit-border-bottom-left-radius: 18px;
+	-moz-border-radius-bottomleft: 18px;
+	color: white
+}
+
+#mainLogo {
+	background-image: url(Images/macfusionIcon.png);
+	position: absolute;
+	left: -40px;
+	top: -20px;
+	width: 128px;
+	height: 128px;
+}
+
+#titleText {
+	position: relative;
+	top: 5px;
+	left: 90px;
+	font-weight: bold;
+	display: block;
+	float: left;
+	height: 91px;
+	width: 300px;
+	text-indent: -1000em;
+	overflow: none;
+	background: url(Images/grad_headertext.png);
+	margin: 0px 0px;
+}
+
+#content {
+	font-family: "Lucida Grande", Verdana, Arial, sans-serif;
+	font-size: small;
+	text-indent: 0em;
+	padding-top: 0px;
+	margin-top 0px;
+}
+
+#mainContent {
+	width: 60%;
+	float: left;
+	clear: left;
+	margin-left: 20px;
+	margin-top: 0px;
+	padding-top: 0px;
+}
+
+#content h1 {
+	font-size: large;
+	padding-left: 0px;
+	border: 0px solid #0066ff;
+	margin-left: 0px;
+	margin-top: 0px;
+	margin-bottom: 0px;
+}
+
+#mainContent p {
+	text-indent: 2em;
+	margin-top: 0px
+}
+
+#sidebar p {
+	text-indent: 0em;
+}
+
+#sidebar {
+	float: right;
+	width: 30%;
+	margin-right: 20px;
+	margin-top: 0px;
+}
+
+.contentItem {
+	border: none;
+	padding: 10px;
+	margin: 10px 0px;
+}
+
+#sidebar .contentItem {
+	background-color: #368aff;
+	border: #0066ff solid 1px;
+	padding: 0px;
+	margin: 20px 0px;
+}
+
+#sidebar .sidebarContent {
+	padding: 0px 10px	
+}
+
+#sidebar .contentItem h1 {
+	border-bottom-style: none;
+	background-color: #0066ff;
+	padding: 2px 10px 2px 10px;
+	font-size: medium;
+	border-bottom: 1px black;
+	color: white
+}
+
+.contentItem ul {
+	text-indent: none;
+	padding-left: 15px
+}
+
+.clear {
+	clear: both
+}
+
+#footer {
+	font-family: "Lucida Grande", Verdana, Arial, sans-serif;
+	font-size: small;
+	text-align: center;
+	margin-top: 5px
+}

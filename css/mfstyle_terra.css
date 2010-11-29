@@ -1,0 +1,294 @@
+body 
+{
+	background-color: #cccccc;
+}
+
+#wrapper {
+	margin: 0px auto;
+	width: 85%;
+	border: #031634 solid 3px;
+	background-color: #E8DDCB;
+	-webkit-border-radius: 20px;
+	-moz-border-radius: 20px;
+	padding: 0px 0px;
+	margin-top: 40px;
+	min-height: 400px;
+	min-width: 725px
+}
+
+#header
+{
+	background-image: url(../images/grad_header_terra.png);
+	background-repeat: repeat-x;
+	height: 95px;
+	width: auto;
+	-webkit-border-top-right-radius: 20px;
+	-moz-border-radius-topright: 20px;
+	position: relative
+}
+
+.navigation {
+	float: right;
+	margin-top: 0px;
+	margin-bottom: 0px;
+	padding: 0px 0px 0px 0px;
+}
+
+.navigation li {
+	display: inline;
+	margin: 0px;
+	padding: 0px 0px;
+	float: left;
+	text-align: center;
+}
+
+.navigation a {
+	padding: 5px 5px 5px 5px;
+	margin: 0px 0px 0px 0px;
+	font-family: "Lucida Grande", Verdana, Arial, sans-serif;
+	font-size: 15px;
+	text-decoration: none;
+	display: block;
+	width: auto;
+	text-align: center;
+	
+	background-color: #033649;
+	color: #E8DDCB;
+	border-color: #031634;
+	border-bottom-style: solid;
+	border-bottom-width: 2.0px;
+}
+
+.navigation a:hover {
+	background-color: #031634 !important;
+}
+
+.navigation > :last-child a {
+	-webkit-border-top-right-radius: 15px;
+	-moz-border-radius-topright: 15px;
+	padding-right: 10px
+}
+
+.navigation > :first-child a {
+	-webkit-border-bottom-left-radius: 15px;
+	-moz-border-radius-bottomleft: 15px;
+	padding-left: 10px;
+	border-left-style: solid;
+	border-left-width: 2.0px
+}
+
+.navigation a.selected {
+	color: #CDB380
+}
+
+#navSecondary {
+	clear: right;
+	margin-right: 20px;
+	margin-top: 20px;
+}
+
+#navSecondary li a {
+	background: #033649;
+	border-top: 2.0px solid #031634;
+	border-right: 2.0px solid #031634; 
+	border-left: 2.0px solid #031634;
+}
+
+#navSecondary > :first-child a, #navSecondary > :first-child a:hover  {
+	-webkit-border-top-left-radius: 15px;
+	-webkit-border-bottom-left-radius: 15px;
+	-moz-border-radius-topleft: 15px;
+	-moz-border-radius-bottomleft: 15px;
+}
+
+#navSecondary > :first-child, #navSecondary > :last-child { 
+	margin: 0px 1px
+}
+
+#navSecondary > :last-child a, #navSecondary > :last-child a:hover {
+	-webkit-border-top-right-radius: 15px;
+	-webkit-border-bottom-right-radius: 15px;
+	-moz-border-radius-topright: 15px;
+	-moz-border-radius-bottomright: 15px;
+}
+
+#mainLogo {
+	background-image: url(../images/macfusionIcon.png);
+	position: absolute;
+	left: -30px;
+	top: -20px;
+	width: 128px;
+	height: 128px;
+}
+
+#titleText {
+	position: relative;
+	top: 5px;
+	left: 45px;
+	font-weight: bold;
+	float: left;
+	height: 91px;
+	width: 300px;
+	text-indent: -1000em;
+	background: url(../images/grad_headertext_terra.png);
+	margin: 0px 50px;
+}
+
+#content {
+	font-family: "Lucida Grande", Verdana, Arial, sans-serif;
+	font-size: small;
+	text-indent: 0em;
+	padding-top: 10px;
+	margin-top: 0px;
+	padding: 20px 20px;
+}
+
+#mainContent {
+	color: #003649;
+	margin-left: 0px;
+	margin-right: 0px;
+	margin-top: 0px;
+	padding-top: 0px;
+}
+
+#content a {
+	text-decoration: none
+}
+
+#content a:link, #sidebar a:visited, #footer a {
+	color: #036564;
+	font-weight: bold
+}
+
+#content ul li, #content ol li {
+	margin: 5px 0px;
+}
+
+#content h1 {
+	font-size: large;
+	padding-left: 0px;
+	margin-left: 0px;
+	margin-top: 0px;
+	margin-bottom: 5px;
+}
+
+#content h2 {
+	font-size: medium;
+	margin: 0px 0px;
+	text-decoration: underline
+}
+
+#content code {
+	display: inline-block;
+	font-size: medium;
+	text-indent: 0px;
+	background-color: #CDB380;
+	border: 1px solid #033649;
+	padding: 2px;
+	margin: 2px 0px
+}
+
+#mainContent p {
+	text-indent: 2em;
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+
+#mainContent p, #mainContent ul, #mainContent ol {
+	max-width: 400px
+}
+
+#sidebar {
+	float: right;
+	width: 300px;
+}
+
+#sidebar ul {
+	margin-left: 0px;
+	padding-left: 15px;
+}
+
+.contentItem {
+	margin: 0px 0px 20px 0px;
+}
+
+.subContentItem {
+	margin: 0px 10px
+}
+
+.date {
+	margin: 0px 0px;
+}
+
+#sidebar .contentItem {
+	background-color: #CDB380;
+	border: #033649 solid 1px;
+	padding: 0px;
+	margin: 0px 0px 10px 10px;
+	color: #031634
+}
+
+#sidebar .sidebarContent {
+	padding: 0px 10px	
+}
+
+#sidebar .contentItem h1 {
+	border-bottom-style: none;
+	background-color: #033649;
+	padding: 2px 10px 2px 10px;
+	font-size: medium;
+	border-bottom: 1px black;
+	color: #E8DDCB;
+	text-indent: 0px
+}
+
+.sidebarContent * {
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+
+#sidebar .contentItem p {
+	text-indent: 2em;
+}
+
+.clear {
+	clear: both
+}
+
+#footer {
+	font-family: "Lucida Grande", Verdana, Arial, sans-serif;
+	font-size: small;
+	text-align: center;
+	margin-top: 5px
+}
+
+.screenshot img {
+	border: 1px black solid;
+	width: 253px;
+	display: block
+}
+
+#sidebar .screenshot img {
+	border: none;
+	text-align: center;
+	vertical-align: middle
+}
+
+.screenshots {
+	text-align: center;
+}
+
+.screenshot {
+	display: inline-block;
+	overflow: hidden;
+	text-align: center;
+	vertical-align: top;
+	margin: 5px 5px;
+}
+
+.screenshot p {
+	text-align: center;
+	margin: 10px 0px 0px 0px;
+	text-indent: 0px !important;
+	width: 254px
+}
