@@ -28,7 +28,7 @@ NSString *mfcMainBundlePath() {
 		// Try to connect to server and use the agent's bundle path
 		id <MFServerProtocol> server =  (id <MFServerProtocol>)[NSConnection rootProxyForConnectionWithRegisteredName:kMFDistributedObjectName host:nil];
 		if (server) {
-			bundle = [NSBundle bundleWithPath: [server agentBundlePath]];
+			bundle = [NSBundle bundleWithPath:[server agentBundlePath]];
 		}
 	}
 		
@@ -36,12 +36,12 @@ NSString *mfcMainBundlePath() {
 	
 	if ([mybundleID isEqualToString:kMFMainBundleIdentifier]) {
 		pathToReturn = [[NSBundle mainBundle] bundlePath];
-	}
-		
-	if ([mybundleID isEqualToString: kMFAgentBundleIdentifier] || [mybundleID isEqualToString: kMFMenulingBundleIdentifier]) {
+	} else if ([mybundleID isEqualToString: kMFAgentBundleIdentifier] || [mybundleID isEqualToString: kMFMenulingBundleIdentifier]) {
 		NSString *relativePath = @"/../../../";
 		NSString *fullPath = [[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent: relativePath];
 		pathToReturn = [fullPath stringByStandardizingPath];
+	} else if (!pathToReturn && bundle) {
+		pathToReturn = [bundle bundlePath];
 	}
 		
 	return pathToReturn;

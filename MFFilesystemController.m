@@ -105,7 +105,7 @@ static MFFilesystemController* sharedController = nil;
 		}
 	}
 	
-	return [fsDefPaths copy];
+	return [[fsDefPaths copy] autorelease];
 }
 
 - (void)loadFilesystems {
@@ -202,7 +202,7 @@ static MFFilesystemController* sharedController = nil;
 }
 
 - (void)recordRecentFilesystem:(MFServerFS *)fs {
-	NSMutableDictionary *params = [fs.parameters mutableCopy];
+	NSMutableDictionary *params = [[fs.parameters mutableCopy] autorelease];
 	// Strip the UUID so it never repeats
 	[params setValue:nil forKey:kMFFSUUIDParameter];
 	
@@ -306,10 +306,10 @@ static void diskUnMounted(DADiskRef disk, void *mySelf) {
 
 # pragma mark Security Tokens
 - (NSString *)tokenForFilesystem:(MFServerFS *)fs {
-	CFUUIDRef theUUID = CFUUIDCreate(NULL);
-    CFStringRef string = CFUUIDCreateString(NULL, theUUID);
-    CFRelease(theUUID);
-    NSString *tokenString = [(NSString *)string autorelease];
+	CFUUIDRef uuidObject = CFUUIDCreate(NULL);
+    CFStringRef uuidCFString = CFUUIDCreateString(NULL, uuidObject);
+    CFRelease(uuidObject);
+    NSString *tokenString = [NSMakeCollectable(uuidCFString) autorelease];
 	if ([[_tokens allValues] containsObject: fs]) {
 		MFLogSO(self, fs, @"Uh oh ... adding a second token for an FS already in tokens");
 		// MFLogSO(self, _tokens, @"Tokens Before %@", _tokens);

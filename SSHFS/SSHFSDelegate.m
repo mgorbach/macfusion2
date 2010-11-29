@@ -180,7 +180,9 @@ static NSString *advancedViewControllerKey = @"sshfsAdvancedView";
 		if([converted isKindOfClass:[NSNumber class]] && [converted intValue] > 0 && [converted intValue] < 65535) {
 			return YES;
 		} else {
-			*outError = [MFError invalidParameterValueErrorWithParameterName:kNetFSPortParameter value:value description:@"Must be positive number < 65535"];
+			if (outError) {
+				*outError = [MFError invalidParameterValueErrorWithParameterName:kNetFSPortParameter value:value description:@"Must be positive number < 65535"];	
+			}
 			return NO;
 		}
 	}
@@ -198,7 +200,9 @@ static NSString *advancedViewControllerKey = @"sshfsAdvancedView";
 	}
 	
 	if (![parameters objectForKey:kNetFSHostParameter]) {
-		*outError = [MFError parameterMissingErrorWithParameterName:kNetFSHostParameter];
+		if (outError) {
+			*outError = [MFError parameterMissingErrorWithParameterName:kNetFSHostParameter];	
+		}
 		return NO;
 	}
 	

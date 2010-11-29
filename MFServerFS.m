@@ -59,7 +59,9 @@
 								   @"Could not read dictionary data for filesystem", NSLocalizedDescriptionKey,
 								   [NSString stringWithFormat:@"File at path %@", path], NSLocalizedRecoverySuggestionErrorKey, 
 								   nil];
-		*error = [NSError errorWithDomain:kMFErrorDomain code:kMFErrorCodeDataCannotBeRead userInfo:errorDict];
+		if (error) {
+			*error = [NSError errorWithDomain:kMFErrorDomain code:kMFErrorCodeDataCannotBeRead userInfo:errorDict];	
+		}
 		return nil;
 	}
 	
@@ -72,7 +74,9 @@
 								   @"Could not read plugin id key for filesystem", NSLocalizedDescriptionKey,
 								   [NSString stringWithFormat:@"File at path %@", path], NSLocalizedRecoverySuggestionErrorKey,
 								   nil];
-		*error = [NSError errorWithDomain:kMFErrorDomain code:kMFErrorCodeMissingParameter userInfo:errorDict];
+		if (error) {
+			*error = [NSError errorWithDomain:kMFErrorDomain code:kMFErrorCodeMissingParameter userInfo:errorDict];	
+		}
 		return nil;
 	}
 	
@@ -84,16 +88,20 @@
 		BOOL ok = [fs validateParametersWithError:&validationError];
 		if (ok) {
 			return fs;
-		} else {		   
-			*error = validationError;
+		} else {
+			if (error) {
+				*error = validationError;	
+			}
 			return nil;
 		}
 	} else {
-		NSDictionary *errorDict = [NSDictionary dictionaryWithObjectsAndKeys:
-								   @"Invalid plugin ID given", NSLocalizedDescriptionKey,
-								   [NSString stringWithFormat:@"File at path %@", path], NSLocalizedRecoverySuggestionErrorKey,
-								   nil];
-		*error = [NSError errorWithDomain:kMFErrorDomain code:kMFErrorCodeInvalidParameterValue userInfo:errorDict];
+		if (error) {
+			NSDictionary *errorDict = [NSDictionary dictionaryWithObjectsAndKeys:
+									   @"Invalid plugin ID given", NSLocalizedDescriptionKey,
+									   [NSString stringWithFormat:@"File at path %@", path], NSLocalizedRecoverySuggestionErrorKey,
+									   nil];
+			*error = [NSError errorWithDomain:kMFErrorDomain code:kMFErrorCodeInvalidParameterValue userInfo:errorDict];	
+		}
 		return nil;
 	}
 }
@@ -102,7 +110,9 @@
 + (MFServerFS *)filesystemFromURL:(NSURL *)url plugin:(MFServerPlugin *)p error:(NSError **)error {
 	NSMutableDictionary* params = [[[p delegate] parameterDictionaryForURL:url error:error] mutableCopy];
 	if (!params) {
-		*error = [MFError errorWithErrorCode:kMFErrorCodeMountFaliure description:@"Plugin failed to parse URL"];
+		if (error) {
+			*error = [MFError errorWithErrorCode:kMFErrorCodeMountFaliure description:@"Plugin failed to parse URL"];	
+		}
 		return nil;
 	}
 	[params setValue:[NSNumber numberWithBool:NO] forKey:kMFFSPersistentParameter];
@@ -114,7 +124,9 @@
 	NSError *validationError;
 	BOOL ok = [fs validateParametersWithError:&validationError];
 	if (!ok) {
-		*error = validationError;
+		if (error) {
+			*error = validationError;	
+		}
 		return nil;
 	} else {
 		return fs;
@@ -173,11 +185,10 @@
 }
 
 - (NSString *)getNewUUID {
-	CFUUIDRef theUUID = CFUUIDCreate(NULL);
-    CFStringRef string = CFUUIDCreateString(NULL, theUUID);
-    CFRelease(theUUID);
-    NSString* uuid = [(NSString *)string autorelease];
-	return uuid;
+	CFUUIDRef uuidObject = CFUUIDCreate(NULL);
+    CFStringRef uuidCFString = CFUUIDCreateString(NULL, uuidObject);
+    CFRelease(uuidObject);
+	return [NSMakeCollectable(uuidCFString) autorelease];
 }
 
 
@@ -201,8 +212,7 @@
 	}
 	
 	for(NSString *parameterKey in [defaultParams allKeys]) {
-		id value;
-		if ((value = [fsParams objectForKey:parameterKey]) != nil) {
+		if ([fsParams objectForKey:parameterKey]) {
 		} else {
 			[params setObject:[defaultParams objectForKey:parameterKey] forKey:parameterKey];
 		}
@@ -416,15 +426,21 @@
 		// MFLogS(self, @"Delegate did validate %@", impliedParams);
 		// Continue validation for general macfusion keys
 		if (![impliedParams objectForKey:kMFFSVolumeNameParameter]) {
-			*error = [MFError parameterMissingErrorWithParameterName:kMFFSVolumeNameParameter];
+			if (error) {
+				*error = [MFError parameterMissingErrorWithParameterName:kMFFSVolumeNameParameter];	
+			}
 			return NO;
 		}
 		if (![impliedParams objectForKey:kMFFSMountPathParameter]) {
-			*error = [MFError parameterMissingErrorWithParameterName:kMFFSMountPathParameter];
+			if (error) {
+				*error = [MFError parameterMissingErrorWithParameterName:kMFFSMountPathParameter];	
+			}
 			return NO;
 		}
 		if (![impliedParams objectForKey:kMFFSUUIDParameter]) {
-			*error = [MFError parameterMissingErrorWithParameterName:kMFFSUUIDParameter];
+			if (error) {
+				*error = [MFError parameterMissingErrorWithParameterName:kMFFSUUIDParameter];	
+			}
 			return NO;
 		}
 	}
