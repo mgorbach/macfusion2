@@ -59,11 +59,11 @@ static MFLogReader *sharedReader;
 	asl_set_query(q, ASL_KEY_FACILITY, MF_ASL_SERVICE_NAME, ASL_QUERY_OP_EQUAL);
 		
 	aslresponse r = asl_search(NULL, q);
-	NSMutableArray* logMessagesToAdd = [NSMutableArray array];
+	NSMutableArray *logMessagesToAdd = [NSMutableArray array];
 	
 	while (NULL != (m = aslresponse_next(r))) {
-		NSDictionary* dict = dictFromASLMessage(m);
-		[logMessagesToAdd addObject: dict];
+		NSDictionary *dict = dictFromASLMessage(m);
+		[logMessagesToAdd addObject:dict];
 	}
 	
 	aslresponse_free(r);

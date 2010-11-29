@@ -25,42 +25,6 @@
 
 // Print to logging system
 void MFLog(NSString *format, ...) {
-	MFLogging* logger = [MFLogging sharedLogging];
-	
-	// get a reference to the arguments on the stack that follow
-    // the format paramter
-    va_list argList;
-    va_start (argList, format);
-	
-    // NSString luckily provides us with this handy method which
-    // will do all the work for us, including %@
-    NSString *string;
-    string = [[NSString alloc] initWithFormat: format
-									arguments: argList];
-    va_end  (argList);
-	[logger logMessage:string ofType:0 object: nil sender:@"MFCORE"]; 
-}
-
-
-void MFLogP(int type, NSString *format, ...) {
-	MFLogging* logger = [MFLogging sharedLogging];
-	
-	// get a reference to the arguments on the stack that follow
-    // the format paramter
-    va_list argList;
-    va_start (argList, format);
-	
-    // NSString luckily provides us with this handy method which
-    // will do all the work for us, including %@
-    NSString *string;
-    string = [[NSString alloc] initWithFormat: format
-									arguments: argList];
-    va_end  (argList);
-	[logger logMessage:string ofType:type object: nil sender:nil]; 
-}
-
-void MFLogS(id sender, NSString *format, ...)
-{
 	MFLogging *logger = [MFLogging sharedLogging];
 	
 	// get a reference to the arguments on the stack that follow
@@ -71,9 +35,40 @@ void MFLogS(id sender, NSString *format, ...)
     // NSString luckily provides us with this handy method which
     // will do all the work for us, including %@
     NSString *string;
-    string = [[NSString alloc] initWithFormat: format arguments: argList];
+    string = [[NSString alloc] initWithFormat:format arguments:argList];
+    va_end (argList);
+	[logger logMessage:string ofType:0 object:nil sender:@"MFCORE"]; 
+}
+
+
+void MFLogP(int type, NSString *format, ...) {
+	MFLogging *logger = [MFLogging sharedLogging];
+	
+	// get a reference to the arguments on the stack that follow
+    // the format paramter
+    va_list argList;
+    va_start (argList, format);
+	
+    // NSString luckily provides us with this handy method which
+    // will do all the work for us, including %@
+    NSString *string = [[NSString alloc] initWithFormat:format arguments: argList];
+    va_end(argList);
+	[logger logMessage:string ofType:type object: nil sender:nil]; 
+}
+
+void MFLogS(id sender, NSString *format, ...) {
+	MFLogging *logger = [MFLogging sharedLogging];
+	
+	// get a reference to the arguments on the stack that follow
+    // the format paramter
+    va_list argList;
+    va_start (argList, format);
+	
+    // NSString luckily provides us with this handy method which
+    // will do all the work for us, including %@
+    NSString *string = [[NSString alloc] initWithFormat: format arguments: argList];
     va_end  (argList);
-	[logger logMessage:string ofType:0 object: nil sender:sender]; 
+	[logger logMessage:string ofType:0 object:nil sender:sender]; 
 }
 
 void MFLogSO(id sender, id object, NSString *format, ...) {
@@ -86,14 +81,13 @@ void MFLogSO(id sender, id object, NSString *format, ...) {
 	
     // NSString luckily provides us with this handy method which
     // will do all the work for us, including %@
-    NSString *string;
-    string = [[NSString alloc] initWithFormat: format arguments: argList];
-    va_end  (argList);
+    NSString *string = [[NSString alloc] initWithFormat:format arguments:argList];
+    va_end (argList);
 	[logger logMessage:string ofType:0 object:object sender:sender]; 
 }
 
 // Print directly to console
-void MFPrint(NSString* format, ...) {
+void MFPrint(NSString *format, ...) {
 	// get a reference to the arguments on the stack that follow
     // the format paramter
     va_list argList;
@@ -102,8 +96,7 @@ void MFPrint(NSString* format, ...) {
     // NSString luckily provides us with this handy method which
     // will do all the work for us, including %@
     NSString *string;
-    string = [[NSString alloc] initWithFormat: format
-									arguments: argList];
+    string = [[NSString alloc] initWithFormat:format arguments:argList];
     va_end  (argList);
 	printf("%s\n", [string cStringUsingEncoding:NSASCIIStringEncoding]);
 }
@@ -158,12 +151,15 @@ NSDictionary *dictFromASLMessage(aslmsg m) {
 	const char *val;
 	for (i = 0; (NULL != (key = asl_key(m, i))); i++) {
 		val = asl_get(m, key);
-		if (key && val)
-			[messageDict setObject: [[NSString alloc] initWithUTF8String: val]
-							forKey: [[NSString alloc] initWithUTF8String: key]];
+		if (key && val) {
+			[messageDict setObject:[[NSString alloc] initWithUTF8String:val]
+							forKey:[[NSString alloc] initWithUTF8String:key]];	
+		}
 	}
 	
-	
+	if (![messageDict objectForKey:kMFLogKeyTime]) {
+		[messageDict setObject:[NSNumber numberWithInt:[[NSDate date] timeIntervalSince1970]] forKey:kMFLogKeyTime];
+	}
 	return [messageDict copy];
 }
 
@@ -174,12 +170,12 @@ NSDictionary *dictFromASLMessage(aslmsg m) {
 NSString *headerStringForASLMessageDict(NSDictionary *messageDict) {
 	MFLogging *self = [MFLogging sharedLogging];
 	NSMutableArray* headerList = [NSMutableArray array];
-	NSString *sender = [messageDict objectForKey: kMFLogKeySender];
-	NSString *uuid = [messageDict objectForKey: kMFLogKeyUUID];
-	NSString *subsystem = [messageDict objectForKey: kMFLogKeySubsystem];
-	NSString *uuidFSName = uuid ? [[[self delegate] filesystemWithUUID: uuid] name] : nil;
-	NSDate *time = [NSDate dateWithTimeIntervalSince1970: [[messageDict objectForKey: kMFLogKeyTime] intValue]];;
-	NSString *formattedDate = [[self formatter] stringFromDate: time];
+	NSString *sender = [messageDict objectForKey:kMFLogKeySender];
+	NSString *uuid = [messageDict objectForKey:kMFLogKeyUUID];
+	NSString *subsystem = [messageDict objectForKey:kMFLogKeySubsystem];
+	NSString *uuidFSName = uuid ? [[[self delegate] filesystemWithUUID:uuid] name] : nil;
+	NSDate *date = [NSDate dateWithTimeIntervalSince1970:[[messageDict objectForKey:kMFLogKeyTime] intValue]];;
+	NSString *formattedDate = [[self formatter] stringFromDate:date];
 	
 	if (sender) {
 		[headerList addObject:sender];	
@@ -208,7 +204,7 @@ NSString *headerStringForASLMessageDict(NSDictionary *messageDict) {
 	(id<MFServerProtocol>)[NSConnection rootProxyForConnectionWithRegisteredName:kMFDistributedObjectName host:nil];
 	
 	if (server) 	{
-		[server sendASLMessageDict: messageDict];
+		[server sendASLMessageDict:messageDict];
 	}
 }
 
@@ -218,20 +214,23 @@ NSString *headerStringForASLMessageDict(NSDictionary *messageDict) {
 	}
 		
 	
-	message = [message stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceAndNewlineCharacterSet]];
-	aslmsg m = asl_new(ASL_TYPE_MSG);
-	asl_set(m, ASL_KEY_FACILITY, MF_ASL_SERVICE_NAME);
-	if ([sender isKindOfClass: [MFFilesystem class]])
-		asl_set(m, ASL_KEY_UUID, [[(MFFilesystem*)sender uuid] UTF8String]);
-	if ([object isKindOfClass: [MFFilesystem class]])
-		asl_set(m, ASL_KEY_UUID, [[(MFFilesystem*)object uuid] UTF8String]);
-	asl_set(m, ASL_KEY_SUBSYSTEM, [[[sender class] description] UTF8String]);
-	asl_set(m, ASL_KEY_MSG, [message UTF8String]);
-	asl_log(aslClient, m, ASL_LEVEL_ERR, "%s", [message UTF8String]);
+	message = [message stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+	aslmsg newASLMessage = asl_new(ASL_TYPE_MSG);
+	asl_set(newASLMessage, ASL_KEY_FACILITY, MF_ASL_SERVICE_NAME);
+	if ([sender isKindOfClass: [MFFilesystem class]]) {
+		asl_set(newASLMessage, ASL_KEY_UUID, [[(MFFilesystem*)sender uuid] UTF8String]);
+	}
+	if ([object isKindOfClass: [MFFilesystem class]]) {
+		asl_set(newASLMessage, ASL_KEY_UUID, [[(MFFilesystem*)object uuid] UTF8String]);
+	}
+	asl_set(newASLMessage, ASL_KEY_SUBSYSTEM, [[[sender class] description] UTF8String]);
+	asl_set(newASLMessage, ASL_KEY_MSG, [message UTF8String]);
+	asl_log(aslClient, newASLMessage, ASL_LEVEL_ERR, "%s", [message UTF8String]);
 	
 	// Send to other macfusion system processes over DO
-	NSDictionary* messageDict = dictFromASLMessage(m);
-	[self sendASLMessageDictOverDO: messageDict];
+	NSDictionary *messageDict = dictFromASLMessage(newASLMessage);
+	asl_free(newASLMessage);
+	[self sendASLMessageDictOverDO:messageDict];
 }
 
 
