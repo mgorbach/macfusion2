@@ -13,32 +13,54 @@
 	
 	<style type="text/css">
 	body {
-  		margin-top: 1.0em;
-  		background-color: #3562a8;
+
+  		background-color: #e8e8e8;
 			font-family: "Helvetica,Arial,FreeSans";
   		color: #ffffff;
 	}
 	
 	#nav {
-	
+		background-color: #336699;
+		-webkit-border-top-right-radius: 20px;
+		-webkit-border-top-left-radius: 20px;
+		height: 150px;
 	}
+	
 	#wrap {
-		width:1020px;
+		width:1060px;
 		margin:0 auto;
 	}
 	
-	#container {
-		padding-right: 20px;
-		width: 500px;
+	#mainContent {
+		background-color: #336699;
+		padding-right: 10px;
+		padding-left: 20px;
+		width: 400px;
 		float:left;
+		height: 1200px;
+		-webkit-border-bottom-left-radius: 20px;
 	}
 	
 	#sidebar {
+		background-color: #336699;
 		float:right;
-		width:500px;
+		padding-left: 10px;
+		width:600px;
+		-webkit-border-bottom-right-radius: 20px;
+		padding-right: 20px;
+		height: 1200px;
+	}
+	
+	#footer {
+		height: 20px;
+		clear:both;
+	}
+	
+	.screenshots {
+		padding-top: 20px;
 	}
 		
-	h1 { font-size: 3.8em; color: white; margin-bottom: 3px; }
+	h1 { font-size: 3.8em; color: white; margin-bottom: 0px; padding-top: 10px; padding-left: 10px;}
 	h1 .small { font-size: 0.4em; }
 	h1 a { text-decoration: none }
 	h2 { font-size: 1.5em; color: white; }
@@ -49,8 +71,10 @@
 		pre { background: #000; color: #fff; padding: 15px;}
 	hr { border: 0; width: 80%; border-bottom: 1px solid #aaa}
 	.footer { text-align:center; padding-top:30px; font-style: italic; }
-	.screenshot a { margin: auto 0 text-align: center}
-	.screenshot a img { margin:auto 0 text-align: center}
+	.screenshot { text-align: right; margin-bottom: 10px;}
+	.screenshot a img { border-width: 1.0px; border-style: ridge; border-collapse: white; }
+	
+	#githubforkimage { float:right; margin-bottom: 0; margin-top: 0; position: relative; }
 	</style>
 	
 </head>
@@ -58,14 +82,11 @@
 <body>
 	<div id="wrap">
 	 	<div id="nav">
-		 	<a href="http://github.com/mgorbach/MacFusion2"><img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub" /></a>
-			<h1><a href="http://github.com/mgorbach/MacFusion2"><img src="images/macfusionIcon.png" align="center">Macfusion</a>
-			</h1>
-
+ 			<img id="githubforkimage" src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"/>
+			<h1><a href="http://github.com/mgorbach/MacFusion2"><img src="images/macfusionIcon.png" align="center">Macfusion</a></h1>
 		</div>
-	 	<div id="container">
-		<p>Macfusion brings servers from across the internet directly to your Mac's desktop! Your files and documents appear as a "Volume" in Finder, and you can work with them using your favorite Mac applications, such as Word, Photoshop, TextMate or Dreamweaver. Macfusion can connect to the following types of servers:
-		</p
+		
+	 	<div id="mainContent">
 		<h2>What is Macfusion?</h2>
 		<p>
 		Macfusion brings servers from across the internet directly to your Mac's desktop! Your files and documents appear as a "Volume" in Finder, and you can work with them using your favorite Mac applications, such as Word, Photoshop, TextMate or Dreamweaver. Macfusion can connect to the following types of servers:
@@ -84,10 +105,6 @@
 			<p>You need to have the latest for version of Google's MacFUSE installed in order to use Macfusion. Get it here: http://code.google.com/p/macfuse/</p>
 		<h2>License</h2>
 			<p>Apache License, Version 2.0</p>
-		<h2>Authors</h2>
-			<p>Michael Gorbach (mgorbach@mac.com)</p>
-		<h2>Contact</h2>
-			<p>Michael Gorbach (mgorbach@mac.com)</p>
 		<h2>Download</h2>
 		<p>
 		  You can download this project in either
@@ -100,7 +117,6 @@
 	  
 	  	<div id="sidebar">
 	  	<div class="screenshots">
-			<h2>Screenshots</h2>
 				<div class="screenshot">
 					<a href="screenshots/mf2_sc_main.png" rel="lightbox"> <img title="The Main Macfusion interface" src="screenshots/mf2_sc_main.png" alt="Main interface screenshot"/> </a>
 				</div>
@@ -112,6 +128,7 @@
 				</div>
 			</div>
 	  	</div>
-	</div>	 
+	</div>
+	<div id="footer"></div>
 </body>
 </html>
