@@ -7,16 +7,16 @@
         <generator>Feeder 2.1.5(1363); Mac OS X Version 10.6.5 (Build 10H574) http://reinventedsoftware.com/feeder/</generator>
         <docs>http://blogs.law.harvard.edu/tech/rss</docs>
         <language>en</language>
-        <pubDate>Fri, 03 Dec 2010 10:46:11 -0800</pubDate>
-        <lastBuildDate>Fri, 03 Dec 2010 10:46:11 -0800</lastBuildDate>
+        <pubDate>Fri, 03 Dec 2010 11:04:02 -0800</pubDate>
+        <lastBuildDate>Fri, 03 Dec 2010 11:04:02 -0800</lastBuildDate>
         <item>
             <title>Macfusion 2.0.4</title>
             <description><![CDATA[<p>Now 64bit-enabled and compatible with 10.6.5.
 <br />Internal changes.
 <br />Deleted sshnodelay.so.
 <br />A few other small bug fixes (including logging).</p>]]></description>
-            <pubDate>Thu, 02 Dec 2010 21:23:32 -0800</pubDate>
-            <enclosure url="https://github.com/downloads/mgorbach/macfusion2/Macfusion%202.0.4.zip" length="4806797" type="application/zip" sparkle:version="2.0.4" sparkle:shortVersionString="2.0.4"/>
+            <pubDate>Fri, 03 Dec 2010 11:04:02 -0800</pubDate>
+            <enclosure url="http://macfusionapp.org/releases/Macfusion_2.0.4.zip" length="5063700" type="application/zip" sparkle:version="2.0.4" sparkle:shortVersionString="2.0.4" sparkle:dsaSignature="MCwCFFpOn57Y84tzH78S9ADJ54xh/KeMAhRRPZ1S3Yew3zjQClRRgiyEI3JF1g=="/>
             <guid isPermaLink="false">macfusion-204</guid>
         </item>
     </channel>
