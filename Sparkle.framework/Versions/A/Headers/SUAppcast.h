@@ -9,12 +9,15 @@
 #ifndef SUAPPCAST_H
 #define SUAPPCAST_H
 
-@class RSS, SUAppcastItem;
-@interface SUAppcast : NSObject {
+@class SUAppcastItem;
+@interface SUAppcast : NSObject
+{
+@private
 	NSArray *items;
 	NSString *userAgentString;
 	id delegate;
-	NSMutableData *incrementalData;
+	NSString *downloadFilename;
+	NSURLDownload *download;
 }
 
 - (void)fetchAppcastFromURL:(NSURL *)url;

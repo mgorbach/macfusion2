@@ -9,21 +9,46 @@
 #ifndef SUUPDATER_H
 #define SUUPDATER_H
 
-#import "SUUpdateAlert.h"
-#import "SUVersionComparisonProtocol.h"
+#import <Sparkle/SUVersionComparisonProtocol.h>
 
-@class SUUpdateDriver, SUAppcastItem, SUAppcast;
-@interface SUUpdater : NSObject {
+@class SUUpdateDriver, SUAppcastItem, SUHost, SUAppcast;
+@interface SUUpdater : NSObject
+{
+@private
 	NSTimer *checkTimer;
 	SUUpdateDriver *driver;
-	
-	NSBundle *hostBundle;
+
+	NSString *customUserAgentString;
+	SUHost *host;
 	IBOutlet id delegate;
 }
 
 + (SUUpdater *)sharedUpdater;
++ (SUUpdater *)updaterForBundle:(NSBundle *)bundle;
+- initForBundle:(NSBundle *)bundle;
+
+- (NSBundle *)hostBundle;
 
 - (void)setDelegate:(id)delegate;
+- delegate;
+
+- (void)setAutomaticallyChecksForUpdates:(BOOL)automaticallyChecks;
+- (BOOL)automaticallyChecksForUpdates;
+
+- (void)setUpdateCheckInterval:(NSTimeInterval)interval;
+- (NSTimeInterval)updateCheckInterval;
+
+- (void)setFeedURL:(NSURL *)feedURL;
+- (NSURL *)feedURL;
+
+- (void)setUserAgentString:(NSString *)userAgent;
+- (NSString *)userAgentString;
+
+- (void)setSendsSystemProfile:(BOOL)sendsSystemProfile;
+- (BOOL)sendsSystemProfile;
+
+- (void)setAutomaticallyDownloadsUpdates:(BOOL)automaticallyDownloadsUpdates;
+- (BOOL)automaticallyDownloadsUpdates;
 
 // This IBAction is meant for a main menu item. Hook up any menu item to this action,
 // and Sparkle will check for updates and report back its findings verbosely.
@@ -34,56 +59,54 @@
 // update is found, it will be downloaded and prepped for installation.
 - (void)checkForUpdatesInBackground;
 
-// This forces an update to begin with a particular driver (see SU*UpdateDriver.h)
-- (void)checkForUpdatesWithDriver:(SUUpdateDriver *)driver;
+// Date of last update check. Returns null if no check has been performed.
+- (NSDate*)lastUpdateCheckDate;
 
-// For non-.app updates:
-// Call this when your bundle is loaded to tell Sparkle what to update.
-- (void)setHostBundle:(NSBundle *)hostBundle;
+// This begins a "probing" check for updates which will not actually offer to update to that version. The delegate methods, though,
+// (up to updater:didFindValidUpdate: and updaterDidNotFindUpdate:), are called, so you can use that information in your UI.
+- (void)checkForUpdateInformation;
 
-// Call this to appropriately reschedule or cancel the update checking timer if preferences for time interval or automatic checks change.
-// If you're using a .app, this'll be picked up automatically via NSUserDefaultsController, but for non-.apps, there's no way to observe changes.
-- (void)updatePreferencesChanged;
+// Call this to appropriately schedule or cancel the update checking timer according to the preferences for time interval and automatic checks. This call does not change the date of the next check, but only the internal NSTimer.
+- (void)resetUpdateCycle;
 
 - (BOOL)updateInProgress;
 @end
 
 @interface NSObject (SUUpdaterDelegateInformalProtocol)
-// This method allows you to add extra parameters to the appcast URL, potentially based on whether or not
-// Sparkle will also be sending along the system profile. This method should return an array of dictionaries with the following keys:
-- (NSArray *)feedParametersForHostBundle:(NSBundle *)bundle sendingSystemProfile:(BOOL)sendingProfile;
+// This method allows you to add extra parameters to the appcast URL, potentially based on whether or not Sparkle will also be sending along the system profile. This method should return an array of dictionaries with keys: "key", "value", "displayKey", "displayValue", the latter two being specifically for display to the user.
+- (NSArray *)feedParametersForUpdater:(SUUpdater *)updater sendingSystemProfile:(BOOL)sendingProfile;
 
 // Use this to override the default behavior for Sparkle prompting the user about automatic update checks.
-- (BOOL)shouldPromptForPermissionToCheckForUpdatesToHostBundle:(NSBundle *)bundle;
+- (BOOL)updaterShouldPromptForPermissionToCheckForUpdates:(SUUpdater *)bundle;
 
 // Implement this if you want to do some special handling with the appcast once it finishes loading.
-- (void)appcastDidFinishLoading:(SUAppcast *)appcast forHostBundle:(NSBundle *)bundle;
+- (void)updater:(SUUpdater *)updater didFinishLoadingAppcast:(SUAppcast *)appcast;
 
 // If you're using special logic or extensions in your appcast, implement this to use your own logic for finding
 // a valid update, if any, in the given appcast.
-- (SUAppcastItem *)bestValidUpdateInAppcast:(SUAppcast *)appcast forHostBundle:(NSBundle *)bundle;
+- (SUAppcastItem *)bestValidUpdateInAppcast:(SUAppcast *)appcast forUpdater:(SUUpdater *)bundle;
 
 // Sent when a valid update is found by the update driver.
-- (void)didFindValidUpdate:(SUAppcastItem *)update toHostBundle:(NSBundle *)bundle;
+- (void)updater:(SUUpdater *)updater didFindValidUpdate:(SUAppcastItem *)update;
 
 // Sent when a valid update is not found.
-- (void)didNotFindUpdateToHostBundle:(NSBundle *)hb;
-
-// Sent when the user makes a choice in the update alert dialog (install now / remind me later / skip this version).
-- (void)userChoseAction:(SUUpdateAlertChoice)action forUpdate:(SUAppcastItem *)update toHostBundle:(NSBundle *)bundle;
+- (void)updaterDidNotFindUpdate:(SUUpdater *)update;
 
 // Sent immediately before installing the specified update.
-- (void)updateWillInstall:(SUAppcastItem *)update toHostBundle:(NSBundle *)bundle;
+- (void)updater:(SUUpdater *)updater willInstallUpdate:(SUAppcastItem *)update;
 
 // Return YES to delay the relaunch until you do some processing; invoke the given NSInvocation to continue.
-- (BOOL)shouldPostponeRelaunchForUpdate:(SUAppcastItem *)update toHostBundle:(NSBundle *)hostBundle untilInvoking:(NSInvocation *)invocation;
+- (BOOL)updater:(SUUpdater *)updater shouldPostponeRelaunchForUpdate:(SUAppcastItem *)update untilInvoking:(NSInvocation *)invocation;
 
 // Called immediately before relaunching.
-- (void)updaterWillRelaunchApplication;
+- (void)updaterWillRelaunchApplication:(SUUpdater *)updater;
 
 // This method allows you to provide a custom version comparator.
 // If you don't implement this method or return nil, the standard version comparator will be used.
-- (id <SUVersionComparison>)versionComparatorForHostBundle:(NSBundle *)hb;
+- (id <SUVersionComparison>)versionComparatorForUpdater:(SUUpdater *)updater;
+
+// Returns the path which is used to relaunch the client after the update is installed. By default, the path of the host bundle.
+- (NSString *)pathToRelaunchForUpdater:(SUUpdater *)updater;
 
 @end
 

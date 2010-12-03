@@ -174,6 +174,7 @@
 		D4EA63530D8B30F6006D8885 /* DiskArbitration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D4905BD60D380B6B00E21C1E /* DiskArbitration.framework */; };
 		D4EA63570D8B3118006D8885 /* macfusionIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = D4386C0B0D0B47240078C19F /* macfusionIcon.icns */; };
 		D4EA635C0D8B318C006D8885 /* macfusionAgent.app in Copy App Resources */ = {isa = PBXBuildFile; fileRef = D4EA61500D8B30DA006D8885 /* macfusionAgent.app */; };
+		D4EBC34112A9754E0052951E /* macfusion_dsa_pub.pem in Resources */ = {isa = PBXBuildFile; fileRef = D4EBC34012A9754E0052951E /* macfusion_dsa_pub.pem */; };
 		D4F499EF0D52601B00CDA4A9 /* SSHFSDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D4F499EE0D52601B00CDA4A9 /* SSHFSDelegate.m */; };
 		D4F499F10D52609400CDA4A9 /* MFFSDelegateProtocol.h in Resources */ = {isa = PBXBuildFile; fileRef = D4F499F00D52609400CDA4A9 /* MFFSDelegateProtocol.h */; };
 		D4FC0C9A0CF128480029B133 /* MFCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D4FC0C980CF128480029B133 /* MFCore.framework */; };
@@ -493,6 +494,7 @@
 		D4E983440D7223CE0058AF73 /* MGNSImage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MGNSImage.m; sourceTree = "<group>"; };
 		D4E983460D7223D70058AF73 /* MGNSImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MGNSImage.h; sourceTree = "<group>"; };
 		D4EA61500D8B30DA006D8885 /* macfusionAgent.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = macfusionAgent.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D4EBC34012A9754E0052951E /* macfusion_dsa_pub.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = macfusion_dsa_pub.pem; sourceTree = "<group>"; };
 		D4F499ED0D52601B00CDA4A9 /* SSHFSDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSHFSDelegate.h; sourceTree = "<group>"; };
 		D4F499EE0D52601B00CDA4A9 /* SSHFSDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSHFSDelegate.m; sourceTree = "<group>"; };
 		D4F499F00D52609400CDA4A9 /* MFFSDelegateProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MFFSDelegateProtocol.h; sourceTree = "<group>"; };
@@ -886,6 +888,7 @@
 		D4DF34CC0D80FC58005C9402 /* Other Resources */ = {
 			isa = PBXGroup;
 			children = (
+				D4EBC34012A9754E0052951E /* macfusion_dsa_pub.pem */,
 				D41E25610D89B14800F46F50 /* Credits.rtf */,
 			);
 			name = "Other Resources";
@@ -1305,6 +1308,7 @@
 				D41E25640D89B17C00F46F50 /* Credits.rtf in Resources */,
 				D4C9139F0E04EC5F0071C4AF /* ActionGear.png in Resources */,
 				D4C917050E0626BF0071C4AF /* Plus.tiff in Resources */,
+				D4EBC34112A9754E0052951E /* macfusion_dsa_pub.pem in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

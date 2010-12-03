@@ -41,6 +41,8 @@
 	<string>APPL</string>
 	<key>SUFeedURL</key>
 	<string>http://macfusionapp.org/appcast.xml</string>
+	<key>SUPublicDSAKeyFile</key>
+	<string>macfusion_dsa_pub.pem</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>SUCheckForUpdates</key>
