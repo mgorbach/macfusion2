@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" version="2.0">
+    <channel>
+        <title>Macfusion</title>
+        <link>http://www.macfusionapp.org</link>
+        <description>Macfusion</description>
+        <generator>Feeder 2.1.5(1363); Mac OS X Version 10.6.5 (Build 10H574) http://reinventedsoftware.com/feeder/</generator>
+        <docs>http://blogs.law.harvard.edu/tech/rss</docs>
+        <language>en</language>
+        <pubDate>Thu, 02 Dec 2010 21:23:32 -0800</pubDate>
+        <lastBuildDate>Thu, 02 Dec 2010 21:23:32 -0800</lastBuildDate>
+        <item>
+            <title>Macfusion 2.0.4</title>
+            <description><![CDATA[<p>Now 64bit-enabled and compatible with 10.6.5.
+<br />Internal changes.
+<br />Deleted sshnodelay.so.
+<br />A few other small bug fixes (including logging).</p>]]></description>
+            <pubDate>Thu, 02 Dec 2010 21:23:32 -0800</pubDate>
+            <enclosure url="https://github.com/downloads/mgorbach/macfusion2/Macfusion%202.0.4.zip" length="4806797" type="application/zip" sparkle:version="2.0.4" sparkle:shortVersionString="2.0.4"/>
+            <guid isPermaLink="false">macfusion-204</guid>
+        </item>
+    </channel>
+</rss>
