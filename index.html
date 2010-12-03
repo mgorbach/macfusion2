@@ -24,6 +24,7 @@
 		-webkit-border-top-right-radius: 20px;
 		-webkit-border-top-left-radius: 20px;
 		height: 150px;
+		text-shadow: 0px 0px 5px black;
 	}
 	
 	#wrap {
@@ -42,6 +43,7 @@
 	}
 	
 	#sidebar {
+		z-index: -1;
 		background-color: #336699;
 		float:right;
 		padding-left: 10px;
@@ -50,6 +52,32 @@
 		padding-right: 20px;
 		height: 1200px;
 	}
+	
+	#download {
+		background-color: #003366;
+		font-size: 1.1em; color: white;
+		position:relative;
+		margin-left: auto;
+		margin-right: 180px;
+		width: 180px;
+		height: 22px;
+		right:0px;
+		top:-85px;
+		text-align: center;
+		-webkit-border-radius: 10px;
+		padding: 10px;
+		border: 1px ridge white;
+		text-shadow: none;
+	}
+	
+	#download a {
+		text-decoration: none;
+	}
+	
+	#download:hover {
+		color: white;
+		background-color: #6699cc;
+	} 
 	
 	#footer {
 		height: 20px;
@@ -84,6 +112,7 @@
 	 	<div id="nav">
  			<img id="githubforkimage" src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"/>
 			<h1><a href="http://github.com/mgorbach/MacFusion2"><img src="images/macfusionIcon.png" align="center">Macfusion</a></h1>
+			<div id="download"><a href="http://github.com/mgorbach">Download Macfusion</a></div>
 		</div>
 		
 	 	<div id="mainContent">
@@ -93,7 +122,7 @@
 		</p>
 			<ol>
 				<li> <em>SSH</em>, or Secure Shell. This is probably the protocol used by the server hosting your website. It can also be used by any mac to share files across the internet. </li>
-				<li> <em>FTP</em>, or File Transfer Protocol. This is commonly used to share files across the inernet. </li>
+				<li> <em>FTP</em>, or File Transfer Protocol. This is commonly used to share files across the internet. </li>
 			</ol>
 			Using Macfusion, you can:
 			<ul>
