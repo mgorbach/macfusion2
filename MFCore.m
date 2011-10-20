@@ -218,7 +218,7 @@ void mfcKaboomMacfusion() {
   NSArray *runningApps = [[NSWorkspace sharedWorkspace] runningApplications];
   for (NSRunningApplication *app in runningApps) {
     if ([app.bundleIdentifier isEqualToString:kMFMainBundleIdentifier] && 
-        [app.bundleURL.path isEqualToString:mfcMainBundlePath()])
+        ![app.bundleURL.path isEqualToString:mfcMainBundlePath()])
       [app terminate];
   }
 }
