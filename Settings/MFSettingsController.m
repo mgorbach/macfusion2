@@ -94,13 +94,13 @@
 		return YES;
 	} else {
 		BOOL agentRunning = NO;
-		NSArray *runningApplicationIdentifiers = [[[NSWorkspace sharedWorkspace] launchedApplications] valueForKey:@"NSApplicationBundleIdentifier"];
-		for(NSString *id in runningApplicationIdentifiers) {
-			if ([id isEqualToString:kMFAgentBundleIdentifier]) {
+    NSArray *runningApplications = [[NSWorkspace sharedWorkspace] runningApplications];
+    for (NSRunningApplication *app in runningApplications) {
+      if ([app.bundleIdentifier isEqualToString:kMFAgentBundleIdentifier]) {
 				agentRunning = YES;
 				break;
 			}
-		}
+    }
 		
 		if (agentRunning) {
 			// Agent is running. Wait a bit for it to set up IPC
