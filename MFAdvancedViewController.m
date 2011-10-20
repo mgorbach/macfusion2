@@ -18,9 +18,9 @@
 	NSOpenPanel *panel = [NSOpenPanel openPanel];
 	[panel setAllowsMultipleSelection:NO];
 	[panel setAllowedFileTypes:[NSArray arrayWithObject: @"icns"]];
-	NSInteger returnValue = [panel runModalForTypes:[NSArray arrayWithObject: @"icns"]];
-	if (returnValue == NSOKButton && [[panel filenames] count] > 0) {
-		NSString *filename = [[panel filenames] objectAtIndex:0];
+	NSInteger returnValue = [panel runModal];
+	if (returnValue == NSOKButton && [[panel URLs] count] > 0) {
+		NSString *filename = [[[panel URLs] objectAtIndex:0] path];
 		NSImage *iconImage = [[NSImage alloc] initWithContentsOfFile:filename];
 		if (iconImage) {
 			[(MFClientFS*)[self representedObject] setIconImage:iconImage];
