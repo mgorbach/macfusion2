@@ -31,6 +31,8 @@ MFLogViewerController, MGActionButton;
 	MFClient* client;
 	MFPreferencesController* preferencesController;
 	MFLogViewerController* logViewerController;
+    
+    NSMutableArray *newFilesystemsToDelete;
 }
 
 - (IBAction)newFSPopupClicked:(id)sender;
@@ -50,4 +52,5 @@ MFLogViewerController, MGActionButton;
 - (IBAction)openSupportSite:(id)sender;
 
 @property(readonly) MFClient* client;
+@property(readwrite, assign) NSMutableArray *newFilesystemsToDelete;
 @end
