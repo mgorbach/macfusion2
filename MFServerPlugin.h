@@ -21,5 +21,5 @@
 }
 
 + (MFServerPlugin *)pluginFromBundleAtPath:(NSString *)path;
-
+- (MFPlugin *)initWithPath:(NSString *)path;
 @end

@@ -215,18 +215,12 @@ void mfcCheckIntegrity() {
 
 // Kill all Macfusion Processes other than me
 void mfcKaboomMacfusion() {
-	NSPredicate *macfusionAppsPredicate = [NSPredicate
-										   predicateWithFormat: 
-										   @"self.NSApplicationBundleIdentifier CONTAINS \
-										   org.mgorbach.macfusion2 AND self.NSApplicationPath != %@", 
-										   mfcMainBundlePath()];
-	
-	NSArray *macfusionApps = [[[NSWorkspace sharedWorkspace] launchedApplications] filteredArrayUsingPredicate:
-							  macfusionAppsPredicate];
-	NSArray *macfusionAppsPIDs = [macfusionApps valueForKey: @"NSApplicationProcessIdentifier"];
-	for(NSNumber *pid in macfusionAppsPIDs) {
-		kill( [pid intValue], SIGKILL );
-	}
+  NSArray *runningApps = [[NSWorkspace sharedWorkspace] runningApplications];
+  for (NSRunningApplication *app in runningApps) {
+    if ([app.bundleIdentifier isEqualToString:kMFMainBundleIdentifier] && 
+        ![app.bundleURL.path isEqualToString:mfcMainBundlePath()])
+      [app terminate];
+  }
 }
 
 # pragma mark Trashing
