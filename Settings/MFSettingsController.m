@@ -30,6 +30,8 @@
 #import "MFPreferences.h"
 #import "MFLogging.h"
 
+
+
 @interface MFSettingsController(PrivateAPI)
 - (void)editFilesystem:(MFClientFS*)fs;
 - (void)toggleFilesystem:(MFClientFS*)fs;
@@ -305,10 +307,11 @@
 		NSButton *cancelButton = [deleteConfirmation addButtonWithTitle:@"Cancel"];
 		[cancelButton setKeyEquivalent:@"\e"];
 		[deleteConfirmation setAlertStyle: NSCriticalAlertStyle];
+        [self setNewFilesystemsToDelete:filesystemsToDelete];
 		[deleteConfirmation beginSheetModalForWindow: [filesystemTableView window]
 									   modalDelegate:self
 									  didEndSelector:@selector(deleteConfirmationAlertDidEnd:returnCode:contextInfo:)
-										 contextInfo:filesystemsToDelete];
+										 contextInfo:nil];
 	}
 }
 
@@ -366,13 +369,14 @@
 
 
 - (void)deleteConfirmationAlertDidEnd:(NSAlert*)alert returnCode:(NSInteger)code contextInfo:(void *)context {
-	NSArray *filesystemsToDelete = (NSArray *)context;
+    
 	if (code == NSAlertSecondButtonReturn) {
 		
 	} else if (code == NSAlertFirstButtonReturn) {
-		for(MFClientFS *fs in filesystemsToDelete) {
+		for(MFClientFS *fs in [self newFilesystemsToDelete]) {
 			[client deleteFilesystem: fs];	
 		}
+        [self setNewFilesystemsToDelete:[NSMutableArray alloc]];
 	}
 }
 
@@ -584,4 +588,5 @@
 }
 
 @synthesize client;
+@synthesize newFilesystemsToDelete;
 @end
